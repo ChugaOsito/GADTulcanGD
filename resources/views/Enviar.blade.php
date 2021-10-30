@@ -21,7 +21,7 @@
 @csrf
 <div class="form-group">
     <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
-    <select class="form-select" id="exampleSelect1">
+    <select class="form-select" id="exampleSelect1" name="receptor">
       @foreach ($users as $user )
       <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
       @endforeach

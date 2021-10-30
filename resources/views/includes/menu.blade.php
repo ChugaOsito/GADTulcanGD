@@ -9,21 +9,42 @@
         
 
 <div class="list-group">
-  <a  @if (request()->is('EnviarDoc')) class="list-group-item list-group-item-action active bg-dark" @else class="list-group-item list-group-item-action active "@endif 
-  href="/EnviarDoc" >Enviar</a>
+ 
+
+  <a @if (request()->is('EnviarDoc') or request()->is('Editor') )  class="nav-link dropdown-toggle list-group-item list-group-item-action active bg-dark" 
+    @else  
+    class="nav-link dropdown-toggle list-group-item list-group-item-action active"
+    @endif
+    data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Enviar</a>
+
+  <div class="dropdown-menu">
+    <a class="dropdown-item" href="/EnviarDoc">Subir Documento</a>
+    <a class="dropdown-item" href="/Editor">Editar Documento</a>
+    
+    
+  </div>
   
   <a  @if (request()->is('Enviados')) class="list-group-item list-group-item-action active bg-dark" @else class="list-group-item list-group-item-action active "@endif 
   href="/Enviados" class="list-group-item list-group-item-action active">Documentos Enviados</a>
+
+  <a  @if (request()->is('Recibidos')) class="list-group-item list-group-item-action active bg-dark" @else class="list-group-item list-group-item-action active "@endif 
+    href="/Recibidos" class="list-group-item list-group-item-action active">Bandeja de Entrada</a>
+<!---
   <a class="nav-link dropdown-toggle list-group-item list-group-item-action active" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Firma Electronica</a>
   <div class="dropdown-menu">
     <a class="dropdown-item" href="/FormFirmarDoc">Firmar Documento</a>
     <a class="dropdown-item" href="/FormValidarDocFirmado">Verificar Firmas Electronicas</a>
-    
+  
   </div>
+  -->
   <a @if (request()->is('Documentos')) class="list-group-item list-group-item-action active bg-dark" @else class="list-group-item list-group-item-action active "@endif  
-  href="/Documentos">Buscar en Repositorio</a>
+  href="/Documentos/1">Buscar en Repositorio</a>
   @if (auth()->user()->is_admin)
-  <a @if (request()->is('usuarios'))  class="nav-link dropdown-toggle list-group-item list-group-item-action active bg-dark" 
+
+  <a @if (request()->is('carpetas')) class="list-group-item list-group-item-action active bg-dark" @else class="list-group-item list-group-item-action active "@endif  
+    href="/carpetas">Gestionar Carpetas</a>
+
+  <a @if (request()->is('usuarios') or request()->is('departamentos') )  class="nav-link dropdown-toggle list-group-item list-group-item-action active bg-dark" 
     @else  
     class="nav-link dropdown-toggle list-group-item list-group-item-action active"
     @endif
@@ -31,9 +52,12 @@
 
   <div class="dropdown-menu">
     <a class="dropdown-item" href="/usuarios">Registrar Usuarios</a>
+    <a class="dropdown-item" href="/departamentos">Gestion de departamentos</a>
     
     
   </div>
+
+  
   @endif
  
     

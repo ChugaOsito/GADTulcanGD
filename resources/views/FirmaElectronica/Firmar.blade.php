@@ -7,15 +7,18 @@
                 <div class="card-header">Firma Electronica</div>
 
                 <div class="card-body bg-light text-black">
-    <form action="/FirmarDoc" method="post" enctype="multipart/form-data">
+    <form action="" method="post" enctype="multipart/form-data">
 @csrf
+<!-- Boorar , esto servia para hacer pruebas cuando se subian y firmaban archivos directamente
 @if ($activador == 0)
 <div class="form-group">
     <label for="formFile" class="form-label mt-4">Archivo PDF a Firmar</label>
     <input class="form-control" type="file" id="formFile" name="urlpdf">
   </div>
 @endif
-<input id="RutaPdf" name="AFirmar" type="hidden" value={{ $docSubido }}>
+-->
+
+
   <div class="form-group">
     <label for="formFile" class="form-label mt-4">Certificado P12 o PFX</label>
     <input class="form-control" type="file" id="formFile" name="p12">
@@ -68,7 +71,12 @@
 </br>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Firmar</button>
+
+    <a href="/VincularCarpeta/{{$id}}" class="btn btn-danger" title="Editar">Omitir
+      <span class="glyphicon glyphicon-pencil"></span></a>
           </div> 
+        
+         
 </form>
 </div>
 </div>

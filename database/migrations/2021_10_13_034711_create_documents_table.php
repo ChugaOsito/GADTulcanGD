@@ -17,9 +17,9 @@ class CreateDocumentsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('path');
-            
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('folder_id')->default(1);
+            $table->foreign('folder_id')->references('id')->on('folders');
+   
             //La siguiente se usara para realizar pruebas de envio de documentos posteriormente
 /*
             $table->integer('receiver_id')->unsigned();

@@ -16,16 +16,16 @@ class FirmaElectronicaController extends Controller
     }
     //Fin Middledare
     //Firmar Documento
-    public function FormularioFirma(){
+    public function FormularioFirma($id){
         $activador=0;
 
-        return  view('FirmaElectronica/Firmar')->with (compact('activador'));
+        return  view('FirmaElectronica/Firmar')->with (compact('activador'))->with (compact('id'));
     }
     
     
-    public function FirmarDoc(Request $request){
+    public function FirmarDoc($id, Request $request){
         
-        $pdfAFirmar=$request->input("AFirmar");
+        $pdfAFirmar=$id;
         
         if(( $pdfAFirmar !==null )and ($request->hasFile("p12"))){
             
@@ -131,7 +131,11 @@ class FirmaElectronicaController extends Controller
             $DocumentoFirmado=json_decode($response->getBody(),true);
             $documents->path=$DocumentoFirmado['docFirmado'];
             $documents->save();
-            return response()->file($documents->path);
+
+            //Lo siguiente sirve para mostar el PDF Firmado, se usara despues
+            //return response()->file($documents->path);
+
+            return redirect()->route('VincularCarpeta', ['id' => $id]);
             }
         }
     //Fin Firmar Documento 
@@ -142,20 +146,9 @@ class FirmaElectronicaController extends Controller
     }
 
 
-    public function ValidarDoc(Request $request){
-if($request->hasFile("urlpdf")){
-   
-    $file=$request->file("urlpdf");
-    $nombre="pdf_".time().".".$file->guessExtension();
-    $ruta=public_path("pdf/".$nombre);
-    $pdfAvalidar="C:/xampp/htdocs/GADTulcanGD/public/pdf/";
-    if($file->guessExtension()=="pdf"){
-        copy($file,$ruta);
-        $pdfAvalidar.=$nombre;
-        
-    }else{
-        dd("No es un pdf");
-    }
+    public function ValidarDoc($id){
+        $documento= document::find($id);
+        $pdfAvalidar=$documento->path;
     $client = new Client([
         'headers' => [ 'Content-Type' => 'application/json; charset="utf-8"' ]
     ]);
@@ -167,8 +160,10 @@ if($request->hasFile("urlpdf")){
             ]
         )]
     );
-    dd($response->getBody()->getContents());
+    //dd($response->getBody()->getContents());
+    $datos=json_decode($response->getBody(),true);
+    
+    return view('FirmaElectronica/Validar')->with(compact('datos'));
     }
 } 
     //Fin Validar Documento 
-}
