@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="card text-white bg-primary border-primary mb-3" style="max-width: 50rem;">
+<div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
             
                 <div class="card-header">Datos del Firmante </div>

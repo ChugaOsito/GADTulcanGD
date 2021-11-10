@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="card text-white bg-primary border-primary mb-3" style="max-width: 50rem;">
+<div class="rounded-3 card text-white bg-primary border-primary mb-3 " style="max-width: 100rem;">
 
             
                 <div class="card-header">Enviar Documento</div>
 
-                <div class="card-body bg-light text-black">
+                <div class="card-body bg-light text-black ">
                   @if (count ($errors)>0)
                   <div class="alert alert-danger">
                   <ul>
@@ -21,7 +21,7 @@
 @csrf
 <div class="form-group">
     <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
-    <select class="form-select" id="exampleSelect1" name="receptor">
+    <select class="rounded form-select" id="exampleSelect1" name="receptor">
       @foreach ($users as $user )
       <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
       @endforeach
@@ -32,12 +32,12 @@
 
   <div class="form-group">
   <label class="col-form-label mt-4" for="inputDefault">Nombre del Documento</label>
-  <input type="text" class="form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
+  <input type="text" class="rounded form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
 </div>
 
 <div class="form-group">
   <label for="formFile" class="form-label mt-4">Subir Archivo PDF</label>
-  <input class="form-control" type="file" id="formFile" name="archivo">
+  <input class="rounded form-control" type="file" id="formFile" name="archivo">
 </div>
 
 
@@ -46,7 +46,7 @@
   
 </br>
   <div class="form-group">
-    <button type="submit" class="btn btn-primary">Enviar</button>
+    <button type="submit" class="rounded btn btn-primary">Enviar</button>
           </div> 
 </form>
 
