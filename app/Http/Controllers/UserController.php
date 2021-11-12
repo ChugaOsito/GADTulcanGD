@@ -5,13 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\Departament;
 
 class UserController extends Controller
 {
    public function index()
    {
-       $users= User::all();
-       return view('admin.users.index')->with(compact('users'));
+    $users=\DB::table('users')
+    ->join('departaments','departaments.id','=','users.departament_id')
+    ->select('users.*', 'departaments.name as departament_name')->get();
+    $departaments=Departament::all();
+       
+       return view('admin.users.index')->with(compact('users'))->with(compact('departaments'));
    }
    public function store(Request $request )
    {
@@ -47,6 +52,7 @@ class UserController extends Controller
        $user->email =$request->input('email');
        $user->password = bcrypt($request->input('contrasena'));
        $user->rol =$request->input('rol');
+       $user->departament_id =$request->input('departamento');
        $user->save();
 
        return back()->with('notification','El usuario ha sido registrado exitosamente');
@@ -54,8 +60,8 @@ class UserController extends Controller
    public function edit($id)
    {
        $user= User::find($id);
-       
-       return view('admin.users.edit')->with(compact('user'));
+       $departaments=Departament::all();
+       return view('admin.users.edit')->with(compact('user'))->with(compact('departaments'));
    }
    public function update($id, Request $request)
    {
@@ -92,6 +98,7 @@ class UserController extends Controller
       }
        
        $user->rol =$request->input('rol');
+       $user->departament_id =$request->input('departamento');
        $user->save();
        
     return back()->with('notification','El usuario ha sido modificado exitosamente');

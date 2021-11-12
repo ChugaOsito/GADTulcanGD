@@ -11,10 +11,10 @@ class DepartamentController extends Controller
    {
     $departaments=\DB::table('departaments AS d1')
     ->join('departaments AS d2','d2.id','=','d1.father_departament_id')
-    
+    ->select('d1.*', 'd2.name as father_departament')
 ->get();
 
-       dd($departaments);
+       
        return view('admin.departaments.index')->with(compact('departaments'));
    }
    public function store(Request $request )

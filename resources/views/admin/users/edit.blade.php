@@ -54,6 +54,18 @@
     <input type="text" class="form-control" placeholder="Inserte Contraseña" id="inputDefault" name="contrasena" value="{{ old('contrasena') }}">
   </div>
   <div class="form-group">
+
+    <div class="form-group">
+      <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece</label>
+      <select class="rounded form-select" id="exampleSelect1" name="departamento">
+        @foreach ($departaments as $departament )
+        <option value="{{ $departament->id }}"> {{ $departament->name }} </option>   
+        @endforeach
+         
+        
+      </select>
+    </div>
+
     <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
 </br>
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -71,7 +83,7 @@
   <button type="submit" class="btn btn-primary">Actualizar</button>
         </div> 
 </form>
-<br>
+
 
 </div>
 </div>

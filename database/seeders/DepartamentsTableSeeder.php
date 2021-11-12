@@ -19,5 +19,11 @@ class DepartamentsTableSeeder extends Seeder
            
 
         ]);
+        Departament::create([
+            'name'=> 'TIC',
+            'father_departament_id'=> 1
+           
+
+        ]);
     }
 }

@@ -54,6 +54,17 @@
     <input type="text" class="form-control" placeholder="Inserte Contraseña" id="inputDefault" name="contrasena" value="{{ old('contrasena', Str::random(10)) }}">
   </div>
   <div class="form-group">
+
+    <div class="form-group">
+      <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece</label>
+      <select class="rounded form-select" id="exampleSelect1" name="departamento">
+        @foreach ($departaments as $departament )
+        <option value="{{ $departament->id }}"> {{ $departament->name }} </option>   
+        @endforeach
+         
+        
+      </select>
+    </div>
     <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
 </br>
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -79,6 +90,7 @@
       <th>Apellidos</th>
       <th>Nombres</th>
       <th>E-mail</th>
+      <th>Departamento</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -89,6 +101,7 @@
       <td>{{ $user->lastname }}</td>
       <td>{{ $user->name }}</td>
       <td>{{ $user->email}}</td>
+      <td>{{ $user->departament_name}}</td>
       <td>
         <a href="/usuario/{{$user->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
           <span class="glyphicon glyphicon-pencil"></span>

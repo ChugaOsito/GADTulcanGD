@@ -19,6 +19,9 @@ class CreateFoldersTable extends Migration
             $table->unsignedBigInteger('father_folder_id');
             $table->foreign('father_folder_id')->references('id')->on('folders');
             
+            $table->unsignedBigInteger('departament_id');
+            $table->foreign('departament_id')->references('id')->on('departaments');
+            
             $table->timestamps();
         });
     }

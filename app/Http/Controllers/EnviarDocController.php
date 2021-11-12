@@ -6,19 +6,24 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Document;
 use App\Models\Folder;
+use App\Models\Departament;
 use App\Models\Annex;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
+use PDF;
 class EnviarDocController extends Controller
 {
     
 
     
     public function getEnviar(){
-        $users=User::all();
-
-
-        return  view('Enviar')->with (compact('users'));
+        $id_departamento = Auth::user()->departament_id;
+        
+        $users=\DB::table('users')->where('departament_id', '=', $id_departamento)->get();
+        
+        $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
+        
+        return  view('Enviar')->with (compact('users'))->with (compact('departaments'));
     }
     public function postEnviar(Request $request){
 
@@ -117,13 +122,92 @@ class EnviarDocController extends Controller
     }
     
     public function EditorTexto(){
+        $id_departamento = Auth::user()->departament_id;
+        
+        $users=\DB::table('users')->where('departament_id', '=', $id_departamento)->get();
+        
+        $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
+        
+        return  view('Documents.EditorTexto')->with (compact('users'))->with (compact('departaments'));
 
-       return view('Documents.EditorTexto');
+
+       
     }
     public function DocHtml(Request $request){
-        $PDF=$request->input('exportar');
-        dd($PDF);
-        return view('Documents.EditorTexto');
+        $rules=[
+
+            'nombre'=> 'required|min:3',
+            'cuerpo'=> 'required|min:3',
+            'objeto'=> 'required|min:3',
+                    ];
+            
+                    $messages=[
+                        'objeto.required'=>'No ha introducido ningun objeto de documento ',
+                        'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
+                        'nombre.required'=>'No ha introducido un nombre para el archivo ',
+                        'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
+            
+                    ];
+                    $this->validate($request, $rules, $messages);
+            
+                    
+        $id_receptor=$request->input('receptor');
+        $cuerpo=$request->input('cuerpo');
+        $objeto=$request->input('objeto');
+        
+        $nombre = Auth::user()->name;
+        $apellido = Auth::user()->lastname;
+        $receptor=\DB::table('users')->where('id', '=', $id_receptor)->first();
+
+        //Inicio transformar Html a pdf
+        $pdf = PDF::loadView(
+        'TextEditor.documento',
+        ['receptor_nombre'=>$receptor->name,'receptor_apellido'=>$receptor->lastname,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+        );
+    $output = $pdf->output();
+
+    $nombrepdf="pdf_".time().".pdf";
+        $rutapdf=public_path("pdf/".$nombrepdf);
+
+    file_put_contents( "pdf/".$nombrepdf, $output);
+
+
+       
+        
+
+        //Fin transformacion
+        //Guardando en base de datos
+                    
+        
+      
+        
+        //Enviando datos a la base tabla documento
+        $doc =new Document();
+        $doc->name= $request->input('nombre');
+        $doc->path= $rutapdf;
+        
+        $doc->save();
+        //Fin Enviando datos a tabla de documento
+        //Inicio Enviar datos a la tabla de transaccion
+        //Emisor
+        $transaccion= new Transaction();
+        $transaccion->user_id= auth()->user()->id;
+        $transaccion->document_id=$doc->id;
+        $transaccion->type="E";
+        $transaccion->save();
+        //Receptor
+        $transaccion= new Transaction();
+        $transaccion->user_id= $id_receptor ;
+        $transaccion->document_id=$doc->id;
+        $transaccion->type="R";
+        $transaccion->save();
+        //Fin enviar datos tabla de transaccion
+        $activador=1;
+        $docSubido=$doc->id;
+        //Fin guardado en base de datos 
+       
+        return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+
      }
 //Carpeta
      public function FormularioCarpeta($id){

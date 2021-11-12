@@ -15,6 +15,7 @@ class FoldersTableSeeder extends Seeder
     public function run()
     {
         Folder::create([
+            'departament_id'=> 1,
             'name'=> 'Documentos Internos del GAD de Tulcan',
             'father_folder_id'=> 1
            

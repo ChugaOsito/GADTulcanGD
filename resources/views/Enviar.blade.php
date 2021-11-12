@@ -25,6 +25,9 @@
       @foreach ($users as $user )
       <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
       @endforeach
+      @foreach ($departaments as $departament )
+      <option value="{{ $departament->id }}">{{ $departament->name }} </option>   
+      @endforeach
        
       
     </select>

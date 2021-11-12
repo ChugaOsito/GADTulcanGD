@@ -20,7 +20,8 @@ class UsersTableSeeder extends Seeder
             'name'=> 'Karina del pilar',
             'email'=> 'karinacevallos@gmail.com',
             'password'=> bcrypt('admin123'),
-            'rol'=> 0
+            'rol'=> 0,
+            'departament_id' => 2
 
         ]);
         //Usuario gestor de carpetas
@@ -30,7 +31,8 @@ class UsersTableSeeder extends Seeder
             'name'=> 'Cristian Fernando',
             'email'=> 'cristianfreire@gmail.com',
             'password'=> bcrypt('admin123'),
-            'rol'=> 1
+            'rol'=> 1,
+            'departament_id' => 2
 
         ]);
         //Funcionario
@@ -40,7 +42,8 @@ class UsersTableSeeder extends Seeder
             'name'=> 'Luis Fernando',
             'email'=> 'luisisizan@gmail.com',
             'password'=> bcrypt('admin123'),
-            'rol'=> 2
+            'rol'=> 2,
+            'departament_id' => 2
 
         ]);
     }

@@ -24,6 +24,9 @@ class CreateUsersTable extends Migration
             $table->smallInteger('rol')->default(2); //0 Administrador 1GestorCarpetas 2Funcionario
             $table->rememberToken();
             $table->timestamps();
+
+            $table->unsignedBigInteger('departament_id');
+            $table->foreign('departament_id')->references('id')->on('departaments');
         });
     }
 

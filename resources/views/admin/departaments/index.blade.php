@@ -30,7 +30,7 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
+  <label for="exampleSelect1" class="form-label mt-4">Departamento Padre</label>
   <select class="form-select" id="exampleSelect1" name="padre">
     @foreach ($departaments as $departament )
     <option value="{{ $departament->id }}">{{ $departament->name }}</option>   
@@ -66,7 +66,7 @@
     <tr>
       <td>{{ $departament->id }}</td>
       <td>{{ $departament->name }}</td>
-      <td>{{ $departament->father_departament_id }}</td>
+      <td>{{ $departament->father_departament}}</td>
       <td>
         <a href="/usuario/{{$departament->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
           <span class="glyphicon glyphicon-pencil"></span>
