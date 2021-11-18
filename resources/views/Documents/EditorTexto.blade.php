@@ -33,7 +33,7 @@
 
                                 <div class="form-group">
                                     <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
-                                    <select class="rounded form-select" id="exampleSelect1" name="receptor">
+                                    <select class="rounded form-select js-example-basic-multiple" id="exampleSelect1" name="receptor[]" multiple="multiple">
                                       @foreach ($users as $user )
                                       <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
                                       @endforeach

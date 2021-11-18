@@ -46,4 +46,9 @@ class User extends Authenticatable
         return $this->rol ==0;
 
     }
+    //relacion muchos a muchos
+    public function documents()
+    {
+        return $this->belongsToMany('App\Models\Document');
+    }
 }

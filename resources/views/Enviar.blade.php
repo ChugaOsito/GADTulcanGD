@@ -20,18 +20,18 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
-    <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
-    <select class="rounded form-select" id="exampleSelect1" name="receptor">
-      @foreach ($users as $user )
-      <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
-      @endforeach
-      @foreach ($departaments as $departament )
-      <option value="{{ $departament->id }}">{{ $departament->name }} </option>   
-      @endforeach
-       
-      
-    </select>
-  </div>
+  <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
+  <select class="rounded form-select js-example-basic-multiple" id="exampleSelect1" name="receptor[]" multiple="multiple">
+    @foreach ($users as $user )
+    <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
+    @endforeach
+    @foreach ($departaments as $departament )
+    <option value="{{ $departament->id }} ">{{ $departament->name }} </option>   
+    @endforeach
+     
+    
+  </select>
+</div>
 
   <div class="form-group">
   <label class="col-form-label mt-4" for="inputDefault">Nombre del Documento</label>

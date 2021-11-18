@@ -55,21 +55,10 @@ class EnviarDocController extends Controller
         $doc->path= $rutapdf;
         
         $doc->save();
+        $doc->users()->attach($request->receptor, ['type' => "R"]);
+        $doc->users()->attach(auth()->user()->id, ['type' => "E"]);
         //Fin Enviando datos a tabla de documento
-        //Inicio Enviar datos a la tabla de transaccion
-        //Emisor
-        $transaccion= new Transaction();
-        $transaccion->user_id= auth()->user()->id;
-        $transaccion->document_id=$doc->id;
-        $transaccion->type="E";
-        $transaccion->save();
-        //Receptor
-        $transaccion= new Transaction();
-        $transaccion->user_id= $request->input('receptor'); ;
-        $transaccion->document_id=$doc->id;
-        $transaccion->type="R";
-        $transaccion->save();
-        //Fin enviar datos tabla de transaccion
+        
         $activador=1;
         $docSubido=$doc->id;
        
@@ -91,9 +80,9 @@ class EnviarDocController extends Controller
          $usuarios= \DB::table('users')->join('llamadas','users.id','=','llamadas.user_id')
         ->select('users.id AS cedula','users.name','llamadas.*')-> get();
         */
-        $documents=\DB::table('documents')->join('transactions','documents.id','=','transactions.document_id')
-        ->where('transactions.user_id', '=', Auth::user()->id)
-        ->where('transactions.type', '=', "E")
+        $documents=\DB::table('documents')->join('document_user','documents.id','=','document_user.document_id')
+        ->where('document_user.user_id', '=', Auth::user()->id)
+        ->where('document_user.type', '=', "E")
         ->get();
         
     
@@ -105,9 +94,9 @@ class EnviarDocController extends Controller
          $usuarios= \DB::table('users')->join('llamadas','users.id','=','llamadas.user_id')
         ->select('users.id AS cedula','users.name','llamadas.*')-> get();
         */
-        $documents=\DB::table('documents')->join('transactions','documents.id','=','transactions.document_id')
-        ->where('transactions.user_id', '=', Auth::user()->id)
-        ->where('transactions.type', '=', "R")
+        $documents=\DB::table('documents')->join('document_user','documents.id','=','document_user.document_id')
+        ->where('document_user.user_id', '=', Auth::user()->id)
+        ->where('document_user.type', '=', "R")
         ->get();
         
     
@@ -151,18 +140,24 @@ class EnviarDocController extends Controller
                     $this->validate($request, $rules, $messages);
             
                     
-        $id_receptor=$request->input('receptor');
+        $id_receptores=$request->input('receptor');
+        
         $cuerpo=$request->input('cuerpo');
         $objeto=$request->input('objeto');
         
         $nombre = Auth::user()->name;
         $apellido = Auth::user()->lastname;
-        $receptor=\DB::table('users')->where('id', '=', $id_receptor)->first();
-
+        $i=0;
+foreach($id_receptores as $id_receptor){
+    $receptores[$i]=\DB::table('users')->where('id', '=', $id_receptor)->first();
+    $i++;
+}
+        
+        
         //Inicio transformar Html a pdf
         $pdf = PDF::loadView(
         'TextEditor.documento',
-        ['receptor_nombre'=>$receptor->name,'receptor_apellido'=>$receptor->lastname,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+        ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
         );
     $output = $pdf->output();
 
@@ -187,21 +182,10 @@ class EnviarDocController extends Controller
         $doc->path= $rutapdf;
         
         $doc->save();
+        $doc->users()->attach($request->receptor, ['type' => "R"]);
+        $doc->users()->attach(auth()->user()->id, ['type' => "E"]);
         //Fin Enviando datos a tabla de documento
-        //Inicio Enviar datos a la tabla de transaccion
-        //Emisor
-        $transaccion= new Transaction();
-        $transaccion->user_id= auth()->user()->id;
-        $transaccion->document_id=$doc->id;
-        $transaccion->type="E";
-        $transaccion->save();
-        //Receptor
-        $transaccion= new Transaction();
-        $transaccion->user_id= $id_receptor ;
-        $transaccion->document_id=$doc->id;
-        $transaccion->type="R";
-        $transaccion->save();
-        //Fin enviar datos tabla de transaccion
+        
         $activador=1;
         $docSubido=$doc->id;
         //Fin guardado en base de datos 
@@ -230,7 +214,7 @@ class EnviarDocController extends Controller
     public function FormularioAnexos($id){
         $annexes= \DB::table('annexes')->where('document_id', '=', $id)->get();
 
-        $usuario= \DB::table('users')->join('transactions','users.id','=','transactions.user_id')
+        $usuario= \DB::table('users')->join('document_user','users.id','=','document_user.user_id')
         ->where('document_id', '=', $id)
         ->where('type', '=', 'E')->first();
         return  view('annexes.index')->with (compact('annexes'))->with (compact('usuario'));

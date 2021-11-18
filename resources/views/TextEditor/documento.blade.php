@@ -41,13 +41,34 @@
                 text-align: center;
                 line-height: 35px;
             }
+            .para{
+
+                display:inline-block; 
+                position: relative;
+                
+                left: 96px;
+               
+            }
+            .receptor
+            {
+                display:inline-block; 
+                position: relative;
+                top: 10px;
+                left: 596px;  
+            }
     </style>
     <header>
         <img class="img-thumbnail img-fluid rounded" style="width: 100%;" src="images/header.jpg" alt="Error Imagen no encontrada"/>    
     </header>
     <br>
     <br>
-    <h1><b> PARA : </b>{{ $receptor_nombre }} {{ $receptor_apellido }}</h1>
+    <h1 class="para"><b> PARA : </b></h1>
+    
+    @foreach ($receptores as $receptor )
+    <h1 class="receptor">     {{ $receptor->name }} {{ $receptor->lastname }}</h1>    <br>
+    
+    @endforeach
+    
     <h1><b> OBJETO : {{ $objeto }}</b></h1>
     <br>
     <br>
