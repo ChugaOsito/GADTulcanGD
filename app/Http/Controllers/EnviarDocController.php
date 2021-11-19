@@ -55,8 +55,8 @@ class EnviarDocController extends Controller
         $doc->path= $rutapdf;
         
         $doc->save();
-        $doc->users()->attach($request->receptor, ['type' => "R"]);
-        $doc->users()->attach(auth()->user()->id, ['type' => "E"]);
+        $doc->users()->attach($request->receptor, ['type' => "R",'process' =>$doc->id ]);
+        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$doc->id ]);
         //Fin Enviando datos a tabla de documento
         
         $activador=1;
@@ -181,9 +181,10 @@ foreach($id_receptores as $id_receptor){
         $doc->name= $request->input('nombre');
         $doc->path= $rutapdf;
         
+        
         $doc->save();
-        $doc->users()->attach($request->receptor, ['type' => "R"]);
-        $doc->users()->attach(auth()->user()->id, ['type' => "E"]);
+        $doc->users()->attach($request->receptor, ['type' => "R",'process' =>$doc->id ]);
+        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$doc->id ]);
         //Fin Enviando datos a tabla de documento
         
         $activador=1;
@@ -260,5 +261,154 @@ foreach($id_receptores as $id_receptor){
         $pathToFile=$anexo->path;
         return response()->file($pathToFile);
     }
+    //Inicio Responder
+    public function getResponder($id){
+        
+        
+        $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
+        $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
+  
+        
+        return  view('Responder.Enviar')->with (compact('user'));
+    }
+    public function postResponder(Request $request, $id){
+        $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
+        $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
 
+        $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
+
+        $rules=[
+
+
+'archivo'=> 'required|mimes:pdf'
+
+        ];
+
+        $messages=[
+           
+            'archivo.required'=>'No se ha se leccionado un archivo para subir',
+            'archivo.mimes'=>'El archivo debe estar en formato PDF'
+
+        ];
+        $this->validate($request, $rules, $messages);
+
+        //Obteniendo pdf
+        $filepdf=$request->file("archivo");
+        $nombrepdf="pdf_".time().".".$filepdf->guessExtension();
+        $rutapdf=public_path("pdf/".$nombrepdf);
+        copy($filepdf,$rutapdf);
+        //Fin Obteniendo pdf 
+        //Enviando datos a la base tabla documento
+        $doc =new Document();
+        $doc->name= $request->input('nombre');
+        $doc->path= $rutapdf;
+        
+        $doc->save();
+        $doc->users()->attach($user->id, ['type' => "R",'process' =>$process->process ]);
+        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$process->process ]);
+        //Fin Enviando datos a tabla de documento
+        
+        $activador=1;
+        $docSubido=$doc->id;
+       
+        return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+    }
+   //////////
+   public function EditorTextoResponder($id){
+    $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
+        $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
+    
+    return  view('Responder.EditorTexto')->with (compact('user'));
+
+
+   
+}
+public function DocHtmlResponder(Request $request, $id){
+    $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
+    $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
+
+    $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
+    $rules=[
+
+        'cuerpo'=> 'required|min:3',
+        'objeto'=> 'required|min:3',
+                ];
+        
+                $messages=[
+                    'objeto.required'=>'No ha introducido ningun objeto de documento ',
+                    'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
+                   
+        
+                ];
+                $this->validate($request, $rules, $messages);
+        
+                
+    $receptores[0]=$user;
+    
+    $cuerpo=$request->input('cuerpo');
+    $objeto=$request->input('objeto');
+    
+    $nombre = Auth::user()->name;
+    $apellido = Auth::user()->lastname;
+
+   
+    //Inicio transformar Html a pdf
+    $pdf = PDF::loadView(
+    'TextEditor.documento',
+    ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+    );
+$output = $pdf->output();
+
+$nombrepdf="pdf_".time().".pdf";
+    $rutapdf=public_path("pdf/".$nombrepdf);
+
+file_put_contents( "pdf/".$nombrepdf, $output);
+
+
+   
+    
+
+    //Fin transformacion
+    //Guardando en base de datos
+                
+    
+  
+    
+    //Enviando datos a la base tabla documento
+    $doc =new Document();
+    $doc->name= $request->input('nombre');
+    $doc->path= $rutapdf;
+    
+    
+    $doc->save();
+    $doc->users()->attach($user->id, ['type' => "R",'process' =>$process->process ]);
+    $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$process->process ]);
+    //Fin Enviando datos a tabla de documento
+    
+    $activador=1;
+    $docSubido=$doc->id;
+    //Fin guardado en base de datos 
+   
+    return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+
+ }
+
+    //FinResponder
+    public function Seguimiento($id){
+        $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
+        $id_documentos=\DB::table('document_user')->where('process', '=', $process->process)->get();
+
+        $i=0;
+        foreach($id_documentos as $id_documento){
+            $documents[$i]=\DB::table('documents')->where('id', '=', $id_documento->document_id)->first();
+            $i++;
+        }
+             
+        
+
+       // dd($documents);
+        
+        return view('Documentos')->with(compact('documents'));
+
+    }
 }

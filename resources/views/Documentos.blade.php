@@ -47,7 +47,7 @@
     <!-- Fin Carpetas  -->
     @foreach ($documents as $document)
     <tr>
-      @if (request()->is('Documentos/*'))
+      @if ((request()->is('Documentos/*')) or request()->is('Seguimiento/*')) 
       <td>{{ $document->id }}</td>
       @else
       <td>{{ $document->document_id }}</td>
@@ -56,7 +56,22 @@
       <td>{{ $document->created_at }}</td>
       
       <td>
-        @if (request()->is('Documentos/*'))
+        @if (request()->is('Recibidos'))
+        <a  class=" border rounded nav-link dropdown-toggle list-group-item list-group-item-action active"
+          
+          data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Responder</a>
+      
+        <div class="border rounded bg-primary dropdown-menu">
+          <a class="dropdown-item text-white" href="/ResponderDoc/{{$document->document_id}}">Subir Documento</a>
+          <a class="dropdown-item text-white" href="/EditorResponder/{{$document->document_id}}">Editar Documento</a>
+          
+          
+        </div>
+        <a href="/Seguimiento/{{$document->document_id}}" class="btn btn-primary btn-sm" title="Editar">Seguimiento
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+        @endif
+        @if ((request()->is('Documentos/*')) or request()->is('Seguimiento/*')) 
         <a href="/Documento/{{$document->id}}" class="btn btn-primary btn-sm" title="Editar">Visualizar
           <span class="glyphicon glyphicon-pencil"></span>
         </a>
@@ -74,7 +89,9 @@
            <span class="glyphicon glyphicon-remove"></span>
          </a>
           @else
-
+          <a href="/Seguimiento/{{$document->document_id}}" class="btn btn-primary btn-sm" title="Editar">Seguimiento
+            <span class="glyphicon glyphicon-pencil"></span>
+          </a>
           <a href="/Documento/{{$document->document_id}}" class="btn btn-primary btn-sm" title="Editar">Visualizar
             <span class="glyphicon glyphicon-pencil"></span>
           </a>

@@ -36,6 +36,14 @@ Route::get('/Enviados', [App\Http\Controllers\EnviarDocController::class,'Bandej
 Route::get('/Recibidos', [App\Http\Controllers\EnviarDocController::class,'BandejaEntrada']);
 Route::get('/Editor', [App\Http\Controllers\EnviarDocController::class,'EditorTexto']);
 Route::post('/Editor', [App\Http\Controllers\EnviarDocController::class,'DocHtml']);
+//Inicio Responder
+Route::get('/ResponderDoc/{id}', [App\Http\Controllers\EnviarDocController::class,'getResponder'])->name('FormularioEnviar');
+Route::post('/ResponderDoc/{id}', [App\Http\Controllers\EnviarDocController::class,'postResponder'])->name('FormularioEnviar');
+Route::get('/EditorResponder/{id}', [App\Http\Controllers\EnviarDocController::class,'EditorTextoResponder']);
+Route::post('/EditorResponder/{id}', [App\Http\Controllers\EnviarDocController::class,'DocHtmlResponder']);
+Route::get('/Documentos/{id}', [App\Http\Controllers\EnviarDocController::class,'MostrarDocumentos']);
+//Fin Responder
+Route::get('/Seguimiento/{id}', [App\Http\Controllers\EnviarDocController::class,'Seguimiento']);
 Route::get('/12345', function () {
      $pdf = App::make('dompdf.wrapper');
     $pdf->loadHTML('aQUI VA EL HTML');

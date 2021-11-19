@@ -16,6 +16,7 @@ class CreateDocumentUserTable extends Migration
         Schema::create('document_user', function (Blueprint $table) {
             $table->id();
             $table->string('type');
+            $table->string('process');
             
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
