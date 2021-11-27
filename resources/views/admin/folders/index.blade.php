@@ -30,6 +30,17 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
+  <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece esta carpeta</label>
+  <select class="form-select" id="exampleSelect1" name="departament">
+    @foreach ($departaments as $departament )
+    <option value="{{ $departament->id }}">{{ $departament->name }}</option>   
+    @endforeach
+     
+    
+  </select>
+</div>
+
+<div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
   <select class="form-select" id="exampleSelect1" name="padre">
     @foreach ($folders as $folder )
@@ -58,7 +69,8 @@
     <tr>
       <th>ID</th>
       <th>Nombre</th>
-      <th>Departamento Padre</th>
+      <th>Carpeta Padre</th>
+      <th>Departamento al que pertenece</th>
     </tr>
   </thead>
   <tbody>
@@ -66,7 +78,9 @@
     <tr>
       <td>{{ $folder->id }}</td>
       <td>{{ $folder->name }}</td>
-      <td>{{ $folder->father_folder_id }}</td>
+      <td>{{ $folder->father_folder }}</td>
+     
+      <td>{{ $folder->departament }}</td>
       <td>
         <a href="/usuario/{{$folder->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
           <span class="glyphicon glyphicon-pencil"></span>

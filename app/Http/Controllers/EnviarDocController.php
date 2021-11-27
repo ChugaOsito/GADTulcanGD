@@ -30,7 +30,8 @@ class EnviarDocController extends Controller
         $rules=[
 
 'nombre'=> 'required|min:3',
-'archivo'=> 'required|mimes:pdf'
+'archivo'=> 'required|mimes:pdf',
+'receptor'=> 'required'
 
         ];
 
@@ -38,29 +39,15 @@ class EnviarDocController extends Controller
             'nombre.required'=>'No ha introducido un nombre para el archivo ',
             'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
-            'archivo.mimes'=>'El archivo debe estar en formato PDF'
+            'archivo.mimes'=>'El archivo debe estar en formato PDF',
+            'receptor.required'=> 'Seleccione almenos un destinatario'
 
         ];
         $this->validate($request, $rules, $messages);
-
-        //Obteniendo pdf
-        $filepdf=$request->file("archivo");
-        $nombrepdf="pdf_".time().".".$filepdf->guessExtension();
-        $rutapdf=public_path("pdf/".$nombrepdf);
-        copy($filepdf,$rutapdf);
-        //Fin Obteniendo pdf 
-        //Enviando datos a la base tabla documento
-        $doc =new Document();
-        $doc->name= $request->input('nombre');
-        $doc->path= $rutapdf;
-        
-        $doc->save();
-        $doc->users()->attach($request->receptor, ['type' => "R",'process' =>$doc->id ]);
-        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$doc->id ]);
-        //Fin Enviando datos a tabla de documento
-        
+        $rutapdf=$this->SubirPdf($request->file("archivo"));
         $activador=1;
-        $docSubido=$doc->id;
+        //Registrar Documento y obtener su id
+        $docSubido=$this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor') );
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
     }
@@ -103,11 +90,18 @@ class EnviarDocController extends Controller
         return view('Documentos')->with(compact('documents'));
 
     }
+   
     public function VisualizarDocumento($id){
 
         $documento= document::find($id);
         $pathToFile=$documento->path;
-        return response()->file($pathToFile);
+
+   
+if($this->Permiso($id)==true)
+{
+    return response()->file($pathToFile);
+}
+return ('Usted no tiene permitido visualizar este documento');
     }
     
     public function EditorTexto(){
@@ -128,6 +122,7 @@ class EnviarDocController extends Controller
             'nombre'=> 'required|min:3',
             'cuerpo'=> 'required|min:3',
             'objeto'=> 'required|min:3',
+            'receptor'=> 'required'
                     ];
             
                     $messages=[
@@ -135,30 +130,41 @@ class EnviarDocController extends Controller
                         'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
                         'nombre.required'=>'No ha introducido un nombre para el archivo ',
                         'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
+                        'receptor.required'=> 'Seleccione almenos un destinatario'
             
                     ];
                     $this->validate($request, $rules, $messages);
-            
-                    
-        $id_receptores=$request->input('receptor');
-        
+          
         $cuerpo=$request->input('cuerpo');
         $objeto=$request->input('objeto');
         
         $nombre = Auth::user()->name;
         $apellido = Auth::user()->lastname;
-        $i=0;
-foreach($id_receptores as $id_receptor){
-    $receptores[$i]=\DB::table('users')->where('id', '=', $id_receptor)->first();
-    $i++;
-}
         
-        
+        $receptores_departamentos=$this->ObtenerDepartamentosReceptores($request->input('receptor'));
+     
+        $receptores=$this->ObtenerUsuariosReceptores($request->input('receptor'));
+  
         //Inicio transformar Html a pdf
-        $pdf = PDF::loadView(
-        'TextEditor.documento',
-        ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
-        );
+        if($receptores_departamentos==null){
+            $pdf = PDF::loadView(
+                'TextEditor.documento',
+                ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+                );
+
+        }elseif ($receptores==null) {
+            $pdf = PDF::loadView(
+                'TextEditor.documento',
+                ['receptores_departamentos'=>$receptores_departamentos,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+                );
+        }
+        else {
+            $pdf = PDF::loadView(
+                'TextEditor.documento',
+                ['receptores_departamentos'=>$receptores_departamentos,'receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+                );
+        }
+       
     $output = $pdf->output();
 
     $nombrepdf="pdf_".time().".pdf";
@@ -166,34 +172,19 @@ foreach($id_receptores as $id_receptor){
 
     file_put_contents( "pdf/".$nombrepdf, $output);
 
-
-       
-        
-
         //Fin transformacion
-        //Guardando en base de datos
-                    
-        
       
         
-        //Enviando datos a la base tabla documento
-        $doc =new Document();
-        $doc->name= $request->input('nombre');
-        $doc->path= $rutapdf;
-        
-        
-        $doc->save();
-        $doc->users()->attach($request->receptor, ['type' => "R",'process' =>$doc->id ]);
-        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$doc->id ]);
-        //Fin Enviando datos a tabla de documento
-        
         $activador=1;
-        $docSubido=$doc->id;
-        //Fin guardado en base de datos 
+        //Registrar Documento y obtener su id
+        $docSubido= $this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor') );
+        
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
 
      }
+    
+     
 //Carpeta
      public function FormularioCarpeta($id){
         $folders=Folder::all();
@@ -238,13 +229,7 @@ foreach($id_receptores as $id_receptor){
             
                     ];
                     $this->validate($request, $rules, $messages);
-            
-                    //Obteniendo pdf
-                    $filepdf=$request->file("archivo");
-                    $nombrepdf="pdf_".time().".".$filepdf->guessExtension();
-                    $rutapdf=public_path("pdf/".$nombrepdf);
-                    copy($filepdf,$rutapdf);
-                    //Fin Obteniendo pdf 
+                    $rutapdf=$this->SubirPdf($request->file("archivo"));
                     //Enviando datos a la base tabla documento
                     $annex =new Annex();
                     $annex->name= $request->input('nombre');
@@ -259,7 +244,12 @@ foreach($id_receptores as $id_receptor){
 
         $anexo= Annex::find($id);
         $pathToFile=$anexo->path;
-        return response()->file($pathToFile);
+
+       if($this->Permiso($anexo->document_id)==true)
+{
+    return response()->file($pathToFile);
+}
+return ('Usted no tiene permitido visualizar este documento');
     }
     //Inicio Responder
     public function getResponder($id){
@@ -291,25 +281,11 @@ foreach($id_receptores as $id_receptor){
 
         ];
         $this->validate($request, $rules, $messages);
-
-        //Obteniendo pdf
-        $filepdf=$request->file("archivo");
-        $nombrepdf="pdf_".time().".".$filepdf->guessExtension();
-        $rutapdf=public_path("pdf/".$nombrepdf);
-        copy($filepdf,$rutapdf);
-        //Fin Obteniendo pdf 
-        //Enviando datos a la base tabla documento
-        $doc =new Document();
-        $doc->name= $request->input('nombre');
-        $doc->path= $rutapdf;
-        
-        $doc->save();
-        $doc->users()->attach($user->id, ['type' => "R",'process' =>$process->process ]);
-        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$process->process ]);
-        //Fin Enviando datos a tabla de documento
+        $rutapdf=$this->SubirPdf($request->file("archivo"));
+       
         
         $activador=1;
-        $docSubido=$doc->id;
+        $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id);
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
     }
@@ -363,34 +339,10 @@ $nombrepdf="pdf_".time().".pdf";
     $rutapdf=public_path("pdf/".$nombrepdf);
 
 file_put_contents( "pdf/".$nombrepdf, $output);
-
-
-   
-    
-
     //Fin transformacion
-    //Guardando en base de datos
-                
-    
-  
-    
-    //Enviando datos a la base tabla documento
-    $doc =new Document();
-    $doc->name= $request->input('nombre');
-    $doc->path= $rutapdf;
-    
-    
-    $doc->save();
-    $doc->users()->attach($user->id, ['type' => "R",'process' =>$process->process ]);
-    $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$process->process ]);
-    //Fin Enviando datos a tabla de documento
-    
     $activador=1;
-    $docSubido=$doc->id;
-    //Fin guardado en base de datos 
-   
+    $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id);
     return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
-
  }
 
     //FinResponder
@@ -406,9 +358,149 @@ file_put_contents( "pdf/".$nombrepdf, $output);
              
         
 
-       // dd($documents);
+      
         
         return view('Documentos')->with(compact('documents'));
 
     }
+
+
+    
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////Inicio Funciones 
+    //Inicio metodo permitir acceso a documentos
+    function Permiso($id_Documento){
+
+    
+        $departamento= \DB::table('documents')
+        ->join('folders','documents.folder_id','=','folders.id')
+        ->join('departaments','folders.departament_id','=','departaments.id')
+        ->where('documents.id','=',$id_Documento)
+        ->first();
+
+        $destinatario= \DB::table('documents')
+        ->join('document_user','documents.id','=','document_user.document_id')
+        ->where('document_user.document_id','=',$id_Documento)
+        ->where('document_user.user_id','=',Auth::user()->id)
+        
+        ->first();
+    
+
+        if(($departamento->departament_id ==Auth::user()->departament_id)  || ($destinatario !==  null) )
+    {
+    return true;
+    }
+    return false;
+    }
+    //Fin metodo permitir acceso a documentos
+
+     //Inicio metodo para enviar documento 
+     function RegistrarEnvio($nombreDocumento, $rutaDocumento, $Receptores){
+        $doc =new Document();
+        $doc->name= $nombreDocumento;
+        $doc->path= $rutaDocumento;
+        $Usuarios=$this->ObtenerUsuariosReceptores($Receptores);
+        $Departamentos=$this->ObtenerDepartamentosReceptores($Receptores);
+        
+        $doc->save();
+        if(isset($Usuarios))
+        {
+            foreach ($Usuarios as $Usuario ) {
+                $doc->users()->attach($Usuario->id, ['type' => "R",'process' =>$doc->id ]);
+            }
+        }
+        
+        if(isset($Departamentos)){
+            foreach ($Departamentos as $Departamento ) {
+            
+                $UsuariosDelpartamento=\DB::table('users')->where('departament_id', '=', $Departamento->id)->get();
+                
+                foreach ($UsuariosDelpartamento as $UsuarioDelpartamento) {
+                    $doc->users()->attach($UsuarioDelpartamento->id, ['type' => "R",'process' =>$doc->id ]);  
+                }
+                
+            }
+        }
+        
+       
+        $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$doc->id ]);
+        return $doc->id;
+
+     }
+     function ObtenerUsuariosReceptores($id_receptores)
+     {
+        
+         $i=0;
+        foreach($id_receptores as $id_receptor){
+            if($id_receptor>-1)
+            {
+                $receptores[$i]=\DB::table('users')->where('id', '=', $id_receptor)->first();
+                $i++;
+        
+               
+            }
+           
+            
+     }
+     
+     if(isset($receptores)){
+        return $receptores;
+    }
+    return null;
+    }
+    function ObtenerDepartamentosReceptores($id_receptores)
+    {
+        $i=0;
+       foreach($id_receptores as $id_receptor){
+           if($id_receptor<0)
+           {
+               $receptores[$i]=\DB::table('departaments')->where('id', '=', -$id_receptor)->first();
+               $i++;
+       
+              
+           }
+          
+    }
+    if(isset($receptores)){
+        return $receptores;
+    }
+    return null;
+   }
+     //Fin metodo para enviar documento
+
+     //Inicio Funcion Subir Pdf
+     function SubirPdf($archivo){
+         
+     $filepdf=$archivo;
+     $nombrepdf="pdf_".time().".".$filepdf->guessExtension();
+     $rutapdf=public_path("pdf/".$nombrepdf);
+     copy($filepdf,$rutapdf);
+     
+        return $rutapdf;
+     }
+     
+     //Fin Subir pdf 
+
+     //Responder
+     function RegistrarRespuesta($nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder){
+       
+    $doc =new Document();
+    $doc->name= $nombreDocumento;
+    $doc->path= $rutaDocumento;
+    
+    
+    $doc->save();
+    $doc->users()->attach($UsuarioAresponder, ['type' => "R",'process' =>$proceso ]);
+    $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$proceso ]);
+    
+    return $doc->id;
+
+     }
+     //Fin Responder
+//Fin Funciones
 }

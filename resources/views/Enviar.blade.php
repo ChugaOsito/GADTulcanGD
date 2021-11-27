@@ -26,7 +26,14 @@
     <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
     @endforeach
     @foreach ($departaments as $departament )
-    <option value="{{ $departament->id }} ">{{ $departament->name }} </option>   
+    <option value="{{ -$departament->id }} "> Todo el departamento de {{ $departament->name }} </option> 
+    @php
+$otros_usuarios = \DB::table('users')->where('departament_id', '=', $departament->id)->get();
+  @endphp  
+  @foreach ($otros_usuarios as $otro_usuario )
+  <option value="{{ $otro_usuario->id }}">{{ $otro_usuario->identification }} - {{ $otro_usuario->lastname }} {{ $otro_usuario->name }} </option>   
+
+  @endforeach
     @endforeach
      
     

@@ -63,11 +63,24 @@
     <br>
     <br>
     <h1 class="para"><b> PARA : </b></h1>
+    @if (@isset($receptores))
+        
     
-    @foreach ($receptores as $receptor )
-    <h1 class="receptor">     {{ $receptor->name }} {{ $receptor->lastname }}</h1>    <br>
+       @foreach ($receptores as $receptor )
+       <h1 class="receptor">     {{ $receptor->name }} {{ $receptor->lastname }}</h1>    <br>
+       
+       @endforeach 
+    @endif
+
+    @if (@isset($receptores_departamentos))
+        
     
-    @endforeach
+       @foreach ($receptores_departamentos as $receptor_departamento )
+       <h1 class="receptor">  Departamento de {{ $receptor_departamento->name }}</h1>    <br>
+       
+       @endforeach 
+    @endif
+    
     
     <h1><b> OBJETO : {{ $objeto }}</b></h1>
     <br>
