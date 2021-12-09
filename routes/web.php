@@ -59,13 +59,10 @@ Route::post('/VincularCarpeta/{id}', [App\Http\Controllers\EnviarDocController::
 
 
 });
-
-//Inicio Middleware Usuario Administrador
 Route::group(['middleware'=> 'admin', 'namespace'=>'Admin'], function(){
 
-    Route::get('/admin', function () {
-        return 'Bienvenido a la pantalla de Administracion';
-    });
+   
+
 //Inicio Rutas Gestion de usuarios
 Route::get('/usuarios', [App\Http\Controllers\UserController::class,'index']);
 Route::post('/usuarios', [App\Http\Controllers\UserController::class,'store']);
@@ -73,13 +70,7 @@ Route::get('/usuario/{id}', [App\Http\Controllers\UserController::class,'edit'])
 Route::post('/usuario/{id}', [App\Http\Controllers\UserController::class,'update']);
 
 //Fin rutas gestion de usuarios
-//Departamento
-Route::get('/departamentos', [App\Http\Controllers\DepartamentController::class,'index']);
-Route::post('/departamentos', [App\Http\Controllers\DepartamentController::class,'store']);
-Route::get('/departamento/{id}', [App\Http\Controllers\DepartamentController::class,'edit']);
-Route::post('/departamento/{id}', [App\Http\Controllers\DepartamentController::class,'update']);
-
-//Fin departamento  
+ 
 
 //Carpetas
 Route::get('/carpetas', [App\Http\Controllers\FolderController::class,'index']);
@@ -92,5 +83,43 @@ Route::post('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'upda
     
     
     });
-//Fin Middleware Administrador
+
+//Inicio Middleware Usuario Super Administrador
+Route::group(['middleware'=> 'superadmin', 'namespace'=>'Admin'], function(){
+    Route::get('/', function () {
+        return redirect('/Dashboard');
+    });
+  
+Route::get('/Dashboard', [App\Http\Controllers\DashboardController::class,'index']);
+
+//Departamento
+Route::get('/departamentos', [App\Http\Controllers\DepartamentController::class,'index']);
+Route::post('/departamentos', [App\Http\Controllers\DepartamentController::class,'store']);
+Route::get('/departamento/{id}', [App\Http\Controllers\DepartamentController::class,'edit']);
+Route::post('/departamento/{id}', [App\Http\Controllers\DepartamentController::class,'update']);
+
+//Fin departamento  
+//Tratamientos y Tiutulos
+Route::get('/tratamientos', [App\Http\Controllers\TreatmentController::class,'index']);
+Route::post('/tratamientos', [App\Http\Controllers\TreatmentController::class,'store']);
+Route::get('/tratamiento/{id}', [App\Http\Controllers\TreatmentController::class,'edit']);
+Route::post('/tratamiento/{id}', [App\Http\Controllers\TreatmentController::class,'update']);
+//Fin Tratamientos y titulos
+
+//Cargos
+Route::get('/cargos', [App\Http\Controllers\PositionController::class,'index']);
+Route::post('/cargos', [App\Http\Controllers\PositionController::class,'store']);
+Route::get('/cargo/{id}', [App\Http\Controllers\PositionController::class,'edit']);
+Route::post('/cargo/{id}', [App\Http\Controllers\PositionController::class,'update']);
+//Fin Cargos
+//Tamño Archivos
+
+Route::get('/size/{id}', [App\Http\Controllers\ConfigurationController::class,'edit']);
+Route::post('/size/{id}', [App\Http\Controllers\ConfigurationController::class,'update']);
+//Fin Tamño Archivos
+
+    
+    
+    });
+//Fin Middleware Super Administrador
 //Fin Middleware

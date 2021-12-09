@@ -9,6 +9,7 @@ use App\Models\Folder;
 use App\Models\Departament;
 use App\Models\Annex;
 use App\Models\Transaction;
+use App\Models\Configuration;
 use Illuminate\Support\Facades\Auth;
 use PDF;
 class EnviarDocController extends Controller
@@ -17,30 +18,39 @@ class EnviarDocController extends Controller
 
     
     public function getEnviar(){
+      
         $id_departamento = Auth::user()->departament_id;
         
-        $users=\DB::table('users')->where('departament_id', '=', $id_departamento)->get();
+        $users=\DB::table('users')
+        ->join('positions','positions.id','=','users.position_id')
+        ->join('treatments','treatments.id','=','users.treatment_id')
+        ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+        ->where('users.departament_id', '=', $id_departamento)->get();
         
         $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
         
         return  view('Enviar')->with (compact('users'))->with (compact('departaments'));
     }
     public function postEnviar(Request $request){
+        $configuration=Configuration::find(1)->first();
+        
 
         $rules=[
 
 'nombre'=> 'required|min:3',
-'archivo'=> 'required|mimes:pdf',
+'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
 'receptor'=> 'required'
 
         ];
+        
 
         $messages=[
             'nombre.required'=>'No ha introducido un nombre para el archivo ',
             'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
-            'receptor.required'=> 'Seleccione almenos un destinatario'
+            'receptor.required'=> 'Seleccione almenos un destinatario',
+            'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb'
 
         ];
         $this->validate($request, $rules, $messages);

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Models\User;
 use App\Models\Departament;
+use App\Models\Treatment;
+use App\Models\Position;
 
 class UserController extends Controller
 {
@@ -15,8 +17,15 @@ class UserController extends Controller
     ->join('departaments','departaments.id','=','users.departament_id')
     ->select('users.*', 'departaments.name as departament_name')->get();
     $departaments=Departament::all();
+
+    $positions=Position::all();
+    $treatments=Treatment::all();
        
-       return view('admin.users.index')->with(compact('users'))->with(compact('departaments'));
+       return view('admin.users.index')
+       ->with(compact('users'))
+       ->with(compact('departaments'))
+       ->with(compact('positions'))
+       ->with(compact('treatments'));
    }
    public function store(Request $request )
    {
@@ -47,6 +56,8 @@ class UserController extends Controller
        $this->validate($request, $rules, $messages);
        $user= new User();
        $user->identification= $request->input('identification');
+       $user->position_id= $request->input('position');
+       $user->treatment_id= $request->input('treatment');
        $user->name =$request->input('nombres');
        $user->lastname =$request->input('apellidos');
        $user->email =$request->input('email');

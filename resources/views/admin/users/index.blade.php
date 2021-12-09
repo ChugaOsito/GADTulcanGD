@@ -29,6 +29,29 @@
 
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
+
+<div class="form-group">
+  <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
+  <select class="rounded form-select" id="exampleSelect1" name="position">
+    @foreach ($positions as $position )
+    <option value="{{ $position->id }}"> {{ $position->name }} </option>   
+    @endforeach
+     
+    
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>
+  <select class="rounded form-select" id="exampleSelect1" name="treatment">
+    @foreach ($treatments as $treatment )
+    <option value="{{ $treatment->id }}"> {{ $treatment->name }} </option>   
+    @endforeach
+     
+    
+  </select>
+</div>
+
 <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Numero de Cedula</label>
     <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification" value="{{ old('identification') }}">
@@ -68,10 +91,14 @@
     <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
 </br>
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+    @if (Auth::user()->rol==-1)
+    <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="-1">
+    <label class="btn btn-outline-primary" for="btnradio1">Super Administrador</label>
     <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="0">
     <label class="btn btn-outline-primary" for="btnradio1">Administrador</label>
+    @endif
     <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off" checked="" value="1">
-    <label class="btn btn-outline-primary" for="btnradio2">Gestor de Carpetas</label>
+    <label class="btn btn-outline-primary" for="btnradio2">Jefe de departamento</label>
     <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off" checked="" value="2">
     <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>
   </div>

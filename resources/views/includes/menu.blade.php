@@ -1,4 +1,41 @@
 @if (auth()->check())
+<!--Inicio SuperAdmin-->
+@if(auth()->user()->is_superadmin)
+<aside class="col-12 col-md-2 p-0 bg-light border flex-shrink-1">
+  
+  <div class="list-group">
+
+
+    <a  @if (request()->is('Dashboard')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+      href="/Dashboard" class="list-group-item list-group-item-action active">Dashboard</a>
+  
+    <a  @if (request()->is('usuarios')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+      href="/usuarios" class="list-group-item list-group-item-action active">Gestionar Usuarios</a>
+
+      <a  @if (request()->is('departamentos')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+        href="/departamentos" class="list-group-item list-group-item-action active">Gestionar Organigrama</a>
+    
+        <div class="list-group">
+ 
+
+          <a @if (request()->is('cargos') or request()->is('tratamientos') )  class=" border rounded nav-link dropdown-toggle list-group-item list-group-item-action active bg-dark" 
+            @else  
+            class=" border rounded nav-link dropdown-toggle list-group-item list-group-item-action active"
+            @endif
+            data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Otras Configuraciones</a>
+        
+          <div class="border rounded bg-primary dropdown-menu">
+            <a class="dropdown-item text-white" href="/size/1">Configurar Tamaño de Subida de Doumentos</a>
+            <a class="dropdown-item text-white" href="/cargos">Agregar Cargos</a>
+            <a class="dropdown-item text-white" href="/tratamientos">Agregar Tratamientos o Titulos Academicos</a>
+          </div>
+   
+   
+      
+  </div>
+</aside>
+<!--Fin SuperAdmin-->
+@else
 <aside class="col-12 col-md-2 p-0 bg-light border flex-shrink-1">
   
     <div class="list-group">
@@ -37,23 +74,14 @@
       <a @if (request()->is('carpetas')) class="border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif  
         href="/carpetas">Gestionar Carpetas</a>
     
-      <a @if (request()->is('usuarios') or request()->is('departamentos') )  class="border rounded nav-link dropdown-toggle list-group-item list-group-item-action active bg-dark" 
-        @else  
-        class="border rounded  nav-link dropdown-toggle list-group-item list-group-item-action active"
-        @endif
-        data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Opciones de Administracion</a>
-    
-      <div class="border rounded bg-primary dropdown-menu">
-        <a class="dropdown-item text-white" href="/usuarios">Registrar Usuarios</a>
-        <a class="dropdown-item text-white" href="/departamentos">Gestion de departamentos</a>
-        
-        
-      </div>
+     <a  @if (request()->is('usuarios')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+      href="/usuarios" class="list-group-item list-group-item-action active">Gestionar Usuarios</a>
     
       
       @endif
      
         
-  </nav>
+    </div>
 </aside>
+@endif
 @endif

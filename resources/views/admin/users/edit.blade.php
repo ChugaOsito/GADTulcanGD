@@ -68,11 +68,18 @@
 
     <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
 </br>
+
+  
+
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+    @if (Auth::user()->rol==-1)
+    <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="-1">
+    <label class="btn btn-outline-primary" for="btnradio1">Super Administrador</label>
     <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="0">
+    @endif
     <label class="btn btn-outline-primary" for="btnradio1">Administrador</label>
     <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off" checked="" value="1">
-    <label class="btn btn-outline-primary" for="btnradio2">Gestor de Carpetas</label>
+    <label class="btn btn-outline-primary" for="btnradio2">Jefe de Departamento</label>
     <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off" checked="" value="2">
     <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>
   </div>

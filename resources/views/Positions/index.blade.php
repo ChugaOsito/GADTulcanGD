@@ -1,0 +1,79 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
+
+            
+                <div class="card-header">Gestion de cargos de la Institucion</div>
+
+                <div class="card-body bg-light text-black">
+
+                  @if (session('notification'))
+                  <div class="alert alert-success">
+                  {{ session('notification') }}
+                  </div>
+                    
+                  @endif
+
+
+                  @if (count ($errors)>0)
+                  <div class="alert alert-danger">
+                  <ul>
+                    @foreach ($errors->all() as $error )
+                      <li> {{ $error }}</li>
+                    @endforeach
+                  </ul>
+                  </div>
+                    
+                  @endif
+
+    <form action="" method="post" enctype="multipart/form-data">
+@csrf
+
+
+<div class="form-group">
+    <label class="col-form-label mt-4" for="inputDefault">Nombre del Cargo</label>
+    <input type="text" class="form-control" placeholder="Inserte un cargo" id="inputDefault" name="name" value="{{ old('name') }}">
+  </div>
+  
+  
+</br>
+
+<div class="form-group">
+  <button type="submit" class="btn btn-primary">Registrar</button>
+        </div> 
+</form>
+<br>
+<table class="table table-hover table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Cargo</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach ($positions as $position)
+    <tr>
+      <td>{{ $position->id }}</td>
+      <td>{{ $position->name }}</td>
+    
+      <td>
+        <a href="/usuario/{{$position->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
+          <span class="glyphicon glyphicon-pencil"></span>
+        </a>
+
+        <a href="/usuario/{{$position->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+         Dar de baja
+          <span class="glyphicon glyphicon-remove"></span>
+        </a>
+        
+      </td>
+    </tr>
+    @endforeach
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+@endsection
+    

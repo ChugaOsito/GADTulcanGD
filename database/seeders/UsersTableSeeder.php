@@ -13,6 +13,19 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
+        //Super Administradores
+        User::create([
+            'identification'=> '0000000000',
+            'lastname'=> 'Super Administrador',
+            'name'=> 'Super Administrador',
+            'email'=> 'admin@email.com',
+            'password'=> bcrypt('admin123'),
+            'rol'=> -1,
+            'departament_id' => 2,
+            'treatment_id'=>1,
+            'position_id'=>1
+
+        ]);
         //Usuario Administrador 
         User::create([
             'identification'=> '1111111111',
@@ -21,7 +34,9 @@ class UsersTableSeeder extends Seeder
             'email'=> 'karinacevallos@gmail.com',
             'password'=> bcrypt('admin123'),
             'rol'=> 0,
-            'departament_id' => 2
+            'departament_id' => 2,
+            'treatment_id'=>1,
+            'position_id'=>1
 
         ]);
         //Usuario gestor de carpetas
@@ -32,7 +47,9 @@ class UsersTableSeeder extends Seeder
             'email'=> 'cristianfreire@gmail.com',
             'password'=> bcrypt('admin123'),
             'rol'=> 1,
-            'departament_id' => 2
+            'departament_id' => 2,
+            'treatment_id'=>1,
+            'position_id'=>1
 
         ]);
         //Funcionario
@@ -43,7 +60,9 @@ class UsersTableSeeder extends Seeder
             'email'=> 'luisisizan@gmail.com',
             'password'=> bcrypt('admin123'),
             'rol'=> 2,
-            'departament_id' => 2
+            'departament_id' => 2,
+            'treatment_id'=>1,
+            'position_id'=>1
 
         ]);
     }

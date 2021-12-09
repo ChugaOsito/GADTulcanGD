@@ -46,6 +46,11 @@ class User extends Authenticatable
         return $this->rol ==0;
 
     }
+    public function getIsSuperadminAttribute()
+    {
+        return $this->rol ==-1;
+
+    }
     //relacion muchos a muchos
     public function documents()
     {

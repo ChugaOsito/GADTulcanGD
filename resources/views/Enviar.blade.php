@@ -23,7 +23,8 @@
   <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
   <select class="rounded form-select js-example-basic-multiple" id="exampleSelect1" name="receptor[]" multiple="multiple">
     @foreach ($users as $user )
-    <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
+    <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }}
+       </option>   
     @endforeach
     @foreach ($departaments as $departament )
     <option value="{{ -$departament->id }} "> Todo el departamento de {{ $departament->name }} </option> 
