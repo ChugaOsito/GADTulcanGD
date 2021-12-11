@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@extends('librerias.DataTable')
 @section('content')
 <div class="rounded-3 card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
@@ -11,12 +11,13 @@
                   
 
     
-<table class="table table-hover table-bordered">
+<table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th>Identificador</th>
       <th>Nombre del Documento</th>
       <th>Fecha de Creacion</th>
+      <th>Opciones</th>
       
     </tr>
   </thead>

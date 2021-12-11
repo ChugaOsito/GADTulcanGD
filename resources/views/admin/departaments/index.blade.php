@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+
 @section('content')
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
@@ -53,7 +54,7 @@
         </div> 
 </form>
 <br>
-<table class="table table-hover table-bordered">
+<table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th>ID</th>
@@ -67,17 +68,7 @@
       <td>{{ $departament->id }}</td>
       <td>{{ $departament->name }}</td>
       <td>{{ $departament->father_departament}}</td>
-      <td>
-        <a href="/usuario/{{$departament->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
-          <span class="glyphicon glyphicon-pencil"></span>
-        </a>
-
-        <a href="/usuario/{{$departament->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
-         Dar de baja
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
-        
-      </td>
+      
     </tr>
     @endforeach
   </tbody>

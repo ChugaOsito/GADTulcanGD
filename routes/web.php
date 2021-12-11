@@ -62,6 +62,12 @@ Route::post('/VincularCarpeta/{id}', [App\Http\Controllers\EnviarDocController::
 Route::group(['middleware'=> 'admin', 'namespace'=>'Admin'], function(){
 
    
+//Inicio Decarga copias de usuarios
+Route::get('/DescargarCopia', [App\Http\Controllers\ZipController::class,'index']);
+Route::post('/DescargarCopia', [App\Http\Controllers\ZipController::class,'download']);
+
+
+//Fin Decarga copias de usuarios
 
 //Inicio Rutas Gestion de usuarios
 Route::get('/usuarios', [App\Http\Controllers\UserController::class,'index']);

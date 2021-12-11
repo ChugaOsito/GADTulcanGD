@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@extends('librerias.select2')
 @section('content')
 <div class="rounded-3 card text-white bg-primary border-primary mb-3 " style="max-width: 100rem;">
 
@@ -21,7 +21,7 @@
 @csrf
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
-  <select class="rounded form-select js-example-basic-multiple" id="exampleSelect1" name="receptor[]" multiple="multiple">
+  <select class="rounded form-select select2" id="exampleSelect1" name="receptor[]" multiple="multiple">
     @foreach ($users as $user )
     <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }}
        </option>   

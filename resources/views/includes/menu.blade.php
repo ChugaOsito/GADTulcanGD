@@ -76,6 +76,9 @@
     
      <a  @if (request()->is('usuarios')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
       href="/usuarios" class="list-group-item list-group-item-action active">Gestionar Usuarios</a>
+
+      <a  @if (request()->is('DescargarZip')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+        href="/DescargarCopia" class="list-group-item list-group-item-action active">Descargar copias de informacion</a>
     
       
       @endif

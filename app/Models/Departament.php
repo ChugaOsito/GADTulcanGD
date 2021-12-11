@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Departament extends Model
+class Departament extends Model implements Auditable
 {
   
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 }

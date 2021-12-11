@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@extends('librerias.DataTable')
+
+
 @section('content')
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
@@ -103,14 +106,14 @@
     <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>
   </div>
   </div>
-</br>
+<br>
 
 <div class="form-group">
   <button type="submit" class="btn btn-primary">Registrar</button>
         </div> 
 </form>
 <br>
-<table class="table table-hover table-bordered">
+<table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th>Cedula</th>

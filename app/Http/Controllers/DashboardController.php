@@ -10,6 +10,8 @@ use App\Models\Folder;
 class DashboardController extends Controller
 {
     public function index(){
+        $audits=\DB::table('audits')->get();
+        
         $usuarios = User::all()->groupBy('id')->count();
         $departamentos = Departament::all()->groupBy('id')->count();
         $documentos = Document::all()->groupBy('id')->count();
@@ -20,6 +22,8 @@ class DashboardController extends Controller
         ->with(compact('usuarios'))
         ->with(compact('departamentos'))
         ->with(compact('documentos'))
-        ->with(compact('carpetas'));
+        ->with(compact('carpetas'))
+        ->with(compact('audits'))
+        ;
     }
 }

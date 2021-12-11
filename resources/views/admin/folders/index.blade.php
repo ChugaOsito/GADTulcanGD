@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@extends('librerias.DataTable')
 
 @section('content')
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
@@ -64,13 +65,14 @@
         </div> 
 </form>
 <br>
-<table class="table table-hover table-bordered">
+<table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th>ID</th>
       <th>Nombre</th>
       <th>Carpeta Padre</th>
       <th>Departamento al que pertenece</th>
+      <th>Opciones</th>
     </tr>
   </thead>
   <tbody>
