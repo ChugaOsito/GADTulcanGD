@@ -60,14 +60,42 @@
     <header>
         <img class="img-thumbnail img-fluid rounded" style="width: 100%;" src="images/header.jpg" alt="Error Imagen no encontrada"/>    
     </header>
+    
+    @php
+
+$meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
+    $mesnumero=date('m')-1;
+    $mes=$meses[$mesnumero];
+    @endphp
+    <h1 align="right">Tulcan, {{ @date('d') }} de {{ $mes }} del {{ @date('Y') }}</h1>
+    <h1 align="right"><b>{{ $tipo }} Nro {{ $numeracion }}</b></h1>
     <br>
-    <br>
-    <h1 class="para"><b> PARA : </b></h1>
+    
+    
     @if (@isset($receptores))
         
+    @php
+    $i=-1;    
+    @endphp
     
        @foreach ($receptores as $receptor )
-       <h1 class="receptor">     {{ $receptor->name }} {{ $receptor->lastname }}</h1>    <br>
+       @php
+       
+           $consulta1=\DB::table('treatments')->where('id', '=', $receptor->treatment_id)->first();
+           $consulta2=\DB::table('positions')->where('id', '=', $receptor->position_id)->first();
+           $titulo=$consulta1->abbreviation;
+           $posicion=$consulta2->name;
+       $i++;
+       
+       @endphp
+       @if ($i==0)
+       <h1 class="receptor"><b>PARA:  </b></h1>  
+       @else
+       <h1 class="receptor" style="color:white;"><b>PARA:  </b></h1>
+       @endif
+       <h1 class="receptor">{{ $titulo }}. {{ $receptor->name }} {{ $receptor->lastname }}</h1><br>
+       
+       <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor"><b>  {{ $posicion }}</b> </h1><br>
        
        @endforeach 
     @endif

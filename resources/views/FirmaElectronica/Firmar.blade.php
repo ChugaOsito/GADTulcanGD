@@ -9,14 +9,7 @@
                 <div class="card-body bg-light text-black">
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
-<!-- Boorar , esto servia para hacer pruebas cuando se subian y firmaban archivos directamente
-@if ($activador == 0)
-<div class="form-group">
-    <label for="formFile" class="form-label mt-4">Archivo PDF a Firmar</label>
-    <input class="form-control" type="file" id="formFile" name="urlpdf">
-  </div>
-@endif
--->
+
 
 
   <div class="form-group">

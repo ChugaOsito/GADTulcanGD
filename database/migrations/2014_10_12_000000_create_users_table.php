@@ -33,6 +33,8 @@ class CreateUsersTable extends Migration
 
             $table->unsignedBigInteger('position_id');
             $table->foreign('position_id')->references('id')->on('positions');
+
+           
         });
     }
 

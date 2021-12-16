@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@extends('librerias.DataTable')
 @section('content')
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
@@ -27,6 +27,24 @@
                     
                   @endif
 
+                   <!-- Modal -->
+        <!-- Trigger the modal with a button -->
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="fas fa-plus fa-1x "> Nuevo</i></button>
+        <br>
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title text-dark">Crear Nuevo</h4>
+                    </div>
+                    <div class="modal-body">
+
+
+
+
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 
@@ -46,13 +64,23 @@
   <button type="submit" class="btn btn-primary">Registrar</button>
         </div> 
 </form>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+</div>
+</div>
+
+</div>
+</div>
+</div>
 <br>
-<table class="table table-hover table-bordered">
+
+<table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th>ID</th>
       <th>Trato o Titulo</th>
       <th>Abreviatura</th>
+      <th>Opciones</th>
     </tr>
   </thead>
   <tbody>
@@ -62,14 +90,13 @@
       <td>{{ $treatment->name }}</td>
       <td>{{ $treatment->abbreviation}}</td>
       <td>
-        <a href="/usuario/{{$treatment->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
-          <span class="glyphicon glyphicon-pencil"></span>
+        <a href="/tratamiento/{{$treatment->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
+          </i>
         </a>
 
-        <a href="/usuario/{{$treatment->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
-         Dar de baja
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
+        <a href="/tratamiento/{{$treatment->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+          <i class="fas fa-trash fa-1x ">
+          </i>
         
       </td>
     </tr>

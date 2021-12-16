@@ -123,7 +123,12 @@ Route::post('/cargo/{id}', [App\Http\Controllers\PositionController::class,'upda
 Route::get('/size/{id}', [App\Http\Controllers\ConfigurationController::class,'edit']);
 Route::post('/size/{id}', [App\Http\Controllers\ConfigurationController::class,'update']);
 //Fin Tamño Archivos
-
+//Inicio Tipo de documentos
+Route::get('/tipos', [App\Http\Controllers\TypeController::class,'index']);
+Route::post('/tipos', [App\Http\Controllers\TypeController::class,'store']);
+Route::get('/tipo/{id}', [App\Http\Controllers\TypeController::class,'edit']);
+Route::post('/tipo/{id}', [App\Http\Controllers\TypeController::class,'update']); 
+//Fin tipo de documentos
     
     
     });

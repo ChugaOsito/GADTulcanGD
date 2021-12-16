@@ -15,7 +15,7 @@ class UserController extends Controller
    {
     $users=\DB::table('users')
     ->join('departaments','departaments.id','=','users.departament_id')
-    ->select('users.*', 'departaments.name as departament_name')->get();
+    ->select('users.*', 'departaments.name as departament_name')->orderBy('updated_at','DESC')->get();
     $departaments=Departament::all();
 
     $positions=Position::all();
@@ -71,6 +71,7 @@ class UserController extends Controller
    public function edit($id)
    {
        $user= User::find($id);
+    
        $departaments=Departament::all();
        return view('admin.users.edit')->with(compact('user'))->with(compact('departaments'));
    }

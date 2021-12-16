@@ -4,7 +4,7 @@
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
             
-                <div class="card-header">Editar usuario</div>
+                <div class="card-header">Editar Carpeta</div>
 
                 <div class="card-body bg-light text-black">
 
@@ -26,51 +26,44 @@
                   </div>
                     
                   @endif
+                  <form action="" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <div class="form-group">
+                      <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece esta carpeta</label>
+                      <select class="form-select" id="exampleSelect1" name="departament">
+                        @foreach ($departaments as $departament )
+                        <option value="{{ $departament->id }}">{{ $departament->name }}</option>   
+                        @endforeach
+                         
+                        
+                      </select>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
+                      <select class="form-select" id="exampleSelect1" name="padre">
+                        @foreach ($father_folders as $father_folder )
+                        <option value="{{ $father_folder->id }}">{{ $father_folder->name }}</option>   
+                        @endforeach
+                         
+                        
+                      </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="col-form-label mt-4" for="inputDefault">Nombre de la Carpeta</label>
+                        <input type="text" class="form-control" placeholder="Inserte un nombre para el departameto" id="inputDefault" name="name" value="{{ old('name',$folder->name) }}">
+                      </div>
+                      
+                      
+                    </br>
+                    
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary">Registrar</button>
+                            </div> 
+                    </form>
 
-    <form action="" method="post" enctype="multipart/form-data">
-@csrf
-<div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Numero de Cedula</label>
-    <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification" readonly value="{{ old('identification', $user->identification) }}">
-  </div>
-  
-  <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Apellidos</label>
-    <input type="text" class="form-control" placeholder="Inserte Apellidos" id="inputDefault" name="apellidos" value="{{ old('apellidos', $user->lastname) }}">
-  </div>
-  
-  <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Nombres</label>
-    <input type="text" class="form-control" placeholder="Inserte Nombres" id="inputDefault" name="nombres" value="{{ old('nombres', $user->name) }}">
-  </div>
-
-  <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Correo Electronico</label>
-    <input type="text" class="form-control" placeholder="Inserte Correo Electronico" id="inputDefault" name="email" readonly value="{{ old('email', $user->email) }}">
-  </div>
-
-  <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Contraseña <em> Ingresar solo en caso de que desee modificarse</em></label>
-    <input type="text" class="form-control" placeholder="Inserte Contraseña" id="inputDefault" name="contrasena" value="{{ old('contrasena') }}">
-  </div>
-  <div class="form-group">
-    <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
-</br>
-  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-    <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="0">
-    <label class="btn btn-outline-primary" for="btnradio1">Administrador</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off" checked="" value="1">
-    <label class="btn btn-outline-primary" for="btnradio2">Gestor de Carpetas</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off" checked="" value="2">
-    <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>
-  </div>
-  </div>
-</br>
-
-<div class="form-group">
-  <button type="submit" class="btn btn-primary">Actualizar</button>
-        </div> 
-</form>
+ 
 <br>
 
 </div>

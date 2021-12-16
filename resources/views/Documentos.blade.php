@@ -14,7 +14,8 @@
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
-      <th>Identificador</th>
+      <th>Numero</th>
+      <th>Tipo</th>
       <th>Nombre del Documento</th>
       <th>Fecha de Creacion</th>
       <th>Opciones</th>
@@ -25,28 +26,36 @@
     <!-- Inicio Carpetas -->
     @if (request()->is('Documentos/*'))
     @foreach ($folders as $folder)
+    @if ($folder->id>1)
     <tr>
       
-      <td>{{ $folder->id }}</td>
-     
+      
+      
+      <td> </td>
+      <td>Carpeta</td>
       <td>{{ $folder->name }}</td>
       <td>{{ $folder->created_at }}</td>
       
+      
+      
       <td>
        
-        <a href="/Documentos/{{$folder->id}}" class="btn btn-primary btn-sm" title="Editar">Abrir Carpeta
-          <span class="glyphicon glyphicon-pencil"></span>
+        <a href="/Documentos/{{$folder->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-folder-open fa-1x"> Abrir Carpeta</i>
         </a>
 
         
         
       </td>
     </tr>
-   
+    @endif
     @endforeach
     @endif
     <!-- Fin Carpetas  -->
+    @if (isset($documents))
+      
+    
     @foreach ($documents as $document)
+    
     @php
       if ((request()->is('Documentos/*')) or request()->is('Seguimiento/*'))
       {
@@ -57,15 +66,17 @@ $idDelDocumento= $document->id;
     @endphp
     <tr>
      
-      <td>{{ $idDelDocumento }}</td>
+     
       
+      <td>{{ $document->number }}</td>
+      <td>{{ $document->type }}</td>
       <td>{{ $document->name }}</td>
       <td>{{ $document->created_at }}</td>
       
       <td>
         <!-- Modal -->
         <!-- Trigger the modal with a button -->
-        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-{{$idDelDocumento}}">Abrir</button>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-{{$idDelDocumento}}"><i class="fas fa-envelope-open-text fa-1x"> Abrir</i></button>
         
         <div id="myModal-{{$idDelDocumento}}" class="modal fade" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -78,37 +89,49 @@ $idDelDocumento= $document->id;
                     </div>
                     <div class="modal-body">
                       @if (request()->is('Recibidos'))
-                      <a  class=" border rounded nav-link dropdown-toggle list-group-item list-group-item-action active"
-                        
-                        data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Responder</a>
-                    
-                      <div class="border rounded bg-primary dropdown-menu">
-                        <a class="dropdown-item text-white" href="/ResponderDoc/{{$idDelDocumento}}">Subir Documento</a>
-                        <a class="dropdown-item text-white" href="/EditorResponder/{{$idDelDocumento}}">Editar Documento</a>
-                        
-                        
+
+                      <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                        <button type="button" class="btn btn-sm btn-primary">Responder</button>
+                        <div class="btn-group" role="group">
+                          <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                          <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
+                            <a class="dropdown-item" href="/ResponderDoc/{{$idDelDocumento}}">Subir Documento</a>
+                            <a class="dropdown-item" href="/EditorResponder/{{$idDelDocumento}}">Editar Documento</a>
+                          </div>
+                        </div>
                       </div>
-                      <a href="/Seguimiento/{{$idDelDocumento}}" class="btn btn-primary btn-sm" title="Editar">Seguimiento
-                        <span class="glyphicon glyphicon-pencil"></span>
-                      </a>
+
+                    
+                      
+                      @endif
+
+                      @if (request()->is('Enviados'))
+                      <a href="/FirmarDoc/{{$idDelDocumento}}" class="btn btn-primary " title="Editar">
+                        <i class="fas fa-edit fa-1x"> Editar</i>
+                         
+                       </a>
                       @endif
                        
+                      <a href="/Anexos/{{$idDelDocumento}}" class="btn btn-info " title="Ver Anexos">
+                        <i class="fas fa-paperclip fa-1x"> Anexos</i>
+                         
+                       </a>
+
+                      <a href="/Seguimiento/{{$idDelDocumento}}" class="btn btn-success" title="Seguimiento">
+                        <i class="fas fa-history fa-1x"> Seguimiento</i>
+                        
+                      </a>
+<!--Descomentar en caso de ser necesario, este metodo se usaba anteriormente cuando no estaban disponibles los modales
                       <a href="/Documento/{{$idDelDocumento}}" class="btn btn-primary btn-sm" title="Editar">Visualizar
                         <span class="glyphicon glyphicon-pencil"></span>
                       </a>
-              
-                      <a href="/Documento/{{$idDelDocumento}}" class="btn btn-danger btn-sm" title="Dar de baja">
-                       Firmar
-                        <span class="glyphicon glyphicon-remove"></span>
-                      </a>
-                      <a href="/ValidarDocFirmado/{{$idDelDocumento}}" class="btn btn-secondary btn-sm" title="Dar de baja">
-                        Verificar Firmas
-                         <span class="glyphicon glyphicon-remove"></span>
+                    -->
+                      
+                      <a href="/ValidarDocFirmado/{{$idDelDocumento}}" class="btn btn-warning" title="Verificar Firmas">
+                        <i class="fas fa-file-signature fa-1x"> Verificar Firmas Electronicas</i>
+                         
                        </a>
-                       <a href="/Anexos/{{$idDelDocumento}}" class="btn btn-secondary btn-sm" title="Dar de baja">
-                        Anexos
-                         <span class="glyphicon glyphicon-remove"></span>
-                       </a>
+                       
                        
                       @php
                       
@@ -188,6 +211,7 @@ $idDelDocumento= $document->id;
       </td>
     </tr>
     @endforeach
+    @endif
   </tbody>
 </table>
 </div>

@@ -28,6 +28,20 @@
                     
                   @endif
 
+                   <!-- Trigger the modal with a button -->
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="fas fa-plus fa-1x "> Nueva Carpeta</i></button>
+        <br>
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title text-dark">Crear Nueva Carpeta</h4>
+                    </div>
+                    <div class="modal-body">
+
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
@@ -64,6 +78,14 @@
   <button type="submit" class="btn btn-primary">Registrar</button>
         </div> 
 </form>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+</div>
+</div>
+
+</div>
+</div>
+</div>
 <br>
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>
@@ -84,14 +106,13 @@
      
       <td>{{ $folder->departament }}</td>
       <td>
-        <a href="/usuario/{{$folder->id}}" class="btn btn-primary btn-sm" title="Editar">Editar
-          <span class="glyphicon glyphicon-pencil"></span>
+        <a href="/carpeta/{{$folder->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
+          </i>
         </a>
 
-        <a href="/usuario/{{$folder->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
-         Dar de baja
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
+        <a href="/carpeta/{{$folder->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+          <i class="fas fa-trash fa-1x ">
+          </i>
         
       </td>
     </tr>

@@ -15,15 +15,15 @@ class DepartamentsTableSeeder extends Seeder
     {
         Departament::create([
             'name'=> 'Alcaldia',
-            'father_departament_id'=> 1
+            'father_departament_id'=> 1,
+            'identifier'=>'ALC'
            
 
         ]);
         Departament::create([
             'name'=> 'TIC',
-            'father_departament_id'=> 1
-           
-
+            'father_departament_id'=> 1,
+            'identifier'=>'TIC'
         ]);
     }
 }

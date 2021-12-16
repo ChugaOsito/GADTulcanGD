@@ -9,6 +9,7 @@ use App\Models\Folder;
 use App\Models\Departament;
 use App\Models\Annex;
 use App\Models\Transaction;
+use App\Models\Type;
 use App\Models\Configuration;
 use Illuminate\Support\Facades\Auth;
 use PDF;
@@ -28,8 +29,9 @@ class EnviarDocController extends Controller
         ->where('users.departament_id', '=', $id_departamento)->get();
         
         $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
+        $types= Type::all();
         
-        return  view('Enviar')->with (compact('users'))->with (compact('departaments'));
+        return  view('Enviar')->with (compact('users'))->with (compact('departaments'))->with (compact('types'));
     }
     public function postEnviar(Request $request){
         $configuration=Configuration::find(1)->first();
@@ -39,7 +41,8 @@ class EnviarDocController extends Controller
 
 'nombre'=> 'required|min:3',
 'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
-'receptor'=> 'required'
+'receptor'=> 'required',
+'type'=> 'required|exists:types,id'
 
         ];
         
@@ -50,26 +53,47 @@ class EnviarDocController extends Controller
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
             'receptor.required'=> 'Seleccione almenos un destinatario',
-            'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb'
+            'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',
+            'type.required'=>'Ingrese un tipo de documento'
 
         ];
         $this->validate($request, $rules, $messages);
         $rutapdf=$this->SubirPdf($request->file("archivo"));
-        $activador=1;
-        //Registrar Documento y obtener su id
-        $docSubido=$this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor') );
        
-        return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+        
+        //Registrar Documento y obtener su id
+        $docSubido=$this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor'),$request->input('type') );
+       
+        return redirect()->route('FirmarDoc', ['id' => $docSubido]);
     }
 
     public function MostrarDocumentos($id){
 
-       
+        $sub_documents=\DB::table('documents')
+        ->join('types','documents.type_id','=','types.id')
+        ->where('documents.folder_id', '=', $id)
+        ->select('documents.folder_id as folder_id','documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
+        ->get();
 
-        $documents= \DB::table('documents')->where('folder_id', '=', $id)->get();
-        $folders= \DB::table('folders')->where('father_folder_id', '=', $id)->get();
+       
+        $i=0;
         
-        return view('Documentos')->with(compact('documents'))->with(compact('folders'));
+        foreach ($sub_documents as $sub_document) {
+            if($this->Permiso($sub_document->id)==true){
+                $documents[$i]=$sub_document;
+                $i++;
+            }
+            
+        }
+        
+        $folders= \DB::table('folders')->where('father_folder_id', '=', $id)->get();
+        if(isset($documents))
+        {
+            return view('Documentos')->with(compact('documents'))->with(compact('folders'));
+        }else {
+            return view('Documentos')->with(compact('folders'));     
+        }
+       
 
     }
     public function BandejaSalida(){
@@ -78,8 +102,10 @@ class EnviarDocController extends Controller
         ->select('users.id AS cedula','users.name','llamadas.*')-> get();
         */
         $documents=\DB::table('documents')->join('document_user','documents.id','=','document_user.document_id')
+        ->join('types','documents.type_id','=','types.id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.type', '=', "E")
+        ->select('documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
         ->get();
         
     
@@ -92,8 +118,10 @@ class EnviarDocController extends Controller
         ->select('users.id AS cedula','users.name','llamadas.*')-> get();
         */
         $documents=\DB::table('documents')->join('document_user','documents.id','=','document_user.document_id')
+        ->join('types','documents.type_id','=','types.id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.type', '=', "R")
+        ->select('documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
         ->get();
         
     
@@ -120,8 +148,9 @@ return ('Usted no tiene permitido visualizar este documento');
         $users=\DB::table('users')->where('departament_id', '=', $id_departamento)->get();
         
         $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
+        $types= Type::all();
         
-        return  view('Documents.EditorTexto')->with (compact('users'))->with (compact('departaments'));
+        return  view('Documents.EditorTexto')->with (compact('users'))->with (compact('departaments'))->with (compact('types'));
 
 
        
@@ -132,7 +161,8 @@ return ('Usted no tiene permitido visualizar este documento');
             'nombre'=> 'required|min:3',
             'cuerpo'=> 'required|min:3',
             'objeto'=> 'required|min:3',
-            'receptor'=> 'required'
+            'receptor'=> 'required',
+            'type'=> 'required|exists:types,id'
                     ];
             
                     $messages=[
@@ -140,7 +170,8 @@ return ('Usted no tiene permitido visualizar este documento');
                         'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
                         'nombre.required'=>'No ha introducido un nombre para el archivo ',
                         'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
-                        'receptor.required'=> 'Seleccione almenos un destinatario'
+                        'receptor.required'=> 'Seleccione almenos un destinatario',
+                        'type.required'=> 'Seleccione un tipo de documento'
             
                     ];
                     $this->validate($request, $rules, $messages);
@@ -150,6 +181,8 @@ return ('Usted no tiene permitido visualizar este documento');
         
         $nombre = Auth::user()->name;
         $apellido = Auth::user()->lastname;
+        $type= Type::find($request->input('type'));
+        $type= $type->name;
         
         $receptores_departamentos=$this->ObtenerDepartamentosReceptores($request->input('receptor'));
      
@@ -159,19 +192,19 @@ return ('Usted no tiene permitido visualizar este documento');
         if($receptores_departamentos==null){
             $pdf = PDF::loadView(
                 'TextEditor.documento',
-                ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+                ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
                 );
 
         }elseif ($receptores==null) {
             $pdf = PDF::loadView(
                 'TextEditor.documento',
-                ['receptores_departamentos'=>$receptores_departamentos,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+                ['receptores_departamentos'=>$receptores_departamentos,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
                 );
         }
         else {
             $pdf = PDF::loadView(
                 'TextEditor.documento',
-                ['receptores_departamentos'=>$receptores_departamentos,'receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+                ['receptores_departamentos'=>$receptores_departamentos,'receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
                 );
         }
        
@@ -185,22 +218,25 @@ return ('Usted no tiene permitido visualizar este documento');
         //Fin transformacion
       
         
-        $activador=1;
+        
         //Registrar Documento y obtener su id
-        $docSubido= $this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor') );
+        $docSubido= $this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor'),$request->input('type') );
         
        
-        return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+        return redirect()->route('FirmarDoc', ['id' => $docSubido]);
 
      }
     
      
 //Carpeta
      public function FormularioCarpeta($id){
-        $folders=Folder::all();
+        if($this->UsuarioPropietario($id)==Auth::user()->id){
+            $folders=Folder::all();
 
-        $identificador= $id;
-        return  view('Documents.Folder')->with (compact('folders'))->with (compact('identificador'));
+            $identificador= $id;
+            return  view('Documents.Folder')->with (compact('folders'))->with (compact('identificador'));
+        }
+        return 'Usted no tiene permiso para realizar la accion solicitada';
     }
 
     public function VincularCarpeta($id, Request $request){
@@ -214,6 +250,10 @@ return ('Usted no tiene permitido visualizar este documento');
     //Anexos
 
     public function FormularioAnexos($id){
+        if($this->Permiso($id)==false){
+
+            return 'Usted no tiene permisos para realizar la accion solicitada';
+        }
         $annexes= \DB::table('annexes')->where('document_id', '=', $id)->get();
 
         $usuario= \DB::table('users')->join('document_user','users.id','=','document_user.user_id')
@@ -264,12 +304,16 @@ return ('Usted no tiene permitido visualizar este documento');
     //Inicio Responder
     public function getResponder($id){
         
-        
+       
+        if($this->ValidarReceptor($id)==null){
+
+            return 'Usted no tiene permisos para realizar la accion solicitada';
+        }
         $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
         $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
   
-        
-        return  view('Responder.Enviar')->with (compact('user'));
+        $types= Type::all();
+        return  view('Responder.Enviar')->with (compact('user'))->with (compact('types'));
     }
     public function postResponder(Request $request, $id){
         $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
@@ -280,31 +324,37 @@ return ('Usted no tiene permitido visualizar este documento');
         $rules=[
 
 
-'archivo'=> 'required|mimes:pdf'
+'archivo'=> 'required|mimes:pdf',
+'type'=> 'required|exists:types,id'
 
         ];
 
         $messages=[
            
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
-            'archivo.mimes'=>'El archivo debe estar en formato PDF'
+            'archivo.mimes'=>'El archivo debe estar en formato PDF',
+            'type.required'=>'Ingrese un tipo de documento'
 
         ];
         $this->validate($request, $rules, $messages);
         $rutapdf=$this->SubirPdf($request->file("archivo"));
        
         
-        $activador=1;
-        $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id);
+        
+        $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
        
-        return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+        return redirect()->route('FirmarDoc', ['id' => $docSubido]);
     }
    //////////
    public function EditorTextoResponder($id){
+    if($this->ValidarReceptor($id)==null){
+
+        return 'Usted no tiene permisos para realizar la accion solicitada';
+    }
     $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
         $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
-    
-    return  view('Responder.EditorTexto')->with (compact('user'));
+        $types= Type::all();
+    return  view('Responder.EditorTexto')->with (compact('user'))->with (compact('types'));
 
 
    
@@ -318,11 +368,13 @@ public function DocHtmlResponder(Request $request, $id){
 
         'cuerpo'=> 'required|min:3',
         'objeto'=> 'required|min:3',
+        'type'=> 'required|exists:types,id'
                 ];
         
                 $messages=[
                     'objeto.required'=>'No ha introducido ningun objeto de documento ',
                     'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
+                    'type.required'=>'Ingrese un tipo de documento'
                    
         
                 ];
@@ -336,12 +388,13 @@ public function DocHtmlResponder(Request $request, $id){
     
     $nombre = Auth::user()->name;
     $apellido = Auth::user()->lastname;
-
+    $type= Type::find($request->input('type'));
+    $type= $type->name;
    
     //Inicio transformar Html a pdf
     $pdf = PDF::loadView(
     'TextEditor.documento',
-    ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido]
+    ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
     );
 $output = $pdf->output();
 
@@ -350,9 +403,9 @@ $nombrepdf="pdf_".time().".pdf";
 
 file_put_contents( "pdf/".$nombrepdf, $output);
     //Fin transformacion
-    $activador=1;
-    $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id);
-    return redirect()->route('FirmarDoc', ['id' => $docSubido])->with (compact('activador'));
+    
+    $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
+    return redirect()->route('FirmarDoc', ['id' => $docSubido]);
  }
 
     //FinResponder
@@ -360,10 +413,24 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
         $id_documentos=\DB::table('document_user')->where('process', '=', $process->process)->get();
 
+        
+
         $i=0;
+        $temporal=0;
         foreach($id_documentos as $id_documento){
-            $documents[$i]=\DB::table('documents')->where('id', '=', $id_documento->document_id)->first();
-            $i++;
+            if($id_documento->document_id !== $temporal){
+                
+                $documents[$i]=\DB::table('documents')
+        ->join('types','documents.type_id','=','types.id')
+        ->where('documents.id', '=', $id_documento->document_id)
+        ->select('documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')
+        ->first();
+
+                
+                $i++;
+                $temporal=$id_documento->document_id;
+            }
+           
         }
              
         
@@ -408,15 +475,37 @@ file_put_contents( "pdf/".$nombrepdf, $output);
     return false;
     }
     //Fin metodo permitir acceso a documentos
-
+//Inicio Numeracion
+function Asignandonumero(){
+     
+       
+     $departamento= \DB::table('departaments')
+     ->where('id','=',Auth::user()->departament_id)
+     ->first();
+     $consulta=Document::all();
+     $idAnterior=$consulta->last();
+    
+     if($idAnterior==null){
+$numero=1;
+     }else{
+$numero=$idAnterior->id+1;
+     }
+     $numeracion=''.$numero.'-'.$departamento->identifier.'-GADMT-'.date('Y');
+     
+     return $numeracion;
+}
+//Fin Numeracion
      //Inicio metodo para enviar documento 
-     function RegistrarEnvio($nombreDocumento, $rutaDocumento, $Receptores){
+     function RegistrarEnvio($nombreDocumento, $rutaDocumento, $Receptores,$tipo_Documento){
+        
+
         $doc =new Document();
         $doc->name= $nombreDocumento;
         $doc->path= $rutaDocumento;
+        $doc->type_id=$tipo_Documento;
         $Usuarios=$this->ObtenerUsuariosReceptores($Receptores);
         $Departamentos=$this->ObtenerDepartamentosReceptores($Receptores);
-        
+       $doc->number=$this->Asignandonumero();
         $doc->save();
         if(isset($Usuarios))
         {
@@ -497,11 +586,14 @@ file_put_contents( "pdf/".$nombrepdf, $output);
      //Fin Subir pdf 
 
      //Responder
-     function RegistrarRespuesta($nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder){
+     function RegistrarRespuesta($nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder,$tipo_Documento){
        
     $doc =new Document();
     $doc->name= $nombreDocumento;
     $doc->path= $rutaDocumento;
+    $doc->type_id=$tipo_Documento;
+       
+    $doc->number=$this->Asignandonumero();
     
     
     $doc->save();
@@ -512,5 +604,20 @@ file_put_contents( "pdf/".$nombrepdf, $output);
 
      }
      //Fin Responder
+     //Inicio Obtener usuario propietario
+     function UsuarioPropietario($id){
+        $user_id=\DB::table('document_user')->where('document_id', '=', $id)->where('type', '=', 'E')->first();
+        return $user_id->user_id;
+        } 
+     //Fin Usuario Propietario 
+     //Inicio Valida Receptor
+     function ValidarReceptor($id){
+        $receptor=\DB::table('document_user')->where('type', '=', 'R')
+        ->where('document_id', '=', $id)
+        ->where('user_id', '=', Auth::user()->id)
+        ->first();
+        return $receptor;
+     }
+     //Fin Validar Receptor
 //Fin Funciones
 }

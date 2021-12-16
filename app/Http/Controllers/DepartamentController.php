@@ -11,7 +11,7 @@ class DepartamentController extends Controller
    {
     $departaments=\DB::table('departaments AS d1')
     ->join('departaments AS d2','d2.id','=','d1.father_departament_id')
-    ->select('d1.*', 'd2.name as father_departament')
+    ->select('d1.*', 'd2.name as father_departament')->orderBy('updated_at','DESC')
 ->get();
 
        
@@ -21,6 +21,7 @@ class DepartamentController extends Controller
    {
        $rules = [
            'name'=>'required|max:25|min:3|unique:departaments',
+           'identifier'=>'required|max:10|min:1|unique:departaments'
            
        ];
        $messages= [
@@ -28,13 +29,53 @@ class DepartamentController extends Controller
         'name.max'=>'El nombre de departamento no puede tener mas de 25 caracteres',
         'name.min'=>'El nombre de departamento no puede tener menos de 3 caracteres',
         'name.unique'=>'El nombre que ha elejido ya esta en uso',
+        'identifier.required'=>'No se ha ingresado un identificador',
+        'identifier.max'=>'El identificador de departamento no puede tener mas de 10 caracteres',
+        'identifier.min'=>'El identificador de departamento no puede tener menos de 1 caracteres',
+        'identifier.unique'=>'El identificador que ha elejido ya esta en uso',
        ];
        $this->validate($request, $rules, $messages);
        $departaments= new Departament();
        $departaments->name= $request->input('name');
        $departaments->father_departament_id= $request->input('padre');
+       $departaments->identifier= $request->input('identifier');
        $departaments->save();
 
        return back()->with('notification','El departamento ha sido registrado exitosamente');
+   }
+   public function edit($id)
+   {
+       
+       $departament=Departament::find($id);
+       $father_departaments=Departament::all();
+       return view('admin.departaments.edit')->with(compact('departament'))->with(compact('father_departaments'));
+   }
+   public function update($id, Request $request)
+   {
+    $departament= Departament::find($id);
+    $rules = [
+        'name'=>'required|max:25|min:3|unique:departaments,name,'.$departament->id,
+        'identifier'=>'required|max:10|min:1|unique:departaments,identifier,'.$departament->id
+        
+    ];
+    $messages= [
+     'name.required'=>'No se ha ingresado un nombre',
+     'name.max'=>'El nombre de departamento no puede tener mas de 25 caracteres',
+     'name.min'=>'El nombre de departamento no puede tener menos de 3 caracteres',
+     'name.unique'=>'El nombre que ha elejido ya esta en uso',
+     'identifier.required'=>'No se ha ingresado un identificador',
+     'identifier.max'=>'El identificador de departamento no puede tener mas de 10 caracteres',
+     'identifier.min'=>'El identificador de departamento no puede tener menos de 1 caracteres',
+     'identifier.unique'=>'El identificador que ha elejido ya esta en uso',
+    ];
+    $this->validate($request, $rules, $messages);
+   
+      
+    $departament->name= $request->input('name');
+    $departament->father_departament_id= $request->input('padre');
+    $departament->identifier=$request->input('identifier');
+    $departament->save();
+       
+    return back()->with('notification','El departamento ha sido modificado exitosamente');
    }
 }

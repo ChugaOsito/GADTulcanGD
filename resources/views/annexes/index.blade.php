@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@extends('librerias.DataTable')
 @section('content')
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
@@ -54,11 +54,13 @@
 </form>
 @endif
 <br>
-<table class="table table-hover table-bordered">
+<table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th>ID</th>
       <th>Nombre</th>
+      <th>Opciones</th>
+      <th>Opciones</th>
       
     </tr>
   </thead>
@@ -67,6 +69,51 @@
     <tr>
       <td>{{ $annex->id }}</td>
       <td>{{ $annex->name }}</td>
+      <td>
+        <!-- Modal -->
+        <!-- Trigger the modal with a button -->
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-{{$annex->id}}"><i class="fas fa-envelope-open-text fa-1x"> Abrir</i></button>
+        
+        <div id="myModal-{{$annex->id}}" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title text-dark">Visualizar Anexo</h4>
+                    </div>
+                    <div class="modal-body">
+                     
+                       
+                       
+                      @php
+                      
+                      $documento= \DB::table('annexes')->where('id', '=', $annex->id)->first();
+                      $pathToFile=$annex->path;
+                      
+                      $str = substr($pathToFile, 16);
+                      
+                      @endphp
+                        <embed src="http://localhost/{{ $str }}" frameborder="0" width="100%" height="450px">
+                          
+
+                          
+
+                          
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+<!--  Fin Modal -->
+       
+       
+        
+      </td>
       <td>
         <a href="#" class="btn btn-primary btn-sm" title="Editar">Editar
           <span class="glyphicon glyphicon-pencil"></span>

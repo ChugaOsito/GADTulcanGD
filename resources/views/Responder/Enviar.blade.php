@@ -20,6 +20,16 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
+  <label for="exampleSelect1" class="form-label mt-4">Tipo de Documento</label>
+  <select class="form-select" id="exampleSelect1" name="type">
+    @foreach ($types as $type )
+    <option value="{{ $type->id }}">{{ $type->name }}</option>   
+    @endforeach
+     
+    
+  </select>
+</div>
+<div class="form-group">
   <fieldset>
     <label class="form-label mt-4" for="readOnlyInput">Receptor</label>
     <input class="form-control" id="readOnlyInput" type="text" placeholder="{{ $user->lastname }} {{ $user->name }} {{ $user->identification }}" readonly="">

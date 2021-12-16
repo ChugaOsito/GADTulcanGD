@@ -16,6 +16,7 @@
 <script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
 <script>
   $('#DataTable').DataTable({
+      order:[],
         responsive:true,
         autoWidth:false,
         "language": {
