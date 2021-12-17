@@ -17,7 +17,7 @@ class CreateTreatmentsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('abbreviation');
-            
+            $table->softDeletes();
             $table->timestamps();
         });
     }

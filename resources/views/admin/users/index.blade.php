@@ -149,23 +149,33 @@
   </thead>
   <tbody>
     @foreach ($users as $user)
+   
     <tr>
       <td>{{ $user->identification }}</td>
       <td>{{ $user->lastname }}</td>
       <td>{{ $user->name }}</td>
       <td>{{ $user->email}}</td>
       <td>{{ $user->departament_name}}</td>
+      @if($user->deleted_at!=null)
+      <td>
+        <a href="/usuario/{{$user->id}}/restaurar" class="btn btn-success btn-sm" title="Restaurar"><i class="fas fa-recycle fa-1x"></i>
+        </a>
+      </td>
+      
+      @else
       <td>
         <a href="/usuario/{{$user->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
           </i>
         </a>
 
-        <a href="/usuario/{{$user->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/usuario/{{$user->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
           <i class="fas fa-trash fa-1x ">
           </i>
-        
+        </a>
       </td>
+      @endif
     </tr>
+    
     @endforeach
   </tbody>
 </table>

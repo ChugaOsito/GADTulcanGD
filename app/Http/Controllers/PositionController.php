@@ -10,7 +10,7 @@ class PositionController extends Controller
     //
     public function index()
     {
-     $positions=Position::all();
+     $positions=Position::withTrashed()->get();
  
         
         return view('positions.index')->with(compact('positions'));
@@ -71,4 +71,14 @@ class PositionController extends Controller
         
      return back()->with('notification','La informacion ha sido modificado exitosamente');
     }
+    public function delete($id){
+        $position =Position::find($id);
+        $position->delete();
+        return back()->with('notification','La informacion ha sido dado de baja exitosamente');
+           }
+           public function restore($id){
+            $position =Position::onlyTrashed()->findOrFail($id);
+            $position->restore();
+            return back()->with('notification','La informacion ha sido restaurado exitosamente');
+               }
 }

@@ -115,4 +115,14 @@ class UserController extends Controller
        
     return back()->with('notification','El usuario ha sido modificado exitosamente');
    }
+   public function delete($id){
+$user =User::find($id);
+$user->delete();
+return back()->with('notification','El usuario ha sido dado de baja exitosamente');
+   }
+   public function restore($id){
+    $user =User::onlyTrashed()->findOrFail($id);
+    $user->restore();
+    return back()->with('notification','El usuario ha sido restaurado exitosamente');
+       }
 }

@@ -86,16 +86,27 @@
       <td>{{ $type->id }}</td>
       <td>{{ $type->name }}</td>
      
+      @if ($type->deleted_at==null)
       <td>
         <a href="/tipo/{{$type->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
           </i>
         </a>
 
-        <a href="/tipo/{{$type->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/tipo/{{$type->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
           <i class="fas fa-trash fa-1x ">
           </i>
+        </a>
+      </td> 
+      @else
+      <td>
+        <a href="/tipo/{{$type->id}}/restaurar" class="btn btn-success btn-sm" title="Restaurar"><i class="fas fa-recycle fa-1x ">
+          </i>
+        </a>
+
         
       </td>
+      @endif
+      
       
     </tr>
     @endforeach

@@ -26,7 +26,9 @@ class EnviarDocController extends Controller
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
-        ->where('users.departament_id', '=', $id_departamento)->get();
+        ->where('users.departament_id', '=', $id_departamento)
+        ->where('users.deleted_at', '=', NULL)
+        ->get();
         
         $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
         $types= Type::all();
@@ -145,7 +147,13 @@ return ('Usted no tiene permitido visualizar este documento');
     public function EditorTexto(){
         $id_departamento = Auth::user()->departament_id;
         
-        $users=\DB::table('users')->where('departament_id', '=', $id_departamento)->get();
+        $users=\DB::table('users')
+        ->join('positions','positions.id','=','users.position_id')
+        ->join('treatments','treatments.id','=','users.treatment_id')
+        ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+        ->where('users.departament_id', '=', $id_departamento)
+        ->where('users.deleted_at', '=', NULL)
+        ->get();
         
         $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
         $types= Type::all();
@@ -261,7 +269,18 @@ return ('Usted no tiene permitido visualizar este documento');
         ->where('type', '=', 'E')->first();
         return  view('annexes.index')->with (compact('annexes'))->with (compact('usuario'));
     }
+    public function BorrarAnexo($id){
+        $Anexo=Annex::find($id);
+       
+        if($this->UsuarioPropietario($Anexo->document_id)!=Auth::user()->id){
 
+            return 'Usted no tiene permisos para realizar la accion solicitada';
+        }
+        
+        unlink($Anexo->path);
+        $Anexo->delete();
+        return  back();
+    }
     public function Anexos($id, Request $request){
        
         $rules=[

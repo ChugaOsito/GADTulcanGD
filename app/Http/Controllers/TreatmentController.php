@@ -10,7 +10,7 @@ class TreatmentController extends Controller
     //
     public function index()
     {
-     $treatments=Treatment::all();
+     $treatments=Treatment::withTrashed()->get();
  
         
         return view('treatments.index')->with(compact('treatments'));
@@ -75,4 +75,14 @@ class TreatmentController extends Controller
         
      return back()->with('notification','La informacion ha sido modificado exitosamente');
     }
+    public function delete($id){
+        $treatment =Treatment::find($id);
+        $treatment->delete();
+        return back()->with('notification','La informacion ha sido dado de baja exitosamente');
+           }
+           public function restore($id){
+            $treatment =Treatment::onlyTrashed()->findOrFail($id);
+            $treatment->restore();
+            return back()->with('notification','La informacion ha sido restaurado exitosamente');
+               }
 }

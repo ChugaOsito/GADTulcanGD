@@ -110,8 +110,12 @@
             </div>
         </div>
 <!--  Fin Modal -->
-       
-       
+@if (auth()->id()== $usuario->user_id)      
+<a href="/Anexo/{{$annex->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
+  <i class="fas fa-trash fa-1x ">
+  </i>
+</a>
+@endif
         
       </td>
       <td>

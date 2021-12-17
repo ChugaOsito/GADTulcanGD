@@ -59,7 +59,10 @@
   <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
   <select class="form-select" id="exampleSelect1" name="padre">
     @foreach ($folders as $folder )
-    <option value="{{ $folder->id }}">{{ $folder->name }}</option>   
+    @if ($folder->deleted_at==NULL)
+    <option value="{{ $folder->id }}">{{ $folder->name }}</option>    
+    @endif
+     
     @endforeach
      
     
@@ -105,16 +108,27 @@
       <td>{{ $folder->father_folder }}</td>
      
       <td>{{ $folder->departament }}</td>
+      @if ($folder->deleted_at!=null)
+      <td>
+        
+
+        <a href="/carpeta/{{$folder->id}}/restaurar" class="btn btn-success btn-sm" title="Dar de baja">
+          <i class="fas fa-recycle fa-1x"></i>
+        </a>
+      </td>
+      @else
       <td>
         <a href="/carpeta/{{$folder->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
           </i>
         </a>
 
-        <a href="/carpeta/{{$folder->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/carpeta/{{$folder->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
           <i class="fas fa-trash fa-1x ">
           </i>
-        
+        </a>
       </td>
+      @endif
+     
     </tr>
     @endforeach
   </tbody>

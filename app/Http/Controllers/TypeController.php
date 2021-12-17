@@ -11,7 +11,7 @@ class TypeController extends Controller
     
     public function index()
    {
-    $types=Type::all();
+    $types=Type::withTrashed()->get();
 
        
        return view('admin.type.index')->with(compact('types'));
@@ -67,4 +67,14 @@ class TypeController extends Controller
        
     return back()->with('notification','El tipo de documento ha sido modificado exitosamente');
    }
+   public function delete($id){
+    $type =Type::find($id);
+    $type->delete();
+    return back()->with('notification','La informacion ha sido dado de baja exitosamente');
+       }
+       public function restore($id){
+        $type =Type::onlyTrashed()->findOrFail($id);
+        $type->restore();
+        return back()->with('notification','La informacion ha sido restaurado exitosamente');
+           }
 }

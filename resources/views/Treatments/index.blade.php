@@ -89,16 +89,28 @@
       <td>{{ $treatment->id }}</td>
       <td>{{ $treatment->name }}</td>
       <td>{{ $treatment->abbreviation}}</td>
+      @if ($treatment->deleted_at==null)
       <td>
         <a href="/tratamiento/{{$treatment->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
           </i>
         </a>
 
-        <a href="/tratamiento/{{$treatment->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/tratamiento/{{$treatment->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
           <i class="fas fa-trash fa-1x ">
           </i>
+        </a>
+      </td>  
+      @else
+      <td>
+        <a href="/tratamiento/{{$treatment->id}}/restaurar" class="btn btn-success btn-sm" title="Restaurar"><i class="fas fa-recycle fa-1x ">
+          </i>
+        </a>
+
+        
         
       </td>
+      @endif
+      
     </tr>
     @endforeach
   </tbody>

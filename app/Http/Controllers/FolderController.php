@@ -12,9 +12,11 @@ class FolderController extends Controller
     {
 
         $folders=\DB::table('folders AS d1')
-    ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+   
+        ->join('folders AS d2','d2.id','=','d1.father_folder_id')
     ->join('departaments AS d3','d3.id','=','d1.departament_id')
-    ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')->orderBy('updated_at','DESC')
+    ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+    ->orderBy('updated_at','DESC')
 ->get();
 
 //     $folders=Folder::all();
@@ -70,5 +72,15 @@ class FolderController extends Controller
         
      return back()->with('notification','La carpeta ha sido modificado exitosamente');
     }
+    public function delete($id){
+        $folder =Folder::find($id);
+        $folder->delete();
+        return back()->with('notification','La carpeta ha sido dado de baja exitosamente');
+           }
+           public function restore($id){
+            $folder =Folder::onlyTrashed()->findOrFail($id);
+            $folder->restore();
+            return back()->with('notification','La carpeta ha sido restaurado exitosamente');
+               }
 
 }

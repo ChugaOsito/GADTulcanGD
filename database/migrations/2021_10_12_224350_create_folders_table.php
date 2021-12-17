@@ -21,7 +21,7 @@ class CreateFoldersTable extends Migration
             
             $table->unsignedBigInteger('departament_id')->default(1);
             $table->foreign('departament_id')->references('id')->on('departaments');
-            
+            $table->softDeletes();
             $table->timestamps();
         });
     }

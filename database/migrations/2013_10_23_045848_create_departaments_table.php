@@ -19,6 +19,7 @@ class CreateDepartamentsTable extends Migration
             $table->string('identifier');
             $table->unsignedBigInteger('father_departament_id');
             $table->foreign('father_departament_id')->references('id')->on('departaments');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

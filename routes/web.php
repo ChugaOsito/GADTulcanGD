@@ -52,6 +52,7 @@ Route::get('/12345', function () {
 //Anexos
 Route::get('/Anexos/{id}', [App\Http\Controllers\EnviarDocController::class,'FormularioAnexos'])->name('FormularioAnexos');
 Route::post('/Anexos/{id}', [App\Http\Controllers\EnviarDocController::class,'Anexos'])->name('Anexos');
+Route::get('/Anexo/{id}/eliminar', [App\Http\Controllers\EnviarDocController::class,'BorrarAnexo'])->name('BorrarAnexo');
 Route::get('/VerAnexo/{id}', [App\Http\Controllers\EnviarDocController::class,'VisualizarAnexo']);
 //Carpetas
 Route::get('/VincularCarpeta/{id}', [App\Http\Controllers\EnviarDocController::class,'FormularioCarpeta']);
@@ -74,6 +75,8 @@ Route::get('/usuarios', [App\Http\Controllers\UserController::class,'index']);
 Route::post('/usuarios', [App\Http\Controllers\UserController::class,'store']);
 Route::get('/usuario/{id}', [App\Http\Controllers\UserController::class,'edit']);
 Route::post('/usuario/{id}', [App\Http\Controllers\UserController::class,'update']);
+Route::get('/usuario/{id}/eliminar', [App\Http\Controllers\UserController::class,'delete']);
+Route::get('/usuario/{id}/restaurar', [App\Http\Controllers\UserController::class,'restore']);
 
 //Fin rutas gestion de usuarios
  
@@ -83,7 +86,8 @@ Route::get('/carpetas', [App\Http\Controllers\FolderController::class,'index']);
 Route::post('/carpetas', [App\Http\Controllers\FolderController::class,'store']);
 Route::get('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'edit']);
 Route::post('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'update']);
-
+Route::get('/carpeta/{id}/eliminar', [App\Http\Controllers\FolderController::class,'delete']);
+Route::get('/carpeta/{id}/restaurar', [App\Http\Controllers\FolderController::class,'restore']);
 //Fin carpetas    
 
     
@@ -103,13 +107,16 @@ Route::get('/departamentos', [App\Http\Controllers\DepartamentController::class,
 Route::post('/departamentos', [App\Http\Controllers\DepartamentController::class,'store']);
 Route::get('/departamento/{id}', [App\Http\Controllers\DepartamentController::class,'edit']);
 Route::post('/departamento/{id}', [App\Http\Controllers\DepartamentController::class,'update']);
-
+Route::get('/departamento/{id}/eliminar', [App\Http\Controllers\DepartamentController::class,'delete']);
+Route::get('/departamento/{id}/restaurar', [App\Http\Controllers\DepartamentController::class,'restore']);
 //Fin departamento  
 //Tratamientos y Tiutulos
 Route::get('/tratamientos', [App\Http\Controllers\TreatmentController::class,'index']);
 Route::post('/tratamientos', [App\Http\Controllers\TreatmentController::class,'store']);
 Route::get('/tratamiento/{id}', [App\Http\Controllers\TreatmentController::class,'edit']);
 Route::post('/tratamiento/{id}', [App\Http\Controllers\TreatmentController::class,'update']);
+Route::get('/tratamiento/{id}/eliminar', [App\Http\Controllers\TreatmentController::class,'delete']);
+Route::get('/tratamiento/{id}/restaurar', [App\Http\Controllers\TreatmentController::class,'restore']);
 //Fin Tratamientos y titulos
 
 //Cargos
@@ -117,6 +124,8 @@ Route::get('/cargos', [App\Http\Controllers\PositionController::class,'index']);
 Route::post('/cargos', [App\Http\Controllers\PositionController::class,'store']);
 Route::get('/cargo/{id}', [App\Http\Controllers\PositionController::class,'edit']);
 Route::post('/cargo/{id}', [App\Http\Controllers\PositionController::class,'update']);
+Route::get('/cargo/{id}/eliminar', [App\Http\Controllers\PositionController::class,'delete']);
+Route::get('/cargo/{id}/restaurar', [App\Http\Controllers\PositionController::class,'restore']);
 //Fin Cargos
 //Tamño Archivos
 
@@ -127,7 +136,9 @@ Route::post('/size/{id}', [App\Http\Controllers\ConfigurationController::class,'
 Route::get('/tipos', [App\Http\Controllers\TypeController::class,'index']);
 Route::post('/tipos', [App\Http\Controllers\TypeController::class,'store']);
 Route::get('/tipo/{id}', [App\Http\Controllers\TypeController::class,'edit']);
-Route::post('/tipo/{id}', [App\Http\Controllers\TypeController::class,'update']); 
+Route::post('/tipo/{id}', [App\Http\Controllers\TypeController::class,'update']);
+Route::get('/tipo/{id}/eliminar', [App\Http\Controllers\TypeController::class,'delete']);
+Route::get('/tipo/{id}/restaurar', [App\Http\Controllers\TypeController::class,'restore']); 
 //Fin tipo de documentos
     
     

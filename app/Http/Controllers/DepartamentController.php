@@ -78,4 +78,14 @@ class DepartamentController extends Controller
        
     return back()->with('notification','El departamento ha sido modificado exitosamente');
    }
+   public function delete($id){
+    $departament =Departament::find($id);
+    $departament->delete();
+    return back()->with('notification','El departamento ha sido dado de baja exitosamente');
+       }
+       public function restore($id){
+        $departament =Departament::onlyTrashed()->findOrFail($id);
+        $departament->restore();
+        return back()->with('notification','El departamento ha sido restaurado exitosamente');
+           }
 }

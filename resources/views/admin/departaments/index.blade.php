@@ -50,7 +50,10 @@
   <label for="exampleSelect1" class="form-label mt-4">Departamento Padre</label>
   <select class="form-select" id="exampleSelect1" name="padre">
     @foreach ($departaments as $departament )
+    @if ($departament->deleted_at==NULL)
     <option value="{{ $departament->id }}">{{ $departament->name }}</option>   
+    @endif
+      
     @endforeach
      
     
@@ -100,16 +103,26 @@
       <td>{{ $departament->name }}</td>
       <td>{{ $departament->identifier }}</td>
       <td>{{ $departament->father_departament}}</td>
+      @if ($departament->deleted_at!=null)
+      <td>
+        <a href="/departamento/{{$departament->id}}/restaurar" class="btn btn-success btn-sm" title="Restaurar"><i class="fas fa-recycle fa-1x ">
+        </i>
+      </a>
+      </td>
+     
+      @else  
       <td>
         <a href="/departamento/{{$departament->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">
           </i>
         </a>
 
-        <a href="/departamento/{{$departament->id}}" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/departamento/{{$departament->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
           <i class="fas fa-trash fa-1x ">
           </i>
-        
-      </td>
+        </a>
+      </td> 
+      @endif
+     
       
     </tr>
     @endforeach

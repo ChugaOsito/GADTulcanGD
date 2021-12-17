@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->smallInteger('rol')->default(2); //0 Administrador 1GestorCarpetas 2Funcionario
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->unsignedBigInteger('departament_id');
