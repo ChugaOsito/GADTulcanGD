@@ -31,7 +31,9 @@
                             
 
                               <p class="card-text text-center"><i class="fas fa-users fa-5x " > {{ $usuarios }}</i></p>
+                              <!-- 
                               <a href="#" class="btn btn-primary">Mas Detalles</a>
+                              -->
                             </div>
                           </div>
                         </div>
@@ -41,7 +43,9 @@
                               <h5 class="card-title">Documentos Subidos</h5>
                              
                               <p class="card-text text-center"> <i class="far fa-file-pdf fa-5x"> {{ $documentos }}</i></p>
+                             <!-- 
                               <a href="#" class="btn btn-primary">Mas Detalles</a>
+                              -->
                             </div>
                           </div>
                         </div>
@@ -59,7 +63,9 @@
         
 
           <p class="card-text text-center"><i class="fas fa-building fa-5x " > {{ $departamentos }}</i></p>
-          <a href="#" class="btn btn-primary">Mas Detalles</a>
+          <!-- 
+                              <a href="#" class="btn btn-primary">Mas Detalles</a>
+                              -->
         </div>
       </div>
     </div>
@@ -69,7 +75,9 @@
           <h5 class="card-title">Carpetas Registradas</h5>
          
           <p class="card-text text-center"> <i class="fas fa-folder-open fa-5x"> {{ $carpetas }}</i></p>
-          <a href="#" class="btn btn-primary">Mas Detalles</a>
+          <!-- 
+                              <a href="#" class="btn btn-primary">Mas Detalles</a>
+                              -->
         </div>
       </div>
     </div>

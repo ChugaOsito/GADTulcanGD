@@ -18,6 +18,7 @@ class CreateDocumentsTable extends Migration
             $table->string('name');
             $table->string('number');
             $table->string('path');
+            $table->boolean('public')->default(0);
             $table->unsignedBigInteger('folder_id')->default(1);
             $table->foreign('folder_id')->references('id')->on('folders');
             $table->unsignedBigInteger('type_id');

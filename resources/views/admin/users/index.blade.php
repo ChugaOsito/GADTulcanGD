@@ -109,8 +109,8 @@
 </br>
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
     @if (Auth::user()->rol==-1)
-    <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="-1">
-    <label class="btn btn-outline-primary" for="btnradio1">Super Administrador</label>
+    <input type="radio" class="btn-check" name="rol" id="btnradio0" autocomplete="off" checked="" value="-1">
+    <label class="btn btn-outline-primary" for="btnradio0">Super Administrador</label>
     <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="0">
     <label class="btn btn-outline-primary" for="btnradio1">Administrador</label>
     @endif
@@ -144,6 +144,7 @@
       <th>Nombres</th>
       <th>E-mail</th>
       <th>Departamento</th>
+      <th>Rol</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -156,6 +157,10 @@
       <td>{{ $user->name }}</td>
       <td>{{ $user->email}}</td>
       <td>{{ $user->departament_name}}</td>
+      @php
+        $roles = array("Super Administrador","Administrador","Jefe de Departamento", "Funcionario");
+      @endphp
+      <td>{{ $roles[$user->rol+1] }}</td>
       @if($user->deleted_at!=null)
       <td>
         <a href="/usuario/{{$user->id}}/restaurar" class="btn btn-success btn-sm" title="Restaurar"><i class="fas fa-recycle fa-1x"></i>

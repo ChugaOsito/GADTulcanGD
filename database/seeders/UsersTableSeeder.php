@@ -39,7 +39,7 @@ class UsersTableSeeder extends Seeder
             'position_id'=>1
 
         ]);
-        //Usuario gestor de carpetas
+        //Administrador de departamento 
         User::create([
             'identification'=> '2222222222',
             'lastname'=> 'Freir Pozo',

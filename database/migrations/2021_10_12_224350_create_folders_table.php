@@ -16,7 +16,7 @@ class CreateFoldersTable extends Migration
         Schema::create('folders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('father_folder_id');
+            $table->unsignedBigInteger('father_folder_id')->default(1);
             $table->foreign('father_folder_id')->references('id')->on('folders');
             
             $table->unsignedBigInteger('departament_id')->default(1);

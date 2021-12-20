@@ -63,12 +63,7 @@ Route::post('/VincularCarpeta/{id}', [App\Http\Controllers\EnviarDocController::
 Route::group(['middleware'=> 'admin', 'namespace'=>'Admin'], function(){
 
    
-//Inicio Decarga copias de usuarios
-Route::get('/DescargarCopia', [App\Http\Controllers\ZipController::class,'index']);
-Route::post('/DescargarCopia', [App\Http\Controllers\ZipController::class,'download']);
 
-
-//Fin Decarga copias de usuarios
 
 //Inicio Rutas Gestion de usuarios
 Route::get('/usuarios', [App\Http\Controllers\UserController::class,'index']);
@@ -81,14 +76,7 @@ Route::get('/usuario/{id}/restaurar', [App\Http\Controllers\UserController::clas
 //Fin rutas gestion de usuarios
  
 
-//Carpetas
-Route::get('/carpetas', [App\Http\Controllers\FolderController::class,'index']);
-Route::post('/carpetas', [App\Http\Controllers\FolderController::class,'store']);
-Route::get('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'edit']);
-Route::post('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'update']);
-Route::get('/carpeta/{id}/eliminar', [App\Http\Controllers\FolderController::class,'delete']);
-Route::get('/carpeta/{id}/restaurar', [App\Http\Controllers\FolderController::class,'restore']);
-//Fin carpetas    
+  
 
     
     
@@ -144,4 +132,27 @@ Route::get('/tipo/{id}/restaurar', [App\Http\Controllers\TypeController::class,'
     
     });
 //Fin Middleware Super Administrador
+//Inicio Middleware Jefe de Departamento
+Route::group(['middleware'=> 'departamentboss', 'namespace'=>'Admin'], function(){
+    Route::get('/', function () {
+        return redirect('/Dashboard');
+    });
+  
+//Carpetas
+Route::get('/carpetas', [App\Http\Controllers\FolderController::class,'index']);
+Route::post('/carpetas', [App\Http\Controllers\FolderController::class,'store']);
+Route::get('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'edit']);
+Route::post('/carpeta/{id}', [App\Http\Controllers\FolderController::class,'update']);
+Route::get('/carpeta/{id}/eliminar', [App\Http\Controllers\FolderController::class,'delete']);
+Route::get('/carpeta/{id}/restaurar', [App\Http\Controllers\FolderController::class,'restore']);
+//Fin carpetas 
+
+//Inicio Decarga copias de usuarios
+Route::get('/DescargarCopia', [App\Http\Controllers\ZipController::class,'index']);
+Route::post('/DescargarCopia', [App\Http\Controllers\ZipController::class,'download']);
+
+
+//Fin Decarga copias de usuarios
+    }); 
+//Fin middleware jefe de departamento 
 //Fin Middleware

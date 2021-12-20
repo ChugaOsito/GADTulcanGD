@@ -20,8 +20,19 @@
       
     </select>
   </div>
+  <label class="col-form-label mt-4" for="Nombre">¿Desea hacer este documento publico?</label>
+</br>
+
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+   
+    <input type="radio" class="btn-check" name="publico" id="btnradio2" autocomplete="off"  value="1" @if ($document->public==1) checked @endif>
+    <label class="btn btn-outline-primary" for="btnradio2">Si</label>
+    <input type="radio" class="btn-check" name="publico" id="btnradio3" autocomplete="off"  value="0" @if ($document->public==0) checked @endif>
+    <label class="btn btn-outline-primary" for="btnradio3">No</label>
+  </div>
 
 </br>
+<br>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Guardar</button>
 

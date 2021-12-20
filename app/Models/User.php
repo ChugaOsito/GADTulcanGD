@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Notifications\AsignarContraseña;
 class User extends Authenticatable implements Auditable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -53,9 +54,21 @@ class User extends Authenticatable implements Auditable
         return $this->rol ==-1;
 
     }
+    public function getIsDepartamentBossAttribute()
+    {
+        return $this->rol ==1;
+
+    }
     //relacion muchos a muchos
     public function documents()
     {
         return $this->belongsToMany('App\Models\Document');
     }
+    
+    public function sendPasswordResetNotification($token)
+{
+    
+
+    $this->notify(new AsignarContraseña($token));
+}
 }

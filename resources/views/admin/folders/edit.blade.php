@@ -28,22 +28,18 @@
                   @endif
                   <form action="" method="post" enctype="multipart/form-data">
                     @csrf
-                    <div class="form-group">
-                      <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece esta carpeta</label>
-                      <select class="form-select" id="exampleSelect1" name="departament">
-                        @foreach ($departaments as $departament )
-                        <option value="{{ $departament->id }}">{{ $departament->name }}</option>   
-                        @endforeach
-                         
-                        
-                      </select>
-                    </div>
+                   
                     
                     <div class="form-group">
                       <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
                       <select class="form-select" id="exampleSelect1" name="padre">
+                        <option value="1" @if (1==$folder->father_folder_id)
+                          selected
+                        @endif>Documentos Internos del GAD de Tulcan</option> 
                         @foreach ($father_folders as $father_folder )
-                        <option value="{{ $father_folder->id }}">{{ $father_folder->name }}</option>   
+                        <option value="{{ $father_folder->id }}" @if ($father_folder->id==$folder->father_folder_id)
+                          selected
+                        @endif>{{ $father_folder->name }}</option>   
                         @endforeach
                          
                         

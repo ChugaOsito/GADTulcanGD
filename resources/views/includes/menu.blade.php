@@ -70,16 +70,19 @@
       -->
       <a @if (request()->is('Documentos/1')) class="border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif  
       href="/Documentos/1">Buscar en Repositorio</a>
-      @if (auth()->user()->is_admin)
-    
-      <a @if (request()->is('carpetas')) class="border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif  
-        href="/carpetas">Gestionar Carpetas</a>
-    
+     
+    @if (auth()->user()->is_DepartamentBoss)
+    <a @if (request()->is('carpetas')) class="border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif  
+      href="/carpetas">Gestionar Carpetas</a>    
+      <a  @if (request()->is('DescargarZip')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+        href="/DescargarCopia" class="list-group-item list-group-item-action active">Descargar copias de informacion</a>
+    @endif
+  
+    @if (auth()->user()->is_admin)
      <a  @if (request()->is('usuarios')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
       href="/usuarios" class="list-group-item list-group-item-action active">Gestionar Usuarios</a>
 
-      <a  @if (request()->is('DescargarZip')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
-        href="/DescargarCopia" class="list-group-item list-group-item-action active">Descargar copias de informacion</a>
+     
     
       
       @endif

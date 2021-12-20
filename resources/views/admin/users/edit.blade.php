@@ -28,7 +28,31 @@
                   @endif
 
     <form action="" method="post" enctype="multipart/form-data">
+      
 @csrf
+<div class="form-group">
+  <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
+  <select class="rounded form-select" id="exampleSelect1" name="position">
+    
+    @foreach ($positions as $position )
+    <option value="{{ $position->id }}"  @if ($position->id== $user->position_id)   selected  @endif> {{ $position->name }}</option>   
+    @endforeach
+     
+    
+  </select>
+</div>
+
+<div class="form-group">
+  <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>
+  <select class="rounded form-select" id="exampleSelect1" name="treatment">
+    @foreach ($treatments as $treatment )
+    <option value="{{ $treatment->id }}"@if ($treatment->id== $user->treatment_id)   selected  @endif> {{ $treatment->name }} </option>   
+    @endforeach
+     
+    
+  </select>
+</div>
+
 <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Numero de Cedula</label>
     <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification" readonly value="{{ old('identification', $user->identification) }}">
@@ -59,7 +83,7 @@
       <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece</label>
       <select class="rounded form-select" id="exampleSelect1" name="departamento">
         @foreach ($departaments as $departament )
-        <option value="{{ $departament->id }}"> {{ $departament->name }} </option>   
+        <option value="{{ $departament->id }}" @if ($departament->id== $user->departament_id)   selected  @endif> {{ $departament->name }} </option>   
         @endforeach
          
         
@@ -73,15 +97,19 @@
 
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
     @if (Auth::user()->rol==-1)
-    <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="-1">
-    <label class="btn btn-outline-primary" for="btnradio1">Super Administrador</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio1" autocomplete="off" checked="" value="0">
+    <input type="radio" class="btn-check" name="rol" id="btnradio0" autocomplete="off"  value="-1" @if ($user->rol==-1) checked  @endif>
+    <label class="btn btn-outline-primary" for="btnradio0">Super Administrador</label>
+  
     @endif
-    <label class="btn btn-outline-primary" for="btnradio1">Administrador</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off" checked="" value="1">
+    @if ($user->id!=1)
+    <input type="radio" class="btn-check " name="rol" id="btnradio1" autocomplete="off"  value="0" @if ($user->rol==0) checked  @endif>
+    <label class="btn btn-outline-primary"  for="btnradio1">Administrador</label>
+    <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off"  value="1"@if ($user->rol==1) checked  @endif>
     <label class="btn btn-outline-primary" for="btnradio2">Jefe de Departamento</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off" checked="" value="2">
-    <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>
+    <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off"  value="2" @if ($user->rol==2) checked  @endif>
+    <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>  
+    @endif
+    
   </div>
   </div>
 </br>

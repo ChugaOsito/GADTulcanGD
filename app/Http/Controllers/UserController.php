@@ -8,7 +8,8 @@ use App\Models\User;
 use App\Models\Departament;
 use App\Models\Treatment;
 use App\Models\Position;
-
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
    public function index()
@@ -29,13 +30,21 @@ class UserController extends Controller
    }
    public function store(Request $request )
    {
+       
+    if((Auth::user()->rol==-1))
+       {
+    $validacionrol='in:-1,0,1,2';
+       }
+       else {
+        $validacionrol='in:1,2';
+       }
        $rules = [
            'identification'=>'required|max:25|unique:users',
            'nombres'=>'required|max:255',
            'apellidos'=>'required|max:255',
            'email'=>'required|email|max:255|unique:users',
            'contrasena'=>'required|min:6',
-           'rol'=>'in:0,1,2'
+           'rol'=>$validacionrol
        ];
        $messages= [
         'identification.required'=>'No se ha ingresado una identification',
@@ -65,25 +74,44 @@ class UserController extends Controller
        $user->rol =$request->input('rol');
        $user->departament_id =$request->input('departamento');
        $user->save();
+       $token = Password::getRepository()->create($user);
+       
+       $user->sendPasswordResetNotification($token);
 
        return back()->with('notification','El usuario ha sido registrado exitosamente');
    }
    public function edit($id)
    {
        $user= User::find($id);
-    
+       $positions=Position::all();
+       $treatments=Treatment::all();
        $departaments=Departament::all();
-       return view('admin.users.edit')->with(compact('user'))->with(compact('departaments'));
+       return view('admin.users.edit')->with(compact('user'))->with(compact('departaments'))->with(compact('positions'))->with(compact('treatments'));
    }
    public function update($id, Request $request)
    {
+    $user= User::find($id);
+    if(($user->rol<1)  AND (Auth::user()->rol>=0)){
+return('Usted no tiene permisos para realizar esta accion');
+    }
+
+    if((Auth::user()->rol==-1))
+    {
+ $validacionrol='in:-1,0,1,2';
+    }
+    else {
+     $validacionrol='in:1,2';
+    }
+    if($user->id==1){
+        $validacionrol='in:-1';
+    }
     $rules = [
         'identification'=>'required|max:25',
         'nombres'=>'required|max:255',
         'apellidos'=>'required|max:255',
         'email'=>'required|email|max:255',
         'contrasena'=>'nullable|min:6',
-        'rol'=>'in:0,1,2'
+        'rol'=>$validacionrol
     ];
     $messages= [
      'identification.required'=>'No se ha ingresado una identification',
@@ -108,7 +136,8 @@ class UserController extends Controller
       {
         $user->password = bcrypt($pasword);
       }
-       
+      $user->position_id= $request->input('position');
+      $user->treatment_id= $request->input('treatment');
        $user->rol =$request->input('rol');
        $user->departament_id =$request->input('departamento');
        $user->save();

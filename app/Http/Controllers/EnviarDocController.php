@@ -20,20 +20,28 @@ class EnviarDocController extends Controller
     
     public function getEnviar(){
       
-        $id_departamento = Auth::user()->departament_id;
+        $MiDepartamento=Departament::find(Auth::user()->departament_id);
         
         $users=\DB::table('users')
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
-        ->where('users.departament_id', '=', $id_departamento)
+        ->where('users.departament_id', '=', $MiDepartamento->id)
         ->where('users.deleted_at', '=', NULL)
         ->get();
         
-        $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
-        $types= Type::all();
         
-        return  view('Enviar')->with (compact('users'))->with (compact('departaments'))->with (compact('types'));
+        $Child_departaments=\DB::table('departaments')->where('father_departament_id', '=', $MiDepartamento->id)->get();
+        
+        $Father_departament=\DB::table('departaments')->where('id', '=', $MiDepartamento->father_departament_id)->first();
+        $Brother_departaments=\DB::table('departaments')->where('father_departament_id', '=', $MiDepartamento->father_departament_id)->get();
+        $types= Type::all();
+        return  view('Enviar')->with (compact('users'))
+        ->with (compact('Father_departament'))
+        ->with (compact('Brother_departaments'))
+        ->with (compact('Child_departaments'))
+        ->with (compact('types'))
+        ->with (compact('MiDepartamento'));
     }
     public function postEnviar(Request $request){
         $configuration=Configuration::find(1)->first();
@@ -145,23 +153,28 @@ return ('Usted no tiene permitido visualizar este documento');
     }
     
     public function EditorTexto(){
-        $id_departamento = Auth::user()->departament_id;
+        $MiDepartamento=Departament::find(Auth::user()->departament_id);
         
         $users=\DB::table('users')
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
-        ->where('users.departament_id', '=', $id_departamento)
+        ->where('users.departament_id', '=', $MiDepartamento->id)
         ->where('users.deleted_at', '=', NULL)
         ->get();
         
-        $departaments=\DB::table('departaments')->where('father_departament_id', '=', $id_departamento)->get();
-        $types= Type::all();
         
-        return  view('Documents.EditorTexto')->with (compact('users'))->with (compact('departaments'))->with (compact('types'));
-
-
-       
+        $Child_departaments=\DB::table('departaments')->where('father_departament_id', '=', $MiDepartamento->id)->get();
+        
+        $Father_departament=\DB::table('departaments')->where('id', '=', $MiDepartamento->father_departament_id)->first();
+        $Brother_departaments=\DB::table('departaments')->where('father_departament_id', '=', $MiDepartamento->father_departament_id)->get();
+        $types= Type::all();
+        return  view('Documents.EditorTexto')->with (compact('users'))
+        ->with (compact('Father_departament'))
+        ->with (compact('Brother_departaments'))
+        ->with (compact('Child_departaments'))
+        ->with (compact('types'))
+        ->with (compact('MiDepartamento'));
     }
     public function DocHtml(Request $request){
         $rules=[
@@ -240,16 +253,18 @@ return ('Usted no tiene permitido visualizar este documento');
      public function FormularioCarpeta($id){
         if($this->UsuarioPropietario($id)==Auth::user()->id){
             $folders=Folder::all();
-
+            $document=Document::find($id);
             $identificador= $id;
-            return  view('Documents.Folder')->with (compact('folders'))->with (compact('identificador'));
+            return  view('Documents.Folder')->with (compact('document'))->with (compact('folders'))->with (compact('identificador'));
         }
         return 'Usted no tiene permiso para realizar la accion solicitada';
     }
 
     public function VincularCarpeta($id, Request $request){
+        
         $document=Document::find($id);
         $document->folder_id=$request->input('carpeta');
+        $document->public=$request->input('publico');
         $document->save();
         $identificador=$id;
         return redirect()->route('Anexos', ['id' => $identificador]);
@@ -429,6 +444,11 @@ file_put_contents( "pdf/".$nombrepdf, $output);
 
     //FinResponder
     public function Seguimiento($id){
+        if($this->Permiso($id)==false){
+
+            return 'Usted no tiene permisos para realizar la accion solicitada';
+        }
+
         $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
         $id_documentos=\DB::table('document_user')->where('process', '=', $process->process)->get();
 
@@ -472,12 +492,13 @@ file_put_contents( "pdf/".$nombrepdf, $output);
     //Inicio metodo permitir acceso a documentos
     function Permiso($id_Documento){
 
-    
-        $departamento= \DB::table('documents')
-        ->join('folders','documents.folder_id','=','folders.id')
-        ->join('departaments','folders.departament_id','=','departaments.id')
-        ->where('documents.id','=',$id_Documento)
+        $documento=Document::find($id_Documento);
+        $departamento= \DB::table('document_user')
+        ->where('document_id','=',$id_Documento)
+        ->where('type','=','E')
+        ->join('users','document_user.user_id','=','users.id')
         ->first();
+       
 
         $destinatario= \DB::table('documents')
         ->join('document_user','documents.id','=','document_user.document_id')
@@ -487,7 +508,7 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         ->first();
     
 
-        if(($departamento->departament_id ==Auth::user()->departament_id)  || ($destinatario !==  null) )
+        if(($departamento->departament_id ==Auth::user()->departament_id)  || ($destinatario !==  null) || ($documento->public==  1) )
     {
     return true;
     }
@@ -638,5 +659,14 @@ $numero=$idAnterior->id+1;
         return $receptor;
      }
      //Fin Validar Receptor
+     //Obtener Usuarios Jefes de departamento
+     function MasUsuarios($id_Departamento){
+        $masusuarios= \DB::table('users')->where('departament_id', '=', $id_Departamento)->where('rol', '=', 1)
+      ->join('positions','positions.id','=','users.position_id')
+              ->join('treatments','treatments.id','=','users.treatment_id')
+              ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+      ->get();
+      }
+     //Fin Jefes de departameto
 //Fin Funciones
 }

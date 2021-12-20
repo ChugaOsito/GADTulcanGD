@@ -30,11 +30,11 @@
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                        <img class="img-thumbnail img-fluid rounded" style="max-width: 15rem;" src="images/logo.png" alt="logo"/>
+                        <img class="img-thumbnail img-fluid rounded" style="max-width: 15rem;" src="/images/logo.png" alt="logo"/>
 
                     
                 </a>
-                <div style="padding-left: 60vw;">
+                <div style="padding-left: 45vw;">
 
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -44,7 +44,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -53,18 +53,44 @@
                         @guest
                            
                         @else
+                        @php
+                              $position= \DB::table('positions')->where('id', '=', Auth::user()->position_id)->first();
+                              $departament= \DB::table('departaments')->where('id', '=', Auth::user()->departament_id)->first();
+                              
+                              $roles = array("Super Administrador","Administrador","Jefe de Departamento","Funcionario");
+                        @endphp
                             <li class="nav-item dropdown"  >
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
                                     {{ Auth::user()->lastname }} {{ Auth::user()->name }}
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                    
+                                      
+                                 <p class=" text-center small text-muted" 
+                                 >
+                                   {{ $position->name }}
+                                </p>
+                            
+                            
+                               <p class=" text-center small text-muted" 
+                               >
+                                Departamento de: {{$departament->name}}
+                            </p>
+                            <p class=" text-center small text-muted" 
+                             >
+                               Privilegios: {{ $roles[Auth::user()->rol+1] }}
+                        </p>
+                           <div class="dropdown-divider"></div>
+                           <a class="dropdown-item" href="/Recibidos"
+                                   >
+                                     Mi Perfil
+                                 </a>
+                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        Cerrar Sesion
                                     </a>
-
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>

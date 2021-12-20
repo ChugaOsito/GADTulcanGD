@@ -39,23 +39,78 @@
                                   <input type="text" class="rounded form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
                                 </div>
 
+                               
                                 <div class="form-group">
                                   <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
                                   <select class="rounded form-select select2" id="exampleSelect1" name="receptor[]" multiple="multiple">
+                                    <optgroup label="Mi Departamento">
+                                    <option value="{{ -$MiDepartamento->id }} "> Todo el departamento de {{ $MiDepartamento->name }} </option> 
                                     @foreach ($users as $user )
-                                    <option value="{{ $user->id }}">{{ $user->identification }} - {{ $user->lastname }} {{ $user->name }} </option>   
+                                   
+                                    <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }}
+                                       </option>   
+                                   
+                                    
                                     @endforeach
-                                    @foreach ($departaments as $departament )
-                                    <option value="{{ -$departament->id }} "> Todo el departamento de {{ $departament->name }} </option> 
+                                  </optgroup>
                                     @php
-                                $otros_usuarios = \DB::table('users')->where('departament_id', '=', $departament->id)->get();
-                                  @endphp  
+                                   
+                                    $otros_usuarios=MasUsuarios($Father_departament->id);
+                                  @endphp 
+                                  @if (isset($otros_usuarios))
+                                  <optgroup label="Departamento Superior">
                                   @foreach ($otros_usuarios as $otro_usuario )
-                                  <option value="{{ $otro_usuario->id }}">{{ $otro_usuario->identification }} - {{ $otro_usuario->lastname }} {{ $otro_usuario->name }} </option>   
+                                  
+                                  <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}
+                                 
+                                  @endforeach    
+                                </optgroup>
+                                  @endif 
                                 
-                                  @endforeach
-                                    @endforeach
+                                @php
+                                   $otros_usuarios=null;
+                                @endphp
+                                <optgroup label="Departamentos del mismo nivel">    
+                                @foreach ($Brother_departaments as $Brother_departament )
+                                    
+                                    @php
+                                   
+                                      $otros_usuarios=MasUsuarios($Brother_departament->id);
+                                    @endphp 
+                                    @if (isset($otros_usuarios))
+                                    
+                                    @foreach ($otros_usuarios as $otro_usuario )
+                                    @if ($otro_usuario->id!=Auth::user()->id)
+                                    
+                                    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}
+                                  
+                                      @endif
+                                    @endforeach 
                                      
+                                    @endif 
+                                  
+                                    @endforeach
+                                  </optgroup> 
+                                    @php
+                                    $otros_usuarios=null;
+                                 @endphp
+                                    <optgroup label="Departamentos Inferiores">
+                                    @foreach ($Child_departaments as $Child_departament )
+                                    
+                                    @php
+                                      $otros_usuarios=MasUsuarios($Child_departament->id);
+                                    @endphp 
+                                    @if (isset($otros_usuarios))
+                                    
+                                    @foreach ($otros_usuarios as $otro_usuario )
+                                    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}
+                                  
+                                    @endforeach  
+                                     
+                                    @endif 
+                                  
+                                    @endforeach
+                                  </optgroup>  
                                     
                                   </select>
                                 </div>
@@ -102,6 +157,16 @@
         } );
 </script>
 
-    
+@php
+function MasUsuarios($id_Departamento){
+  $masusuarios= \DB::table('users')->where('departament_id', '=', $id_Departamento)->where('rol', '=', 1)
+->join('positions','positions.id','=','users.position_id')
+        ->join('treatments','treatments.id','=','users.treatment_id')
+        ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+->get();
+return $masusuarios;
+}
+
+  @endphp
 @endsection
     
