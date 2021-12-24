@@ -4,7 +4,7 @@
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
             
-                <div class="card-header">Editar usuario</div>
+                <div class="card-header">Mi Perfil</div>
 
                 <div class="card-body bg-light text-black">
 
@@ -79,38 +79,9 @@
   </div>
   <div class="form-group">
 
-    <div class="form-group">
-      <label for="exampleSelect1" class="form-label mt-4">Departamento al que pertenece</label>
-      <select class="rounded form-select" id="exampleSelect1" name="departamento">
-        @foreach ($departaments as $departament )
-        <option value="{{ $departament->id }}" @if ($departament->id== $user->departament_id)   selected  @endif> {{ $departament->name }} </option>   
-        @endforeach
-         
-        
-      </select>
-    </div>
-
-    <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
-</br>
-
-  
-
-  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-    @if (Auth::user()->rol==-1)
-    <input type="radio" class="btn-check" name="rol" id="btnradio0" autocomplete="off"  value="-1" @if ($user->rol==-1) checked  @endif>
-    <label class="btn btn-outline-primary" for="btnradio0">Super Administrador</label>
-  
-    @endif
-    @if ($user->id!=1)
-    <input type="radio" class="btn-check " name="rol" id="btnradio1" autocomplete="off"  value="0" @if ($user->rol==0) checked  @endif>
-    <label class="btn btn-outline-primary"  for="btnradio1">Administrador</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off"  value="1"@if ($user->rol==1) checked  @endif>
-    <label class="btn btn-outline-primary" for="btnradio2">Jefe de Departamento</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off"  value="2" @if ($user->rol==2) checked  @endif>
-    <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>  
-    @endif
     
-  </div>
+
+    
   </div>
 </br>
 

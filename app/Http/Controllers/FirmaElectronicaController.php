@@ -56,11 +56,12 @@ return 'Usted no tiene permiso para realizar la accion solicitada';
                 copy($filep12,$rutap12);
                 $certificado=$rutaGuardado.$nombrep12;
                
-               
+            /*   
             $pag=$request->input("pagina");
             $pos=$request->input("posicion");
             $horiz=0;
             $vert=0;
+            
             //Posicion Arriba
             if ($pos==1){
                 $horiz=0;
@@ -111,10 +112,11 @@ return 'Usted no tiene permiso para realizar la accion solicitada';
             }
 
 
-
+*/
                 
                 
-           
+$horiz=198;
+$vert=175;
             $client = new Client([
                 'headers' => [ 'Content-Type' => 'application/json; charset="utf-8"' ]
             ]);
@@ -126,7 +128,7 @@ return 'Usted no tiene permiso para realizar la accion solicitada';
                         "archivop12" => $certificado,
                         "contrasena" => $contraseña,
                         "documentopdf" => $pdfAFirmar,
-                        "pagina"=> $pag,
+                        "pagina"=> "",
                         "h"=> $horiz,
                         "v"=> $vert,                    ]
                 )]

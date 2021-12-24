@@ -297,11 +297,12 @@ return ('Usted no tiene permitido visualizar este documento');
         return  back();
     }
     public function Anexos($id, Request $request){
+        $configuration=Configuration::find(1)->first();
        
         $rules=[
 
             'nombre'=> 'required|min:3',
-            'archivo'=> 'required|mimes:pdf'
+            'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size
             
                     ];
             
@@ -309,7 +310,8 @@ return ('Usted no tiene permitido visualizar este documento');
                         'nombre.required'=>'No ha introducido un nombre para el archivo ',
                         'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
                         'archivo.required'=>'No se ha se leccionado un archivo para subir',
-                        'archivo.mimes'=>'El archivo debe estar en formato PDF'
+                        'archivo.mimes'=>'El archivo debe estar en formato PDF',
+                        'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',
             
                     ];
                     $this->validate($request, $rules, $messages);
@@ -350,6 +352,7 @@ return ('Usted no tiene permitido visualizar este documento');
         return  view('Responder.Enviar')->with (compact('user'))->with (compact('types'));
     }
     public function postResponder(Request $request, $id){
+        $configuration=Configuration::find(1)->first();
         $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
         $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
 
@@ -358,7 +361,7 @@ return ('Usted no tiene permitido visualizar este documento');
         $rules=[
 
 
-'archivo'=> 'required|mimes:pdf',
+'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
 'type'=> 'required|exists:types,id'
 
         ];
@@ -367,7 +370,8 @@ return ('Usted no tiene permitido visualizar este documento');
            
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
-            'type.required'=>'Ingrese un tipo de documento'
+            'type.required'=>'Ingrese un tipo de documento',
+            'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',
 
         ];
         $this->validate($request, $rules, $messages);

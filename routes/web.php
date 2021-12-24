@@ -22,6 +22,10 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 //Inicio Middleware
 Route::group(['middleware'=> 'auth'], function(){
+    //MiPerfil
+    Route::get('/MiPerfil/{id}', [App\Http\Controllers\UserController::class,'editprofile']);
+Route::post('/MiPerfil/{id}', [App\Http\Controllers\UserController::class,'updateprofile']);
+    //FinmI Perfil
 
 //Rutas de Firma Electronica
 Route::get('/ValidarDocFirmado/{id}', [App\Http\Controllers\FirmaElectronicaController::class,'ValidarDoc'])->name('ValidarDocFirmado');

@@ -106,28 +106,30 @@ return('Usted no tiene permisos para realizar esta accion');
         $validacionrol='in:-1';
     }
     $rules = [
-        'identification'=>'required|max:25',
+        'identification'=>'required|max:25|unique:users,identification,'.$user->id,
         'nombres'=>'required|max:255',
         'apellidos'=>'required|max:255',
-        'email'=>'required|email|max:255',
-        'contrasena'=>'nullable|min:6',
+        'email'=>'required|email|max:255|unique:users,email,'.$user->id,
+       
         'rol'=>$validacionrol
     ];
     $messages= [
-     'identification.required'=>'No se ha ingresado una identification',
-     'identification.max'=>'No se ha ingresado una identification valida',
-     'nombres.required'=>'No se han ingresado los nombres del usuario',
-     'nombres.max'=>'No se ha ingresado un nombre valido',
-     'apellidos.required'=>'No se han ingresado los apellidos del usuario',
-     'apellidos.max'=>'No se ha ingresado apellidos validos',
-     'email.required'=>'No se ha ingresado un correo electronico',
-     'email.email'=>'No se ha ingresado un correo electronico valido',
-     'email.max'=>'No se ha ingresado un correo electronico valido',
-     
-     'rol.in'=>'No se ha ingresado un rol valido',
-    ];
+        'identification.required'=>'No se ha ingresado una identification',
+        'identification.max'=>'No se ha ingresado una identification valida',
+        'identification.unique'=>'La identification ingresada ya existe ',
+        'nombres.required'=>'No se han ingresado los nombres del usuario',
+        'nombres.max'=>'No se ha ingresado un nombre valido',
+        'apellidos.required'=>'No se han ingresado los apellidos del usuario',
+        'apellidos.max'=>'No se ha ingresado apellidos validos',
+        'email.required'=>'No se ha ingresado un correo electronico',
+        'email.email'=>'No se ha ingresado un correo electronico valido',
+        'email.max'=>'No se ha ingresado un correo electronico valido',
+        'email.unique'=>'El correo electronico ingresado ya existe ',
+      
+        'rol.in'=>'No se ha ingresado un rol valido',
+       ];
     $this->validate($request, $rules, $messages);
-    $user= User::find($id);
+    
       
        $user->name =$request->input('nombres');
        $user->lastname =$request->input('apellidos');
@@ -138,9 +140,24 @@ return('Usted no tiene permisos para realizar esta accion');
       }
       $user->position_id= $request->input('position');
       $user->treatment_id= $request->input('treatment');
+      $user->identification= $request->input('identification');
+      $cambiocorreo=false;
+      if($user->email==$request->input('email'))
+      {
+        $user->email= $request->input('email');
+      }else{
+        $user->email= $request->input('email');
+        $cambiocorreo=true;
+      }
+    
        $user->rol =$request->input('rol');
        $user->departament_id =$request->input('departamento');
        $user->save();
+       if($cambiocorreo==true){
+        $token = Password::getRepository()->create($user);
+       
+        $user->sendPasswordResetNotification($token);
+       }
        
     return back()->with('notification','El usuario ha sido modificado exitosamente');
    }
@@ -154,4 +171,76 @@ return back()->with('notification','El usuario ha sido dado de baja exitosamente
     $user->restore();
     return back()->with('notification','El usuario ha sido restaurado exitosamente');
        }
+
+       //Mi Perfil
+       public function editprofile($id)
+       {
+           if(Auth::user()->id!=$id){
+
+            return 'Usted no tiene permisos para realizar esta accion';
+           }
+           $user= User::find($id);
+           $positions=Position::all();
+           $treatments=Treatment::all();
+         
+           return view('admin.users.profile')->with(compact('user'))->with(compact('positions'))->with(compact('treatments'));
+       }
+       public function updateprofile($id, Request $request)
+       {
+        $user= User::find($id);
+       
+        $rules = [
+            'identification'=>'required|max:25|unique:users,identification,'.$user->id,
+            'nombres'=>'required|max:255',
+            'apellidos'=>'required|max:255',
+            'email'=>'required|email|max:255|unique:users,email,'.$user->id
+        ];
+        $messages= [
+            'identification.required'=>'No se ha ingresado una identification',
+            'identification.max'=>'No se ha ingresado una identification valida',
+            'identification.unique'=>'La identification ingresada ya existe ',
+            'nombres.required'=>'No se han ingresado los nombres del usuario',
+            'nombres.max'=>'No se ha ingresado un nombre valido',
+            'apellidos.required'=>'No se han ingresado los apellidos del usuario',
+            'apellidos.max'=>'No se ha ingresado apellidos validos',
+            'email.required'=>'No se ha ingresado un correo electronico',
+            'email.email'=>'No se ha ingresado un correo electronico valido',
+            'email.max'=>'No se ha ingresado un correo electronico valido',
+            'email.unique'=>'El correo electronico ingresado ya existe ',
+          
+           
+           ];
+        $this->validate($request, $rules, $messages);
+      
+          
+           $user->name =$request->input('nombres');
+           $user->lastname =$request->input('apellidos');
+          $pasword= $request->input('contrasena');
+          if($pasword)
+          {
+            $user->password = bcrypt($pasword);
+          }
+          $user->position_id= $request->input('position');
+          $user->treatment_id= $request->input('treatment');
+          $user->identification= $request->input('identification');
+          $cambiocorreo=false;
+          if($user->email==$request->input('email'))
+          {
+            $user->email= $request->input('email');
+          }else{
+            $user->email= $request->input('email');
+            $cambiocorreo=true;
+          }
+  
+           $user->save();
+           if($cambiocorreo==true){
+            $token = Password::getRepository()->create($user);
+           
+            $user->sendPasswordResetNotification($token);
+           }
+           
+        return back()->with('notification','El usuario ha sido modificado exitosamente');
+       }
+
+       //Fin Perfil
 }

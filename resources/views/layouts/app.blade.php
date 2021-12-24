@@ -79,10 +79,10 @@
                             </p>
                             <p class=" text-center small text-muted" 
                              >
-                               Privilegios: {{ $roles[Auth::user()->rol+1] }}
+                               Perfil: {{ $roles[Auth::user()->rol+1] }}
                         </p>
                            <div class="dropdown-divider"></div>
-                           <a class="dropdown-item" href="/Recibidos"
+                           <a class="dropdown-item" href="/MiPerfil/{{ Auth::user()->id }}"
                                    >
                                      Mi Perfil
                                  </a>

@@ -21,7 +21,7 @@
     <label for="exampleInputPassword1" class="form-label mt-4">Contraseña del Certificado</label>
     <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Contraseña" name="senha">
   </div>
-
+<!--- Elejir pagina y posicion de firma
   <div class="form-group">
     <label class="col-form-label mt-4" for="Nombre">Ingrese pagina en donde se estampara la Firma</label>
 <input type="number" class="form-control"  id="pagina" name="pagina"
@@ -61,6 +61,7 @@
 
 
   </div>
+Fin posicion y pagina de firma-->
 </br>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Firmar</button>
