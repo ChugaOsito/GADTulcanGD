@@ -55,7 +55,7 @@
   </div>
   <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Inserte una Abreviatura para el Titulo</label>
-    <input type="text" class="form-control" placeholder="Inserte una abreviatura ejm(Ing, Sr, Msc)" id="inputDefault" name="abbreviation" value="{{ old('abbreviation') }}">
+    <input type="text" class="form-control" placeholder="Inserte una abreviatura ejm(Ing, Sr, Msc)" id="inputDefault" name="abbreviation" value="{{ old('abbreviation') }}" onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>
   
 </br>

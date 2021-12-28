@@ -31,7 +31,7 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Departamento Padre</label>
+  <label for="exampleSelect1" class="form-label mt-4">Seleccione un usuario</label>
   <select class="form-select" id="exampleSelect1" name="usuario">
     @foreach ($users as $user )
     <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }}

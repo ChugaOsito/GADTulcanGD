@@ -67,7 +67,7 @@
   
   <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Identificador del Departamento</label>
-    <input type="text" class="form-control" placeholder="Inserte un identificador para el departameto" id="inputDefault" name="identifier" value="{{ old('identifier') }}">
+    <input type="text" class="form-control" placeholder="Inserte un identificador para el departameto" id="inputDefault" name="identifier" value="{{ old('identifier') }}" onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>  
 </br>
 

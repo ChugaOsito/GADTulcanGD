@@ -67,8 +67,8 @@ class UserController extends Controller
        $user->identification= $request->input('identification');
        $user->position_id= $request->input('position');
        $user->treatment_id= $request->input('treatment');
-       $user->name =$request->input('nombres');
-       $user->lastname =$request->input('apellidos');
+       $user->name =strtoupper($request->input('nombres'));
+       $user->lastname =strtoupper($request->input('apellidos'));
        $user->email =$request->input('email');
        $user->password = bcrypt($request->input('contrasena'));
        $user->rol =$request->input('rol');
@@ -131,8 +131,8 @@ return('Usted no tiene permisos para realizar esta accion');
     $this->validate($request, $rules, $messages);
     
       
-       $user->name =$request->input('nombres');
-       $user->lastname =$request->input('apellidos');
+       $user->name =strtoupper($request->input('nombres'));
+       $user->lastname =strtoupper($request->input('apellidos'));
       $pasword= $request->input('contrasena');
       if($pasword)
       {
@@ -213,8 +213,8 @@ return back()->with('notification','El usuario ha sido dado de baja exitosamente
         $this->validate($request, $rules, $messages);
       
           
-           $user->name =$request->input('nombres');
-           $user->lastname =$request->input('apellidos');
+           $user->name =strtoupper($request->input('nombres'));
+           $user->lastname =strtoupper($request->input('apellidos'));
           $pasword= $request->input('contrasena');
           if($pasword)
           {

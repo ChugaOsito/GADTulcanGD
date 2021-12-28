@@ -7,6 +7,16 @@
                 <div class="card-header">Firma Electronica</div>
 
                 <div class="card-body bg-light text-black">
+                  @if (isset($errors))
+                  <div class="alert alert-danger">
+                  <ul>
+                    
+                      <li> {{ $errors }}</li>
+                   
+                  </ul>
+                  </div>
+                    
+                  @endif
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 

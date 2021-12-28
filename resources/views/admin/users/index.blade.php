@@ -71,17 +71,18 @@
 
 <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Numero de Cedula</label>
-    <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification" value="{{ old('identification') }}">
+    <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification" value="{{ old('identification') }}" 
+    minlength="10" maxlength="10" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
   </div>
   
   <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Apellidos</label>
-    <input type="text" class="form-control" placeholder="Inserte Apellidos" id="inputDefault" name="apellidos" value="{{ old('apellidos') }}">
+    <input type="text" class="form-control" placeholder="Inserte Apellidos" id="inputDefault" name="apellidos" value="{{ old('apellidos') }}"  onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>
   
   <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Nombres</label>
-    <input type="text" class="form-control" placeholder="Inserte Nombres" id="inputDefault" name="nombres" value="{{ old('nombres') }}">
+    <input type="text" class="form-control" placeholder="Inserte Nombres" id="inputDefault" name="nombres" value="{{ old('nombres') }}"  onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>
 
   <div class="form-group">

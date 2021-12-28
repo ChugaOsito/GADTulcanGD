@@ -13,7 +13,7 @@
 <div class="alert alert-dismissible alert-warning">
   
   <h4 class="alert-heading">Lo sentimos</h4>
-  <p class="mb-0">No se han encontrado firmas electronicas validas en este documento <a href="/Documentos" class="alert-link"> Volver</a>.</p>
+  <p class="mb-0">No se han encontrado firmas electronicas validas en este documento <a href="javascript:history.back()" class="alert-link"> Volver</a>.</p>
 </div>
 
 

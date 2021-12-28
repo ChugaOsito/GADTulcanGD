@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Document;
+use Illuminate\Support\Facades\Auth;
 use ZipArchive;
 use File;
 
@@ -15,6 +16,7 @@ class ZipController extends Controller
         //$id_departamento = Auth::user()->departament_id;
         
         $users=\DB::table('users')
+        ->where('departament_id','=',Auth::user()->departament_id)
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')

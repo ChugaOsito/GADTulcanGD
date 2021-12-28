@@ -23,6 +23,7 @@ class EnviarDocController extends Controller
         $MiDepartamento=Departament::find(Auth::user()->departament_id);
         
         $users=\DB::table('users')
+        ->where('rol','>',-1)
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
@@ -156,6 +157,7 @@ return ('Usted no tiene permitido visualizar este documento');
         $MiDepartamento=Departament::find(Auth::user()->departament_id);
         
         $users=\DB::table('users')
+        ->where('rol','>',-1)
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')

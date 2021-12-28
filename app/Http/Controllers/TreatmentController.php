@@ -36,7 +36,7 @@ class TreatmentController extends Controller
         $this->validate($request, $rules, $messages);
         $treatments= new Treatment();
         $treatments->name= $request->input('name');
-        $treatments->abbreviation= $request->input('abbreviation');
+        $treatments->abbreviation= strtoupper($request->input('abbreviation'));
         $treatments->save();
        
  
@@ -51,8 +51,9 @@ class TreatmentController extends Controller
     }
     public function update($id, Request $request)
     {
+        $treatments= Treatment::find($id);
         $rules = [
-            'name'=>'required|max:25|min:2|unique:treatments',
+            'name'=>'required|max:25|min:2|unique:treatments,name,'.$treatments->id,
             'abbreviation'=>'required|max:25|min:1'
             
         ];
@@ -70,7 +71,7 @@ class TreatmentController extends Controller
      $this->validate($request, $rules, $messages);
      $treatments= Treatment::find($id);
         $treatments->name= $request->input('name');
-        $treatments->abbreviation= $request->input('abbreviation');
+        $treatments->abbreviation= strtoupper($request->input('abbreviation'));
         $treatments->save();
         
      return back()->with('notification','La informacion ha sido modificado exitosamente');

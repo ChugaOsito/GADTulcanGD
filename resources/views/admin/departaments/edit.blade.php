@@ -32,7 +32,9 @@
                       <label for="exampleSelect1" class="form-label mt-4">Departamento Padre</label>
                       <select class="form-select" id="exampleSelect1" name="padre">
                         @foreach ($father_departaments as $father_departament )
-                        <option value="{{ $father_departament->id }}">{{ $father_departament->name }}</option>   
+                        <option value="{{ $father_departament->id }}" @if ($father_departament->id==$departament->father_departament_id)
+                          selected
+                        @endif>{{ $father_departament->name }}</option>   
                         @endforeach
                          
                         
@@ -45,7 +47,7 @@
                       </div>
                       <div class="form-group">
                         <label class="col-form-label mt-4" for="inputDefault">Identificador del Departamento</label>
-                        <input type="text" class="form-control" placeholder="Inserte un identificador para el departameto" id="inputDefault" name="identifier" value="{{ old('identifier', $departament->identifier) }}">
+                        <input type="text" class="form-control" placeholder="Inserte un identificador para el departameto" id="inputDefault" name="identifier" value="{{ old('identifier', $departament->identifier) }}" onkeyup="javascript:this.value=this.value.toUpperCase();">
                       </div> 
                       
                     </br>

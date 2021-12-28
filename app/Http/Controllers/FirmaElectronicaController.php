@@ -117,26 +117,46 @@ return 'Usted no tiene permiso para realizar la accion solicitada';
                 
 $horiz=198;
 $vert=175;
-            $client = new Client([
-                'headers' => [ 'Content-Type' => 'application/json; charset="utf-8"' ]
-            ]);
+try{
+
+    $client = new Client([
+        'headers' => [ 'Content-Type' => 'application/json; charset="utf-8"' ]
+    ]);
+    
+    $response = $client->post('http://localhost:8080/Prototipo_Firmador_Api/API/Firmarpdf',
+        ['body' => json_encode(
+            [
+                
+                "archivop12" => $certificado,
+                "contrasena" => $contraseña,
+                "documentopdf" => $pdfAFirmar,
+                "pagina"=> "",
+                "h"=> $horiz,
+                "v"=> $vert,                    ]
+        )]
+    );
+   
+    $DocumentoFirmado=json_decode($response->getBody(),true);
+    if($DocumentoFirmado==NULL){
+        unlink($certificado);
+        return back()->with('errors','Los datos son incorrectos');
+    }
+    $documents->path=$DocumentoFirmado['docFirmado'];
+    $documents->save();
+
+}catch(\GuzzleHttp\Exception\ConnectException $e){
+    unlink($certificado);
+    return 'En este momento no es posible conectarse al modulo de firmas electronicas, por favor intentelo mas tarde';
+
+}
+catch(\GuzzleHttp\Exception\ClientException $e){
+    unlink($certificado);
+    return 'Por este momento no es posible conectarse al modulo de firmas electronicas, por favor intentelo mas tarde';
+
+}
             
-            $response = $client->post('http://localhost:8080/Prototipo_Firmador_Api/API/Firmarpdf',
-                ['body' => json_encode(
-                    [
-                        
-                        "archivop12" => $certificado,
-                        "contrasena" => $contraseña,
-                        "documentopdf" => $pdfAFirmar,
-                        "pagina"=> "",
-                        "h"=> $horiz,
-                        "v"=> $vert,                    ]
-                )]
-            );
-           
-            $DocumentoFirmado=json_decode($response->getBody(),true);
-            $documents->path=$DocumentoFirmado['docFirmado'];
-            $documents->save();
+            unlink($certificado);
+            unlink($pdfAFirmar);
 
             //Lo siguiente sirve para mostar el PDF Firmado, se usara despues
             //return response()->file($documents->path);

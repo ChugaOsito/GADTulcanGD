@@ -35,7 +35,7 @@
 
 <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Nombre del Cargo</label>
-    <input type="text" class="form-control" placeholder="Inserte un cargo" id="inputDefault" name="name" value="{{ old('name', $positions->name) }}">
+    <input type="text" class="form-control" placeholder="Inserte un cargo" id="inputDefault" name="name" value="{{ old('name', $positions->name) }}" onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>
   
   

@@ -33,7 +33,7 @@ class PositionController extends Controller
         ];
         $this->validate($request, $rules, $messages);
         $positions= new Position();
-        $positions->name= $request->input('name');
+        $positions->name= strtoupper($request->input('name'));
        
         $positions->save();
        
@@ -65,7 +65,7 @@ class PositionController extends Controller
         ];
         $this->validate($request, $rules, $messages);
         $position= Position::find($id);
-        $position->name= $request->input('name');
+        $position->name= strtoupper($request->input('name'));
        
         $position->save();
         

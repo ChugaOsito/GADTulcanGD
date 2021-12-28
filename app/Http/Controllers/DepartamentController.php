@@ -38,7 +38,7 @@ class DepartamentController extends Controller
        $departaments= new Departament();
        $departaments->name= $request->input('name');
        $departaments->father_departament_id= $request->input('padre');
-       $departaments->identifier= $request->input('identifier');
+       $departaments->identifier= strtoupper($request->input('identifier'));
        $departaments->save();
 
        return back()->with('notification','El departamento ha sido registrado exitosamente');
@@ -73,7 +73,7 @@ class DepartamentController extends Controller
       
     $departament->name= $request->input('name');
     $departament->father_departament_id= $request->input('padre');
-    $departament->identifier=$request->input('identifier');
+    $departament->identifier=strtoupper($request->input('identifier'));
     $departament->save();
        
     return back()->with('notification','El departamento ha sido modificado exitosamente');

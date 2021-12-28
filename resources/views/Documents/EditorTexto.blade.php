@@ -117,12 +117,14 @@
                         
                                 <div class="form-group">
                                     <label class="col-form-label mt-4" for="inputDefault">Objeto</label>
-                                    <input name="objeto" type="text" class="form-control" placeholder="Inserte Objeto del documento" id="inputDefault">
+                                    <input name="objeto" type="text" class="form-control" placeholder="Inserte Objeto del documento" id="inputDefault" value="{{ old('objeto') }}">
                                   </div>
 
                                 <div class="form-group">
                                     <label for="exampleTextarea" class="form-label mt-4">Cuerpo</label>
-                                    <textarea name="cuerpo" class="form-control" id="exampleTextarea" rows="20"></textarea>
+                                    <textarea name="cuerpo" class="form-control" id="exampleTextarea" rows="20" >
+                                      {{ old('cuerpo') }}
+                                    </textarea>
                                   </div>
                         
                                 </br>

@@ -44,6 +44,9 @@
     
     @endforeach
   </optgroup>
+  @if (Auth::user()->rol==1)
+    
+  
     @php
    
     $otros_usuarios=MasUsuarios($Father_departament->id);
@@ -102,7 +105,7 @@
   
     @endforeach
   </optgroup>  
-    
+  @endif
   </select>
 </div>
 

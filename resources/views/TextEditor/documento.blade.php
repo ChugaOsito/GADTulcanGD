@@ -27,11 +27,13 @@
                 text-align: center;
                 line-height: 35px;
             }
+            .page_break { margin-bottom: 125px; }
 
-            footer {
+            .firma {
                 
-                position: fixed; 
-                bottom: 113,44px; 
+                position: absolute; 
+                
+                bottom: 115px; 
                 left: 0px; 
                 right: 0px;
                 height: 100px; 
@@ -71,12 +73,12 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     <h1 align="right"><b>{{ $tipo }} Nro {{ $numeracion }}</b></h1>
     <br>
     
-    
-    @if (@isset($receptores))
-        
     @php
     $i=-1;    
     @endphp
+    @if (@isset($receptores))
+        
+    
     
        @foreach ($receptores as $receptor )
        @php
@@ -99,12 +101,17 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
        
        @endforeach 
     @endif
-
+    @if ($i==-1)
+    <h1 class="receptor"><b>PARA:  </b></h1>  
+    @endif
     @if (@isset($receptores_departamentos))
         
     
        @foreach ($receptores_departamentos as $receptor_departamento )
-       <h1 class="receptor">  Departamento de {{ $receptor_departamento->name }}</h1>    <br>
+       @if ($i!=-1)
+       <h1 class="receptor" style="color:white;"><b>PARA:  </b></h1>
+       @endif
+       <h1 class="receptor">  DEPARTAMENTO DE {{ strtoupper($receptor_departamento->name) }}</h1>    <br>
        
        @endforeach 
     @endif
@@ -113,12 +120,15 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     <h1><b> OBJETO : {{ $objeto }}</b></h1>
     <br>
     <br>
-    <h1>{{ $cuerpo }}</h1>
-    <footer>
+    <h1 class="page_break">{{ $cuerpo }}</h1>
+    <div class="firma">
         <h1>Atentamente</h1>
+       
+        
+
     <h1>______________</h1>
     <h1>{{ $apellido }} {{ $nombre }} </h1>
-    </footer>
+    </div >
     
 </body>
 </html>
