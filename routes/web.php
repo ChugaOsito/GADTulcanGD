@@ -92,7 +92,7 @@ Route::group(['middleware'=> 'superadmin', 'namespace'=>'Admin'], function(){
         return redirect('/Dashboard');
     });
   
-Route::get('/Dashboard', [App\Http\Controllers\DashboardController::class,'index']);
+Route::get('/Dashboard', [App\Http\Controllers\DashboardController::class,'index'])->name('Dashboard');
 
 //Departamento
 Route::get('/departamentos', [App\Http\Controllers\DepartamentController::class,'index']);

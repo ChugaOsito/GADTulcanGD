@@ -108,6 +108,8 @@ class EnviarDocController extends Controller
 
     }
     public function BandejaSalida(){
+        if(auth()->user()->rol == -1)
+        return redirect()->route('Dashboard');
         /*
          $usuarios= \DB::table('users')->join('llamadas','users.id','=','llamadas.user_id')
         ->select('users.id AS cedula','users.name','llamadas.*')-> get();
@@ -124,6 +126,9 @@ class EnviarDocController extends Controller
 
     }
     public function BandejaEntrada(){
+        if(auth()->user()->rol == -1)
+        return redirect()->route('Dashboard');
+       
         /*
          $usuarios= \DB::table('users')->join('llamadas','users.id','=','llamadas.user_id')
         ->select('users.id AS cedula','users.name','llamadas.*')-> get();
@@ -254,7 +259,9 @@ return ('Usted no tiene permitido visualizar este documento');
 //Carpeta
      public function FormularioCarpeta($id){
         if($this->UsuarioPropietario($id)==Auth::user()->id){
-            $folders=Folder::all();
+            $folders=\DB::table('folders')
+            ->where('departament_id', '=', Auth::user()->departament_id)
+            ->get();
             $document=Document::find($id);
             $identificador= $id;
             return  view('Documents.Folder')->with (compact('document'))->with (compact('folders'))->with (compact('identificador'));
@@ -499,12 +506,21 @@ file_put_contents( "pdf/".$nombrepdf, $output);
     function Permiso($id_Documento){
 
         $documento=Document::find($id_Documento);
+
+        $carpeta=\DB::table('documents')
+        ->join('folders','documents.folder_id','=','folders.id')
+        ->where('documents.id','=',$id_Documento)
+        
+        
+        ->first();
+        
+/*
         $departamento= \DB::table('document_user')
         ->where('document_id','=',$id_Documento)
         ->where('type','=','E')
         ->join('users','document_user.user_id','=','users.id')
         ->first();
-       
+  */     
 
         $destinatario= \DB::table('documents')
         ->join('document_user','documents.id','=','document_user.document_id')
@@ -514,7 +530,7 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         ->first();
     
 
-        if(($departamento->departament_id ==Auth::user()->departament_id)  || ($destinatario !==  null) || ($documento->public==  1) )
+        if(($carpeta->departament_id==Auth::user()->departament_id)||/*($departamento->departament_id ==Auth::user()->departament_id)  || */($destinatario !==  null) || ($documento->public==  1) )
     {
     return true;
     }
