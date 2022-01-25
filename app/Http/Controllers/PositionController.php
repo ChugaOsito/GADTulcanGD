@@ -13,7 +13,7 @@ class PositionController extends Controller
      $positions=Position::withTrashed()->get();
  
         
-        return view('positions.index')->with(compact('positions'));
+        return view('Positions.index')->with(compact('positions'));
     }
     public function store(Request $request )
     {

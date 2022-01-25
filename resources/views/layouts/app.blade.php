@@ -132,5 +132,24 @@
     --}}
 
     @yield('jsDataTable')
+    <footer class="footer bg-light">
+        <img class="footer-item img-thumbnail img-fluid rounded" style="max-width: 4rem;" src="/images/UPEC.png" alt="logo"/>
+       <h5 class="footer-item"> Autores: Chuga Portilla Kevin Alexander - Tates Imbaquingo Lenin Alexander (2022)</h5> 
+    </footer>
 </body>
 </html>
+<style>
+  .footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+ 
+  text-align: center;
+}
+    .footer-item{
+        display: inline-block;
+        color: black;
+        
+    }
+</style>

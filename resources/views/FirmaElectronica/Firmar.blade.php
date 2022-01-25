@@ -7,7 +7,7 @@
                 <div class="card-header">Firma Electronica</div>
 
                 <div class="card-body bg-light text-black">
-                  @if (isset($errors))
+                  @if ((isset($errors)) && strlen($errors)>=10)
                   <div class="alert alert-danger">
                   <ul>
                     

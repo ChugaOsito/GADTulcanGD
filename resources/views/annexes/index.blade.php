@@ -60,7 +60,7 @@
       <th>ID</th>
       <th>Nombre</th>
       <th>Opciones</th>
-      <th>Opciones</th>
+     
       
     </tr>
   </thead>
@@ -118,21 +118,7 @@
 @endif
         
       </td>
-      <td>
-        <a href="#" class="btn btn-primary btn-sm" title="Editar">Editar
-          <span class="glyphicon glyphicon-pencil"></span>
-        </a>
-
-        <a href="#" class="btn btn-danger btn-sm" title="Dar de baja">
-         Dar de baja
-          <span class="glyphicon glyphicon-remove"></span>
-        </a>
-
-        <a href="/VerAnexo/{{$annex->id}}" class="btn btn-primary btn-sm" title="Editar">Visualizar
-          <span class="glyphicon glyphicon-pencil"></span>
-        </a>
-        
-      </td>
+    
     </tr>
     @endforeach
   </tbody>

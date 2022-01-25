@@ -13,7 +13,7 @@ class TreatmentController extends Controller
      $treatments=Treatment::withTrashed()->get();
  
         
-        return view('treatments.index')->with(compact('treatments'));
+        return view('Treatments.index')->with(compact('treatments'));
     }
     public function store(Request $request )
     {

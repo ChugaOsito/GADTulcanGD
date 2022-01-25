@@ -20,13 +20,13 @@ class DepartamentController extends Controller
    public function store(Request $request )
    {
        $rules = [
-           'name'=>'required|max:25|min:3|unique:departaments',
+           'name'=>'required|max:75|min:3|unique:departaments',
            'identifier'=>'required|max:10|min:1|unique:departaments'
            
        ];
        $messages= [
         'name.required'=>'No se ha ingresado un nombre',
-        'name.max'=>'El nombre de departamento no puede tener mas de 25 caracteres',
+        'name.max'=>'El nombre de departamento no puede tener mas de 75 caracteres',
         'name.min'=>'El nombre de departamento no puede tener menos de 3 caracteres',
         'name.unique'=>'El nombre que ha elejido ya esta en uso',
         'identifier.required'=>'No se ha ingresado un identificador',
@@ -54,13 +54,13 @@ class DepartamentController extends Controller
    {
     $departament= Departament::find($id);
     $rules = [
-        'name'=>'required|max:25|min:3|unique:departaments,name,'.$departament->id,
+        'name'=>'required|max:75|min:3|unique:departaments,name,'.$departament->id,
         'identifier'=>'required|max:10|min:1|unique:departaments,identifier,'.$departament->id
         
     ];
     $messages= [
      'name.required'=>'No se ha ingresado un nombre',
-     'name.max'=>'El nombre de departamento no puede tener mas de 25 caracteres',
+     'name.max'=>'El nombre de departamento no puede tener mas de 75 caracteres',
      'name.min'=>'El nombre de departamento no puede tener menos de 3 caracteres',
      'name.unique'=>'El nombre que ha elejido ya esta en uso',
      'identifier.required'=>'No se ha ingresado un identificador',
