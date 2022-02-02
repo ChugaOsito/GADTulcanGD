@@ -26,7 +26,12 @@ Route::group(['middleware'=> 'auth'], function(){
     Route::get('/MiPerfil/{id}', [App\Http\Controllers\UserController::class,'editprofile']);
 Route::post('/MiPerfil/{id}', [App\Http\Controllers\UserController::class,'updateprofile']);
     //FinmI Perfil
+//Terminar proceso
+Route::get('/TerminarProceso/{id}', [App\Http\Controllers\EnviarDocController::class,'Terminar'])->name('Terminar');
 
+Route::get('/AbrirProceso/{id}', [App\Http\Controllers\EnviarDocController::class,'Reabrir'])->name('Reabrir');
+
+//Fin terminar proceso
 //Rutas de Firma Electronica
 Route::get('/ValidarDocFirmado/{id}', [App\Http\Controllers\FirmaElectronicaController::class,'ValidarDoc'])->name('ValidarDocFirmado');
 Route::get('/FirmarDoc/{id}', [App\Http\Controllers\FirmaElectronicaController::class,'FormularioFirma'])->name('FormFirmarDoc');

@@ -32,15 +32,15 @@
 </div>
 
 <div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Usuario Receptor</label>
+  <label for="exampleSelect1" class="form-label mt-4">Para:</label>
   <select class="rounded form-select select2" id="exampleSelect1" name="receptor[]" multiple="multiple">
     <optgroup label="Mi Departamento">
     <option value="{{ -$MiDepartamento->id }} "> Todo el departamento de {{ $MiDepartamento->name }} </option> 
     @foreach ($users as $user )
-   
-    <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }}
+   @if($user->id!=Auth::user()->id)
+    <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }} DE {{ strtoupper($user->departament_name) }}
        </option>   
-   
+   @endif
     
     @endforeach
   </optgroup>
@@ -55,7 +55,7 @@
   <optgroup label="Departamento Superior">
   @foreach ($otros_usuarios as $otro_usuario )
   
-  <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}
+  <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }} DE {{ strtoupper($otro_usuario->departament_name) }}
  
   @endforeach    
 </optgroup>
@@ -76,7 +76,7 @@
     @foreach ($otros_usuarios as $otro_usuario )
     @if ($otro_usuario->id!=Auth::user()->id)
     
-    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}
+    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }} DE {{ strtoupper($otro_usuario->departament_name) }}
   
       @endif
     @endforeach 
@@ -97,7 +97,7 @@
     @if (isset($otros_usuarios))
     
     @foreach ($otros_usuarios as $otro_usuario )
-    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}
+    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }} DE {{ strtoupper($otro_usuario->departament_name) }}
   
     @endforeach  
      
@@ -110,8 +110,8 @@
 </div>
 
   <div class="form-group">
-  <label class="col-form-label mt-4" for="inputDefault">Nombre del Documento</label>
-  <input type="text" class="rounded form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
+  <label class="col-form-label mt-4" for="inputDefault">Descripción del Documento</label>
+  <input type="text" class="rounded form-control" placeholder="Inserte una breve descripción" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
 </div>
 
 <div class="form-group">
@@ -134,10 +134,12 @@
 </div>
 @php
 function MasUsuarios($id_Departamento){
-  $masusuarios= \DB::table('users')->where('departament_id', '=', $id_Departamento)->where('rol', '=', 1)
-->join('positions','positions.id','=','users.position_id')
+  $masusuarios= \DB::table('users')->where('departament_id', '=', $id_Departamento)
+  ->where('rol', '=', 1)->where('users.deleted_at', '=', NULL)
+  ->join('departaments','departaments.id','=','users.departament_id')
+  ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
-        ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+        ->select('users.*', 'departaments.name as departament_name','positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
 ->get();
 return $masusuarios;
 }

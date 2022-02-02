@@ -16,16 +16,7 @@
                   @endif
 
 
-                  @if (count ($errors)>0)
-                  <div class="alert alert-danger">
-                  <ul>
-                    @foreach ($errors->all() as $error )
-                      <li> {{ $error }}</li>
-                    @endforeach
-                  </ul>
-                  </div>
-                    
-                  @endif
+                 
 
                    <!-- Modal -->
         <!-- Trigger the modal with a button -->
@@ -42,7 +33,16 @@
                     </div>
                     <div class="modal-body">
 
-
+                      @if (count ($errors)>0)
+                      <div class="alert alert-danger">
+                      <ul>
+                        @foreach ($errors->all() as $error )
+                          <li> {{ $error }}</li>
+                        @endforeach
+                      </ul>
+                      </div>
+                        
+                      @endif
 
 
     <form action="" method="post" enctype="multipart/form-data">
@@ -118,5 +118,11 @@
 </div>
 </div>
 </div>
+<script type="text/javascript">
+  @if (count($errors) > 0)
+      $('#myModal').modal('show');
+  @endif
+  </script>
+
 @endsection
     

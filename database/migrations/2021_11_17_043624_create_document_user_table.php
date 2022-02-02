@@ -26,6 +26,7 @@ class CreateDocumentUserTable extends Migration
 
             
             $table->timestamps();
+            $table->boolean('available')->default(1);
         });
     }
 

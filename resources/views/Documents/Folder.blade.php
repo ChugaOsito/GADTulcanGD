@@ -9,17 +9,46 @@
                 <div class="card-body bg-light text-black">
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
+<p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
+<p> <b>Descripción:</b> {{ $document->name }}</p>
+
 
 <div class="form-group">
-    <label for="exampleSelect1" class="form-label mt-4">Carpeta</label>
-    <select class="form-select" id="exampleSelect1" name="carpeta">
-      @foreach ($folders as $folder )
-      <option value="{{ $folder->id }}">{{ $folder->name }}</option>   
-      @endforeach
-       
-      
-    </select>
-  </div>
+  <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
+  <select class="form-select" id="exampleSelect1" name="carpeta">
+    @foreach ($carpetas as $carpeta )
+
+    @if ($carpeta->deleted_at==NULL)
+    
+    <option class="dropdown-item " value="{{ $carpeta->id }}" > &#128193; {{ $carpeta->name }}</option>  
+
+    @php
+       $hijos = \DB::table('folders AS d1')
+        ->where('d1.father_folder_id','=',$carpeta->id)
+        ->where('d1.departament_id','=',Auth::user()->departament_id)
+        ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+    ->join('departaments AS d3','d3.id','=','d1.departament_id')
+    ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+    ->orderBy('updated_at','DESC')
+->get();
+
+@endphp
+    @if ($hijos != NULL)
+    @php
+        $nivel=2;
+    @endphp
+    @include('admin.folders.tree',['hijos' => $hijos,'nivel'=>$nivel])   
+    
+    @endif
+    @endif
+     
+    @endforeach
+    
+  </select>
+</div>
+
+
+
   <label class="col-form-label mt-4" for="Nombre">¿Desea hacer este documento publico?</label>
 </br>
 

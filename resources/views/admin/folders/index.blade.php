@@ -17,16 +17,7 @@
                   @endif
 
 
-                  @if (count ($errors)>0)
-                  <div class="alert alert-danger">
-                  <ul>
-                    @foreach ($errors->all() as $error )
-                      <li> {{ $error }}</li>
-                    @endforeach
-                  </ul>
-                  </div>
-                    
-                  @endif
+                 
 
                    <!-- Trigger the modal with a button -->
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="fas fa-plus fa-1x "> Nueva Carpeta</i></button>
@@ -41,23 +32,53 @@
                         <h4 class="modal-title text-dark">Crear Nueva Carpeta</h4>
                     </div>
                     <div class="modal-body">
-
+                      @if (count ($errors)>0)
+                      <div class="alert alert-danger">
+                      <ul>
+                        @foreach ($errors->all() as $error )
+                          <li> {{ $error }}</li>
+                        @endforeach
+                      </ul>
+                      </div>
+                        
+                      @endif
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
   <select class="form-select" id="exampleSelect1" name="padre">
-    @foreach ($folders as $folder )
-    @if ($folder->deleted_at==NULL)
-    <option value="{{ $folder->id }}">{{ $folder->name }}</option>    
+    @foreach ($carpetas as $carpeta )
+
+    @if ($carpeta->deleted_at==NULL)
+    
+    <option class="dropdown-item " value="{{ $carpeta->id }}"> &#128193; {{ $carpeta->name }}</option>  
+
+    @php
+       $hijos = \DB::table('folders AS d1')
+        ->where('d1.father_folder_id','=',$carpeta->id)
+        ->where('d1.departament_id','=',Auth::user()->departament_id)
+        ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+    ->join('departaments AS d3','d3.id','=','d1.departament_id')
+    ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+    ->orderBy('updated_at','DESC')
+->get();
+
+@endphp
+    @if ($hijos != NULL)
+    @php
+        $nivel=2;
+    @endphp
+    @include('admin.folders.tree',['hijos' => $hijos,'nivel'=>$nivel])   
+    
+    @endif
     @endif
      
     @endforeach
-     
     
   </select>
 </div>
+
 
 <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Nombre de la Carpeta</label>
@@ -126,5 +147,11 @@
 </div>
 </div>
 </div>
+<script type="text/javascript">
+  @if (count($errors) > 0)
+      $('#myModal').modal('show');
+  @endif
+  </script>
+
 @endsection
     

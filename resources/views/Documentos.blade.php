@@ -3,20 +3,32 @@
 @section('content')
 <div class="rounded-3 card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
-            
-                <div class="card-header">Documentos Internos del GAD de Tulcan</div>
-
+  @if (request()->is('Seguimiento/*'))
+                <div class="card-header">Seguimiento de documentos</div>
+@elseif (request()->is('Enviados'))
+<div class="card-header">Archivos Enviados</div>
+@elseif (request()->is('Recibidos'))
+<div class="card-header">Bandeja de Entrada</div>
+@else
+<div class="card-header">Documentos Internos del GAD de Tulcan</div>
+@endif
                 <div class="card-body bg-light text-black">
 
                   
 
-    
+                  @if (request()->is('Seguimiento/*'))
+                  <p><b>{{ $tipo->name}} Numero: </b> {{ $documento->number }}</p>
+<p> <b>Descripción:</b> {{ $documento->name }}</p>
+                  @endif  
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
+      @if (request()->is('Seguimiento/*'))
+      <th>Transaccion</th>
+      @endif
       <th>Numero</th>
       <th>Tipo</th>
-      <th>Nombre del Documento</th>
+      <th>Descripción</th>
       <th>Fecha de Creacion</th>
       <th>Opciones</th>
       
@@ -24,6 +36,8 @@
   </thead>
   <tbody>
     <!-- Inicio Carpetas -->
+    
+
     @if (request()->is('Documentos/*'))
     @foreach ($folders as $folder)
     @if ($folder->id>1)
@@ -64,10 +78,19 @@ $idDelDocumento= $document->id;
         $idDelDocumento=$document->document_id;
       }
     @endphp
-    <tr>
+    <tr @if (isset($document->read) && $document->read==0)
+      class="read"
+    @endif>
      
      
-      
+    @if (request()->is('Seguimiento/*'))
+    @if ($document->tipo=='E')
+    <td>Enviado</td>
+    @else
+    <td>Recibido</td>
+    @endif
+    
+    @endif
       <td>{{ $document->number }}</td>
       <td>{{ $document->type }}</td>
       <td>{{ $document->name }}</td>
@@ -85,31 +108,59 @@ $idDelDocumento= $document->id;
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title text-dark">Detalles del Documento</h4>
+                        <h4 class="modal-title text-dark"><b>{{ $document->type}} Numero: {{ $document->number }} </b></h4>
                     </div>
                     <div class="modal-body">
+                      <p><b>Descripción:</b>  {{ $document->name }}</p>
                       @if (request()->is('Recibidos'))
+@php
+  $disponible= \DB::table('document_user')->where('document_id', '=', $document->document_id)->first();
+@endphp
+@if ($disponible->available==1)
+  
 
                       <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                        <button type="button" class="btn btn-sm btn-primary">Responder</button>
+                      
                         <div class="btn-group" role="group">
-                          <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                          <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Responder</button>
                           <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" style="">
                             <a class="dropdown-item" href="/ResponderDoc/{{$idDelDocumento}}">Subir Documento</a>
-                            <a class="dropdown-item" href="/EditorResponder/{{$idDelDocumento}}">Editar Documento</a>
+                            <a class="dropdown-item" href="/EditorResponder/{{$idDelDocumento}}">Redactar Documento</a>
                           </div>
                         </div>
                       </div>
-
-                    
+                      @endif
+                    @php
+                      
+  $leido= \DB::table('documents')->where('id', '=', $idDelDocumento)  ->update(['read' => 1]);
+                    @endphp
                       
                       @endif
 
                       @if (request()->is('Enviados'))
                       <a href="/FirmarDoc/{{$idDelDocumento}}" class="btn btn-primary " title="Editar">
+                        
                         <i class="fas fa-edit fa-1x"> Editar</i>
                          
                        </a>
+@if ($document->available==0)
+<a href="/AbrirProceso/{{$idDelDocumento}}" class="btn btn-success " title="Reabrir Proceso">
+                        
+                        
+  <i class="fas fa-check-circle fa-1x">Reabrir Proceso</i>
+   
+ </a>
+  @else
+  <a href="/TerminarProceso/{{$idDelDocumento}}" class="btn btn-danger " title="Cerrar Proceso">
+                        
+    <i class="fas fa-times-circle fa-1x">Cerrar Proceso</i>
+     
+   </a>
+@endif
+                      
+
+                      
+
                       @endif
                        
                       <a href="/Anexos/{{$idDelDocumento}}" class="btn btn-info " title="Ver Anexos">
@@ -145,12 +196,12 @@ $idDelDocumento= $document->id;
                           @php
                           $emisores=ObtenerUsuarios($idDelDocumento,'E');
                         @endphp
-                         <h5 class="text-dark">Emisor</h5>
+                         <h5 class="text-dark">De:</h5>
                          <table class="table table-hover table-bordered">
                            <thead>
                              <tr>
-                               <th>Cedula del Emisor</th>
-                               <th>Nombre del Emisor</th>
+                               <th>Cedula</th>
+                               <th>Nombre</th>
                                <th>Cargo</th>
                                
                              </tr>
@@ -163,7 +214,7 @@ $idDelDocumento= $document->id;
                              <tr>
                                <td>{{ $emisor->identification }}</td>
                                  <td>{{ $emisor->treatment_abbreviation }} {{ $emisor->name }} {{ $emisor->lastname }}</td>
-                                 <td>{{ $emisor->position_name }}</td>
+                                 <td>{{ $emisor->position_name }} DE {{ strtoupper($emisor->departament_name) }}</td>
                                </tr>
                              @endforeach
                            
@@ -172,12 +223,12 @@ $idDelDocumento= $document->id;
 
                           
 
-                          <h5 class="text-dark">Receptores</h5>
+                          <h5 class="text-dark">Para:</h5>
                           <table class="table table-hover table-bordered">
                             <thead>
                               <tr>
-                                <th>Cedula del Receptor</th>
-                                <th>Nombre del Receptor</th>
+                                <th>Cedula</th>
+                                <th>Nombre</th>
                                 <th>Cargo</th>
                                 
                               </tr>
@@ -190,7 +241,7 @@ $idDelDocumento= $document->id;
                               <tr>
                                 <td>{{ $receptor->identification }}</td>
                                   <td>{{ $receptor->treatment_abbreviation }} {{ $receptor->name }} {{ $receptor->lastname }}</td>
-                                  <td>{{ $receptor->position_name }}</td>
+                                  <td>{{ $receptor->position_name }} DE {{ strtoupper($receptor->departament_name) }}</td>
                                 </tr>
                               @endforeach
                             
@@ -228,9 +279,10 @@ function ObtenerUsuarios($doc,$transaccion){
 $i=0;
 foreach ($usuariosID as $usuarioID) {
   $usuarios[$i]= \DB::table('users')
- ->join('positions','positions.id','=','users.position_id')
+  ->join('departaments','departaments.id','=','users.departament_id')
+  ->join('positions','positions.id','=','users.position_id')
  ->join('treatments','treatments.id','=','users.treatment_id')
- ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+ ->select('users.*', 'departaments.name as departament_name','positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
  ->where('users.id', '=', $usuarioID->user_id)->first();
 $i++;
 }

@@ -16,10 +16,20 @@ class PositionsTableSeeder extends Seeder
     {
         Position::create([
             
-            'name'=> 'Servidor de apoyo de servicios en la unidad de TIC',
+            'name'=> 'SERVIDOR PUBLICO DE APOYO DE SERVICIOS',
             
            
 
         ]);
+        
+        Position::create([
+            
+            'name'=> 'JEFE DE DEPARTAMENTO',
+            
+           
+
+        ]);
+
+       
     }
 }

@@ -11,6 +11,15 @@ class FolderController extends Controller
 {
     public function index()
     {
+        $carpetas = \DB::table('folders AS d1')
+        ->where('d1.father_folder_id','=',1)
+        ->where('d1.departament_id','=',Auth::user()->departament_id)
+        ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+    ->join('departaments AS d3','d3.id','=','d1.departament_id')
+    ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+    ->orderBy('updated_at','DESC')
+->get();
+
 
         $folders=\DB::table('folders AS d1')
    ->where('d1.departament_id','=',Auth::user()->departament_id)
@@ -22,7 +31,9 @@ class FolderController extends Controller
 
 //     $folders=Folder::all();
     $departaments=Departament::all();
-        return view('admin.folders.index')->with(compact('folders'))->with(compact('departaments'));
+        return view('admin.folders.index')->with(compact('folders'))
+        ->with(compact('carpetas'))
+        ->with(compact('departaments'));
     }
     public function store(Request $request )
     {

@@ -20,7 +20,8 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 
-
+<p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
+<p> <b>Descripción:</b> {{ $document->name }}</p>
 
   <div class="form-group">
     <label for="formFile" class="form-label mt-4">Certificado P12 o PFX</label>

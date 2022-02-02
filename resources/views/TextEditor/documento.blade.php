@@ -85,8 +85,10 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
        
            $consulta1=\DB::table('treatments')->where('id', '=', $receptor->treatment_id)->first();
            $consulta2=\DB::table('positions')->where('id', '=', $receptor->position_id)->first();
+           $consulta3=\DB::table('departaments')->where('id', '=', $receptor->departament_id)->first();
            $titulo=$consulta1->abbreviation;
            $posicion=$consulta2->name;
+           $departamento=$consulta3->name;
        $i++;
        
        @endphp
@@ -97,7 +99,7 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
        @endif
        <h1 class="receptor">{{ $titulo }}. {{ $receptor->name }} {{ $receptor->lastname }}</h1><br>
        
-       <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor"><b>  {{ $posicion }}</b> </h1><br>
+       <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor"><b>  {{ $posicion }} DE {{ strtoupper($departamento) }}</b> </h1><br>
        
        @endforeach 
     @endif

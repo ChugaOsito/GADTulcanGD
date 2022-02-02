@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use App\Http\Controllers\EnviarDocController;
 use App\Models\Document;
+use App\Models\Type;
 use Illuminate\Support\Facades\Auth;
 
 class FirmaElectronicaController extends Controller
@@ -18,9 +19,10 @@ class FirmaElectronicaController extends Controller
     //Fin Middledare
     //Firmar Documento
     public function FormularioFirma($id){
-        
+        $document=Document::find($id);
+        $type=Type::find($document->type_id);
 if($this->UsuarioPropietario($id)==Auth::user()->id){
-    return  view('FirmaElectronica/Firmar')->with (compact('id'));
+    return  view('FirmaElectronica/Firmar')->with (compact('id'))->with (compact('document'))->with (compact('type'));
 }
 return 'Usted no tiene permiso para realizar la accion solicitada';
         

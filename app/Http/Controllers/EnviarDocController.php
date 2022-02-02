@@ -24,9 +24,10 @@ class EnviarDocController extends Controller
         
         $users=\DB::table('users')
         ->where('rol','>',-1)
+        ->join('departaments','departaments.id','=','users.departament_id')
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
-        ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+        ->select('users.*', 'departaments.name as departament_name','positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
         ->where('users.departament_id', '=', $MiDepartamento->id)
         ->where('users.deleted_at', '=', NULL)
         ->get();
@@ -59,8 +60,8 @@ class EnviarDocController extends Controller
         
 
         $messages=[
-            'nombre.required'=>'No ha introducido un nombre para el archivo ',
-            'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
+            'nombre.required'=>'No ha introducido una descripcion para el archivo ',
+            'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
             'receptor.required'=> 'Seleccione almenos un destinatario',
@@ -118,7 +119,7 @@ class EnviarDocController extends Controller
         ->join('types','documents.type_id','=','types.id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.type', '=', "E")
-        ->select('documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
+        ->select('document_user.available as available','documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
         ->get();
         
     
@@ -137,7 +138,7 @@ class EnviarDocController extends Controller
         ->join('types','documents.type_id','=','types.id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.type', '=', "R")
-        ->select('documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
+        ->select('documents.read as read','documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
         ->get();
         
     
@@ -163,9 +164,10 @@ return ('Usted no tiene permitido visualizar este documento');
         
         $users=\DB::table('users')
         ->where('rol','>',-1)
+        ->join('departaments','departaments.id','=','users.departament_id')
         ->join('positions','positions.id','=','users.position_id')
         ->join('treatments','treatments.id','=','users.treatment_id')
-        ->select('users.*', 'positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
+        ->select('users.*', 'departaments.name as departament_name','positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
         ->where('users.departament_id', '=', $MiDepartamento->id)
         ->where('users.deleted_at', '=', NULL)
         ->get();
@@ -196,8 +198,8 @@ return ('Usted no tiene permitido visualizar este documento');
                     $messages=[
                         'objeto.required'=>'No ha introducido ningun objeto de documento ',
                         'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
-                        'nombre.required'=>'No ha introducido un nombre para el archivo ',
-                        'nombre.min'=>'El nombre debe tener mas de 3 caracteres',
+                        'nombre.required'=>'No ha introducido una descripcion para el archivo ',
+            'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
                         'receptor.required'=> 'Seleccione almenos un destinatario',
                         'type.required'=> 'Seleccione un tipo de documento'
             
@@ -258,13 +260,24 @@ return ('Usted no tiene permitido visualizar este documento');
      
 //Carpeta
      public function FormularioCarpeta($id){
+
         if($this->UsuarioPropietario($id)==Auth::user()->id){
-            $folders=\DB::table('folders')
-            ->where('departament_id', '=', Auth::user()->departament_id)
-            ->get();
+
+            $carpetas = \DB::table('folders AS d1')
+            ->where('d1.father_folder_id','=',1)
+            ->where('d1.departament_id','=',Auth::user()->departament_id)
+            ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+        ->join('departaments AS d3','d3.id','=','d1.departament_id')
+        ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+        ->orderBy('updated_at','DESC')
+    ->get();
+
+          
             $document=Document::find($id);
+            $type=Type::find($document->type_id);
             $identificador= $id;
-            return  view('Documents.Folder')->with (compact('document'))->with (compact('folders'))->with (compact('identificador'));
+            return  view('Documents.Folder')->with (compact('document'))->with (compact('identificador'))
+            ->with (compact('type'))->with (compact('carpetas'));
         }
         return 'Usted no tiene permiso para realizar la accion solicitada';
     }
@@ -282,6 +295,8 @@ return ('Usted no tiene permitido visualizar este documento');
     //Anexos
 
     public function FormularioAnexos($id){
+        $document=Document::find($id);
+        $type=Type::find($document->type_id);
         if($this->Permiso($id)==false){
 
             return 'Usted no tiene permisos para realizar la accion solicitada';
@@ -291,7 +306,9 @@ return ('Usted no tiene permitido visualizar este documento');
         $usuario= \DB::table('users')->join('document_user','users.id','=','document_user.user_id')
         ->where('document_id', '=', $id)
         ->where('type', '=', 'E')->first();
-        return  view('annexes.index')->with (compact('annexes'))->with (compact('usuario'));
+        return  view('annexes.index')->with (compact('annexes'))->with (compact('usuario'))
+        ->with (compact('document'))
+        ->with (compact('type'));
     }
     public function BorrarAnexo($id){
         $Anexo=Annex::find($id);
@@ -371,12 +388,13 @@ return ('Usted no tiene permitido visualizar este documento');
 
 
 'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
-'type'=> 'required|exists:types,id'
-
+'type'=> 'required|exists:types,id',
+'nombre'=> 'required|min:3'
         ];
 
         $messages=[
-           
+            'nombre.required'=>'No ha introducido una descripcion para el archivo ',
+            'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
             'type.required'=>'Ingrese un tipo de documento',
@@ -415,10 +433,13 @@ public function DocHtmlResponder(Request $request, $id){
 
         'cuerpo'=> 'required|min:3',
         'objeto'=> 'required|min:3',
-        'type'=> 'required|exists:types,id'
+        'type'=> 'required|exists:types,id',
+        'nombre'=> 'required|min:3'
                 ];
         
                 $messages=[
+                    'nombre.required'=>'No ha introducido una descripcion para el archivo ',
+            'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
                     'objeto.required'=>'No ha introducido ningun objeto de documento ',
                     'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
                     'type.required'=>'Ingrese un tipo de documento'
@@ -457,10 +478,13 @@ file_put_contents( "pdf/".$nombrepdf, $output);
 
     //FinResponder
     public function Seguimiento($id){
+
         if($this->Permiso($id)==false){
 
             return 'Usted no tiene permisos para realizar la accion solicitada';
         }
+        $documento=Document::find($id);
+        $tipo=Type::find($documento->type_id);
 
         $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
         $id_documentos=\DB::table('document_user')->where('process', '=', $process->process)->get();
@@ -474,8 +498,10 @@ file_put_contents( "pdf/".$nombrepdf, $output);
                 
                 $documents[$i]=\DB::table('documents')
         ->join('types','documents.type_id','=','types.id')
+        ->join('document_user','documents.id','=','document_user.document_id')
+        ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('documents.id', '=', $id_documento->document_id)
-        ->select('documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')
+        ->select('document_user.type as tipo','documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')
         ->first();
 
                 
@@ -486,17 +512,35 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         }
              
         
-
       
         
-        return view('Documentos')->with(compact('documents'));
+        return view('Documentos')->with(compact('documents'))->with(compact('documento'))->with(compact('tipo'));
 
     }
 
 
     
 
+    public function Terminar($id){
+           
+        $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
 
+        $documents=\DB::table('document_user')->where('process', '=', $process->process)
+        ->update(array('available' => 0));
+
+        
+return back();
+    }
+    public function Reabrir($id){
+           
+        $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
+
+        $documents=\DB::table('document_user')->where('process', '=', $process->process)
+        ->update(array('available' => 1));
+
+        
+return back();
+    }
 
 
 
@@ -560,11 +604,13 @@ $numero=$idAnterior->id+1;
      //Inicio metodo para enviar documento 
      function RegistrarEnvio($nombreDocumento, $rutaDocumento, $Receptores,$tipo_Documento){
         
-
+        $folder=\DB::table('folders')->where('father_folder_id', '=', 1)
+        ->where('departament_id', '=', Auth::user()->departament_id)->orderBy('id', 'asc')->first();
         $doc =new Document();
         $doc->name= $nombreDocumento;
         $doc->path= $rutaDocumento;
         $doc->type_id=$tipo_Documento;
+        $doc->folder_id=$folder->id;
         $Usuarios=$this->ObtenerUsuariosReceptores($Receptores);
         $Departamentos=$this->ObtenerDepartamentosReceptores($Receptores);
        $doc->number=$this->Asignandonumero();
@@ -649,8 +695,10 @@ $numero=$idAnterior->id+1;
 
      //Responder
      function RegistrarRespuesta($nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder,$tipo_Documento){
-       
+        $folder=\DB::table('folders')->where('father_folder_id', '=', 1)
+        ->where('departament_id', '=', Auth::user()->departament_id)->orderBy('id', 'asc')->first();
     $doc =new Document();
+    $doc->folder_id=$folder->id;
     $doc->name= $nombreDocumento;
     $doc->path= $rutaDocumento;
     $doc->type_id=$tipo_Documento;

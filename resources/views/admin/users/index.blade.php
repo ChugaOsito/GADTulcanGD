@@ -19,16 +19,7 @@
                   @endif
 
 
-                  @if (count ($errors)>0)
-                  <div class="alert alert-danger">
-                  <ul>
-                    @foreach ($errors->all() as $error )
-                      <li> {{ $error }}</li>
-                    @endforeach
-                  </ul>
-                  </div>
-                    
-                  @endif
+                  
                   <!-- Modal -->
         <!-- Trigger the modal with a button -->
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal"><i class="fas fa-plus fa-1x "> Nuevo Usuario</i></button>
@@ -43,20 +34,20 @@
                         <h4 class="modal-title text-dark">Crear Nuevo Usuario</h4>
                     </div>
                     <div class="modal-body">
-
+                      @if (count ($errors)>0)
+                      <div class="alert alert-danger">
+                      <ul>
+                        @foreach ($errors->all() as $error )
+                          <li> {{ $error }}</li>
+                        @endforeach
+                      </ul>
+                      </div>
+                        
+                      @endif
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 
-<div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
-  <select class="rounded form-select" id="exampleSelect1" name="position">
-    @foreach ($positions as $position )
-    <option value="{{ $position->id }}"> {{ $position->name }} </option>   
-    @endforeach
-     
-    
-  </select>
-</div>
+
 
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>
@@ -106,6 +97,18 @@
         
       </select>
     </div>
+
+    <div class="form-group">
+      <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
+      <select class="rounded form-select" id="exampleSelect1" name="position">
+        @foreach ($positions as $position )
+        <option value="{{ $position->id }}"> {{ $position->name }} </option>   
+        @endforeach
+         
+        
+      </select>
+    </div>
+    
     <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
 </br>
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
@@ -188,5 +191,12 @@
 </div>
 </div>
 </div>
+
+<script type="text/javascript">
+  @if (count($errors) > 0)
+      $('#myModal').modal('show');
+  @endif
+  </script>
+
 @endsection
     

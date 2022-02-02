@@ -50,7 +50,7 @@
     
       <div class="border rounded bg-primary dropdown-menu">
         <a class="dropdown-item text-white" href="/EnviarDoc">Subir Documento</a>
-        <a class="dropdown-item text-white" href="/Editor">Editar Documento</a>
+        <a class="dropdown-item text-white" href="/Editor">Redactar Documento</a>
         
         
       </div>

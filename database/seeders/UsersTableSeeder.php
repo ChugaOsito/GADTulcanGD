@@ -16,12 +16,12 @@ class UsersTableSeeder extends Seeder
         //Super Administradores
         User::create([
             'identification'=> '0000000000',
-            'lastname'=> 'Super Administrador',
-            'name'=> 'Super Administrador',
+            'lastname'=> 'SUPER ADMINISTRADOR',
+            'name'=> 'SUPER ADMINISTRADOR',
             'email'=> 'admin@email.com',
             'password'=> bcrypt('admin123'),
             'rol'=> -1,
-            'departament_id' => 2,
+            'departament_id' => 3,
             'treatment_id'=>1,
             'position_id'=>1
 
@@ -29,12 +29,12 @@ class UsersTableSeeder extends Seeder
         //Usuario Administrador 
         User::create([
             'identification'=> '1111111111',
-            'lastname'=> 'cevallos caidedo',
-            'name'=> 'Karina del pilar',
+            'lastname'=> 'CEVALLOS CAICEDO',
+            'name'=> 'KARINA PILAR',
             'email'=> 'karinacevallos@gmail.com',
             'password'=> bcrypt('admin123'),
             'rol'=> 0,
-            'departament_id' => 2,
+            'departament_id' => 3,
             'treatment_id'=>1,
             'position_id'=>1
 
@@ -42,12 +42,12 @@ class UsersTableSeeder extends Seeder
         //Administrador de departamento 
         User::create([
             'identification'=> '2222222222',
-            'lastname'=> 'Freir Pozo',
-            'name'=> 'Cristian Fernando',
+            'lastname'=> 'FREIRE POZO ',
+            'name'=> 'CRISTIAN FERNANDO',
             'email'=> 'cristianfreire@gmail.com',
             'password'=> bcrypt('admin123'),
             'rol'=> 1,
-            'departament_id' => 2,
+            'departament_id' => 3,
             'treatment_id'=>1,
             'position_id'=>1
 
@@ -55,12 +55,12 @@ class UsersTableSeeder extends Seeder
         //Funcionario
         User::create([
             'identification'=> '3333333333',
-            'lastname'=> 'Isizan Cuaces',
-            'name'=> 'Luis Fernando',
+            'lastname'=> 'ISIZAN CUACES',
+            'name'=> 'LUIS FERNANDO',
             'email'=> 'luisisizan@gmail.com',
             'password'=> bcrypt('admin123'),
             'rol'=> 2,
-            'departament_id' => 2,
+            'departament_id' => 3,
             'treatment_id'=>1,
             'position_id'=>1
 

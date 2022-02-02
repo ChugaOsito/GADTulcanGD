@@ -43,6 +43,7 @@ class AsignarContraseña extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
+                    ->from($address = 'noreply@domain.com', $name = 'GAD TULCAN')
                     ->subject('Asignacion de contraseña')
                     ->greeting('Saludos '.$notifiable->name.' '.$notifiable->lastname)
                     ->line('Mediante este correo electronico usted podra asignar una contraseña para acceder a la aplicacion informatica para Gestion de Documentos Internos del GAD de Tulcan ')

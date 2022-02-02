@@ -31,14 +31,14 @@
 </div>
 <div class="form-group">
   <fieldset>
-    <label class="form-label mt-4" for="readOnlyInput">Receptor</label>
+    <label class="form-label mt-4" for="readOnlyInput">Para:</label>
     <input class="form-control" id="readOnlyInput" type="text" placeholder="{{ $user->lastname }} {{ $user->name }} {{ $user->identification }}" readonly="">
   </fieldset>
 </div>
 
-  <div class="form-group">
-  <label class="col-form-label mt-4" for="inputDefault">Nombre del Documento</label>
-  <input type="text" class="rounded form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
+<div class="form-group">
+  <label class="col-form-label mt-4" for="inputDefault">Descripción del Documento</label>
+  <input type="text" class="rounded form-control" placeholder="Inserte una breve descripción" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
 </div>
 
 <div class="form-group">

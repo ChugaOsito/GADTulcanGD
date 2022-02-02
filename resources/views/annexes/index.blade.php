@@ -28,11 +28,14 @@
                   @endif
 
                   <!--Con este condicional verificamos que solo el propietario del documento pueda anexar documentos-->
-@if (auth()->id()== $usuario->user_id)
+                  <p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
+                  <p> <b>Descripción:</b> {{ $document->name }}</p>
+                  @if (auth()->id()== $usuario->user_id)
   
 
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
+
 <div class="form-group">
   <label class="col-form-label mt-4" for="inputDefault">Nombre del Annexo</label>
   <input type="text" class="form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">

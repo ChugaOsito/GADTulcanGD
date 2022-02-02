@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Departament;
-
+use App\Models\Folder;
 class DepartamentController extends Controller
 {
     public function index()
@@ -40,6 +40,12 @@ class DepartamentController extends Controller
        $departaments->father_departament_id= $request->input('padre');
        $departaments->identifier= strtoupper($request->input('identifier'));
        $departaments->save();
+
+    $folder= new Folder();
+    $folder->name= 'Archivos de '.$request->input('name');
+    $folder->father_folder_id= 1;
+    $folder->departament_id= $departaments->id;
+    $folder->save();       
 
        return back()->with('notification','El departamento ha sido registrado exitosamente');
    }

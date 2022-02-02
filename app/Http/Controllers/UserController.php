@@ -10,6 +10,7 @@ use App\Models\Treatment;
 use App\Models\Position;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\MessageBag;
 class UserController extends Controller
 {
    public function index()
@@ -71,6 +72,16 @@ class UserController extends Controller
        $user->lastname =strtoupper($request->input('apellidos'));
        $user->email =$request->input('email');
        $user->password = bcrypt($request->input('contrasena'));
+       if ($request->input('rol')==1) {
+        $existeJefe=\DB::table('users') 
+        ->where('departament_id','=',$request->input('departamento'))
+        ->where('rol','=',1)->get();
+     if (count($existeJefe)>0) {
+      $errors = new MessageBag();
+      $errors->add('jefe', 'Ya existe un jefe en este departamento');
+      return back()->withInput()->withErrors($errors);
+     }
+       }
        $user->rol =$request->input('rol');
        $user->departament_id =$request->input('departamento');
        $user->save();
@@ -149,7 +160,17 @@ return('Usted no tiene permisos para realizar esta accion');
         $user->email= $request->input('email');
         $cambiocorreo=true;
       }
-    
+      if ($request->input('rol')==1) {
+        $existeJefe=\DB::table('users') 
+        ->where('departament_id','=',$request->input('departamento'))
+        ->where('rol','=',1)->where('users.id','!=',$id)->get();
+        
+     if (count($existeJefe)>0) {
+      $errors = new MessageBag();
+      $errors->add('jefe', 'Ya existe un jefe en este departamento');
+      return back()->withErrors($errors);
+     }
+       }
        $user->rol =$request->input('rol');
        $user->departament_id =$request->input('departamento');
        $user->save();

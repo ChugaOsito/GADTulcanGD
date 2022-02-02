@@ -86,16 +86,36 @@
                                    >
                                      Mi Perfil
                                  </a>
+                                 
+                                 <a class="dropdown-item" href="{{ url('/GADTulcanGD/public/UserManual.pdf') }}"
+                                 target="_blank">
+                                    
+                                      Manual de Usuario
+                                  </a>
+<!--
                                  <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         Cerrar Sesion
                                     </a>
+                                -->
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
+
+                               
                             </li>
+                            <a href="{{ route('logout') }}" class="btn btn-danger " title="Cerrar Sesion"
+                            onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                
+                                <i class="fas fa-power-off fa-1x">
+                                 </i>
+                                 
+                            
+                            </a>
+                            
                         @endguest
                     </ul>
                 </div>
@@ -152,4 +172,10 @@
         color: black;
         
     }
+
+ .read{
+     background-color: white;
+     font-weight: bold;
+ }
+
 </style>

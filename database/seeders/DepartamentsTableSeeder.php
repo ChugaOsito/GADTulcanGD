@@ -14,6 +14,14 @@ class DepartamentsTableSeeder extends Seeder
     public function run()
     {
         Departament::create([
+            'name'=> 'GAD Municipal de Tulcan',
+            'father_departament_id'=> 1,
+            'identifier'=>'ALC'
+           
+
+        ]);
+
+        Departament::create([
             'name'=> 'Alcaldia',
             'father_departament_id'=> 1,
             'identifier'=>'ALC'
@@ -22,7 +30,7 @@ class DepartamentsTableSeeder extends Seeder
         ]);
         Departament::create([
             'name'=> 'TIC',
-            'father_departament_id'=> 1,
+            'father_departament_id'=> 2,
             'identifier'=>'TIC'
         ]);
     }

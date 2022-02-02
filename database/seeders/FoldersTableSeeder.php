@@ -21,5 +21,22 @@ class FoldersTableSeeder extends Seeder
            
 
         ]);
+       
+        Folder::create([
+            'departament_id'=> 2,
+            'name'=> 'Archivos de Alcaldia',
+            'father_folder_id'=> 1
+           
+
+        ]);
+
+        Folder::create([
+            'departament_id'=> 3,
+            'name'=> 'Archivos de TIC',
+            'father_folder_id'=> 1
+           
+
+        ]);
+       
     }
 }
