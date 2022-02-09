@@ -35,7 +35,7 @@ class UserController extends Controller
    }
    public function store(Request $request )
    {
-       
+     
     if((Auth::user()->rol==-1))
        {
     $validacionrol='in:-1,0,1,2';
@@ -72,20 +72,28 @@ class UserController extends Controller
        $user->identification= $request->input('identification');
        //Comprobacion jefe de departamento
        $position= Position::find($request->input('position'));
+       
        if($position->representative==1){
          $existeJefe=\DB::table('users')
          ->join('positions','users.position_id','=','positions.id')
          ->where('users.departament_id','=',$request->input('departamento'))
          ->where('positions.representative','=',1)->get();
-      if (count($existeJefe)>0) {
+         
+         if (count($existeJefe)>0) {
+        
        $errors = new MessageBag();
        $errors->add('jefe', 'Ya existe un jefe en este departamento');
        return back()->withInput()->withErrors($errors);
-      }
+      }else{
+       
+         $user->position_id= $request->input('position');
+        
+       }
          
        }else{
-
+       
          $user->position_id= $request->input('position');
+        
        }
        //Fin comprobacion jefe de departamento
        
@@ -178,7 +186,11 @@ class UserController extends Controller
       $errors = new MessageBag();
       $errors->add('jefe', 'Ya existe un jefe en este departamento');
       return back()->withInput()->withErrors($errors);
-     }
+     }else{
+       
+      $user->position_id= $request->input('position');
+     
+    }
         
       }else{
 
@@ -196,7 +208,7 @@ class UserController extends Controller
         $cambiocorreo=true;
       }
       //
-      if (auth()->user()->rol == 0)
+      if (auth()->user()->rol == 0 )
       {
 
       }else{

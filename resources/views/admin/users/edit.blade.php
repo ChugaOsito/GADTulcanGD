@@ -92,11 +92,15 @@
       </select>
     </div>
     <br>
+    
     @if (auth()->user()->rol==0)
 
     @else
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="rol">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="rol"
+        @if ($user->rol==0))
+          checked
+        @endif>
         <label class="form-check-label" for="flexCheckDefault">
         <b>  Asignar privilegios de Administrador</b>
         </label>
