@@ -16,9 +16,13 @@ class UserController extends Controller
    public function index()
    {
     $users=\DB::table('users')
+    ->join('positions','users.position_id','=','positions.id')
     ->join('departaments','departaments.id','=','users.departament_id')
-    ->select('users.*', 'departaments.name as departament_name')->orderBy('updated_at','DESC')->get();
-    $departaments=Departament::all();
+    ->select('users.*', 'departaments.name as departament_name','positions.name as position_name')->orderBy('updated_at','DESC')->get();
+    $departaments = \DB::table('departaments')
+    
+    ->where('id', '>', 1)
+    ->get();
 
     $positions=Position::all();
     $treatments=Treatment::all();
@@ -45,7 +49,7 @@ class UserController extends Controller
            'apellidos'=>'required|max:255',
            'email'=>'required|email|max:255|unique:users',
            'contrasena'=>'required|min:6',
-           'rol'=>$validacionrol
+          // 'rol'=>$validacionrol
        ];
        $messages= [
         'identification.required'=>'No se ha ingresado una identification',
@@ -61,18 +65,36 @@ class UserController extends Controller
         'email.unique'=>'El correo electronico ingresado ya existe ',
         'contrasena.required'=>'No se ha ingresado una contraseña',
         'contrasena.min'=>'No se ha ingresado una contrasena valida',
-        'rol.in'=>'No se ha ingresado un rol valido',
+        //'rol.in'=>'No se ha ingresado un rol valido',
        ];
        $this->validate($request, $rules, $messages);
        $user= new User();
        $user->identification= $request->input('identification');
-       $user->position_id= $request->input('position');
+       //Comprobacion jefe de departamento
+       $position= Position::find($request->input('position'));
+       if($position->representative==1){
+         $existeJefe=\DB::table('users')
+         ->join('positions','users.position_id','=','positions.id')
+         ->where('users.departament_id','=',$request->input('departamento'))
+         ->where('positions.representative','=',1)->get();
+      if (count($existeJefe)>0) {
+       $errors = new MessageBag();
+       $errors->add('jefe', 'Ya existe un jefe en este departamento');
+       return back()->withInput()->withErrors($errors);
+      }
+         
+       }else{
+
+         $user->position_id= $request->input('position');
+       }
+       //Fin comprobacion jefe de departamento
+       
        $user->treatment_id= $request->input('treatment');
        $user->name =strtoupper($request->input('nombres'));
        $user->lastname =strtoupper($request->input('apellidos'));
        $user->email =$request->input('email');
        $user->password = bcrypt($request->input('contrasena'));
-       if ($request->input('rol')==1) {
+       /*if ($request->input('rol')==1) {
         $existeJefe=\DB::table('users') 
         ->where('departament_id','=',$request->input('departamento'))
         ->where('rol','=',1)->get();
@@ -82,7 +104,14 @@ class UserController extends Controller
       return back()->withInput()->withErrors($errors);
      }
        }
-       $user->rol =$request->input('rol');
+       */
+       if ($request->has('rol')) {
+        
+        $user->rol=0;
+       }else {
+       
+        $user->rol=2;
+       }
        $user->departament_id =$request->input('departamento');
        $user->save();
        $token = Password::getRepository()->create($user);
@@ -96,33 +125,21 @@ class UserController extends Controller
        $user= User::find($id);
        $positions=Position::all();
        $treatments=Treatment::all();
-       $departaments=Departament::all();
+       $departaments = \DB::table('departaments')->where('id', '>', 1)
+    ->get();
        return view('admin.users.edit')->with(compact('user'))->with(compact('departaments'))->with(compact('positions'))->with(compact('treatments'));
    }
    public function update($id, Request $request)
    {
     $user= User::find($id);
-    if(($user->rol<1)  AND (Auth::user()->rol>=0)){
-return('Usted no tiene permisos para realizar esta accion');
-    }
-
-    if((Auth::user()->rol==-1))
-    {
- $validacionrol='in:-1,0,1,2';
-    }
-    else {
-     $validacionrol='in:1,2';
-    }
-    if($user->id==1){
-        $validacionrol='in:-1';
-    }
+   
     $rules = [
         'identification'=>'required|max:25|unique:users,identification,'.$user->id,
         'nombres'=>'required|max:255',
         'apellidos'=>'required|max:255',
         'email'=>'required|email|max:255|unique:users,email,'.$user->id,
        
-        'rol'=>$validacionrol
+       
     ];
     $messages= [
         'identification.required'=>'No se ha ingresado una identification',
@@ -137,7 +154,7 @@ return('Usted no tiene permisos para realizar esta accion');
         'email.max'=>'No se ha ingresado un correo electronico valido',
         'email.unique'=>'El correo electronico ingresado ya existe ',
       
-        'rol.in'=>'No se ha ingresado un rol valido',
+        
        ];
     $this->validate($request, $rules, $messages);
     
@@ -149,7 +166,25 @@ return('Usted no tiene permisos para realizar esta accion');
       {
         $user->password = bcrypt($pasword);
       }
-      $user->position_id= $request->input('position');
+      //Comprobacion jefe de departamento
+      $position= Position::find($request->input('position'));
+      if($position->representative==1){
+        $existeJefe=\DB::table('users')
+        ->join('positions','users.position_id','=','positions.id')
+        ->where('users.departament_id','=',$request->input('departamento'))
+        ->where('users.id','!=',$id)
+        ->where('positions.representative','=',1)->get();
+     if (count($existeJefe)>0) {
+      $errors = new MessageBag();
+      $errors->add('jefe', 'Ya existe un jefe en este departamento');
+      return back()->withInput()->withErrors($errors);
+     }
+        
+      }else{
+
+        $user->position_id= $request->input('position');
+      }
+      //Fin comprobacion jefe de departamento
       $user->treatment_id= $request->input('treatment');
       $user->identification= $request->input('identification');
       $cambiocorreo=false;
@@ -160,18 +195,21 @@ return('Usted no tiene permisos para realizar esta accion');
         $user->email= $request->input('email');
         $cambiocorreo=true;
       }
-      if ($request->input('rol')==1) {
-        $existeJefe=\DB::table('users') 
-        ->where('departament_id','=',$request->input('departamento'))
-        ->where('rol','=',1)->where('users.id','!=',$id)->get();
+      //
+      if (auth()->user()->rol == 0)
+      {
+
+      }else{
+         if ($request->has('rol')) {
         
-     if (count($existeJefe)>0) {
-      $errors = new MessageBag();
-      $errors->add('jefe', 'Ya existe un jefe en este departamento');
-      return back()->withErrors($errors);
-     }
-       }
-       $user->rol =$request->input('rol');
+            $user->rol=0;
+           }else {
+           
+            $user->rol=2;
+           }
+      }
+     
+       //
        $user->departament_id =$request->input('departamento');
        $user->save();
        if($cambiocorreo==true){
@@ -241,7 +279,7 @@ return back()->with('notification','El usuario ha sido dado de baja exitosamente
           {
             $user->password = bcrypt($pasword);
           }
-          $user->position_id= $request->input('position');
+         
           $user->treatment_id= $request->input('treatment');
           $user->identification= $request->input('identification');
           $cambiocorreo=false;

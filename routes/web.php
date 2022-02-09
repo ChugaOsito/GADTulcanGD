@@ -41,7 +41,7 @@ Route::get('/EnviarDoc', [App\Http\Controllers\EnviarDocController::class,'getEn
 Route::post('/EnviarDoc', [App\Http\Controllers\EnviarDocController::class,'postEnviar'])->name('FormularioEnviar');
 Route::get('/Documentos/{id}', [App\Http\Controllers\EnviarDocController::class,'MostrarDocumentos']);
 Route::get('/Documento/{id}', [App\Http\Controllers\EnviarDocController::class,'VisualizarDocumento']);
-Route::get('/Enviados', [App\Http\Controllers\EnviarDocController::class,'BandejaSalida']);
+Route::get('/Enviados', [App\Http\Controllers\EnviarDocController::class,'BandejaSalida'])->name('Enviados');
 Route::get('/Recibidos', [App\Http\Controllers\EnviarDocController::class,'BandejaEntrada']);
 Route::get('/Editor', [App\Http\Controllers\EnviarDocController::class,'EditorTexto']);
 Route::post('/Editor', [App\Http\Controllers\EnviarDocController::class,'DocHtml']);
@@ -53,6 +53,7 @@ Route::post('/EditorResponder/{id}', [App\Http\Controllers\EnviarDocController::
 Route::get('/Documentos/{id}', [App\Http\Controllers\EnviarDocController::class,'MostrarDocumentos']);
 //Fin Responder
 Route::get('/Seguimiento/{id}', [App\Http\Controllers\EnviarDocController::class,'Seguimiento']);
+Route::get('/Procesos', [App\Http\Controllers\EnviarDocController::class,'Procesos']);
 Route::get('/12345', function () {
      $pdf = App::make('dompdf.wrapper');
     $pdf->loadHTML('aQUI VA EL HTML');

@@ -50,8 +50,13 @@
     <label class="col-form-label mt-4" for="inputDefault">Nombre del Cargo</label>
     <input type="text" class="form-control" placeholder="Inserte un cargo" id="inputDefault" name="name" value="{{ old('name') }}" onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>
-  
-  
+</br>  
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="representative">
+    <label class="form-check-label" for="flexCheckDefault">
+     <b>Asignar privilegios de Representante de Departamentos</b> 
+    </label>
+  </div>
 </br>
 
 <div class="form-group">
@@ -75,6 +80,7 @@
     <tr>
       <th>ID</th>
       <th>Cargo</th>
+      <th>Privilegios</th>
       <th>Opciones</th>
     </tr>
   </thead>
@@ -83,7 +89,12 @@
     <tr>
       <td>{{ $position->id }}</td>
       <td>{{ $position->name }}</td>
-    
+      @if ($position->representative==1)
+      <td>Representante</td>
+      @else
+      <td>Funcionario</td>
+      @endif
+     
       @if ($position->deleted_at==null)
       <td>
         <a href="/cargo/{{$position->id}}" class="btn btn-primary btn-sm" title="Editar"><i class="fas fa-edit fa-1x ">

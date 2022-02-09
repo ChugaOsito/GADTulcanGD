@@ -25,7 +25,7 @@ class PositionsTableSeeder extends Seeder
         Position::create([
             
             'name'=> 'JEFE DE DEPARTAMENTO',
-            
+            'representative'=>1
            
 
         ]);

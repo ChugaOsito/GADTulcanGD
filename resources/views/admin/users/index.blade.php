@@ -108,9 +108,23 @@
         
       </select>
     </div>
-    
+  </br>
+  @if (auth()->user()->rol==0)
+
+  @else
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="rol">
+      <label class="form-check-label" for="flexCheckDefault">
+      <b>  Asignar privilegios de Administrador</b>
+      </label>
+    </div>
+@endif
+    <!-- 
     <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
 </br>
+
+
+
   <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
     @if (Auth::user()->rol==-1)
     <input type="radio" class="btn-check" name="rol" id="btnradio0" autocomplete="off" checked="" value="-1">
@@ -123,6 +137,7 @@
     <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off" checked="" value="2">
     <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>
   </div>
+  -->
   </div>
 <br>
 
@@ -147,6 +162,7 @@
       <th>Apellidos</th>
       <th>Nombres</th>
       <th>E-mail</th>
+      <th>Cargo</th>
       <th>Departamento</th>
       <th>Rol</th>
       <th>Opciones</th>
@@ -160,6 +176,7 @@
       <td>{{ $user->lastname }}</td>
       <td>{{ $user->name }}</td>
       <td>{{ $user->email}}</td>
+      <td>{{ $user->position_name}}</td>
       <td>{{ $user->departament_name}}</td>
       @php
         $roles = array("Super Administrador","Administrador","Jefe de Departamento", "Funcionario");

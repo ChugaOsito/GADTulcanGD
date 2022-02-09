@@ -21,7 +21,7 @@ class UsersTableSeeder extends Seeder
             'email'=> 'admin@email.com',
             'password'=> bcrypt('admin123'),
             'rol'=> -1,
-            'departament_id' => 3,
+            'departament_id' => 1,
             'treatment_id'=>1,
             'position_id'=>1
 
@@ -39,14 +39,14 @@ class UsersTableSeeder extends Seeder
             'position_id'=>1
 
         ]);
-        //Administrador de departamento 
+        //Funcionario
         User::create([
             'identification'=> '2222222222',
             'lastname'=> 'FREIRE POZO ',
             'name'=> 'CRISTIAN FERNANDO',
             'email'=> 'cristianfreire@gmail.com',
             'password'=> bcrypt('admin123'),
-            'rol'=> 1,
+            'rol'=> 2,
             'departament_id' => 3,
             'treatment_id'=>1,
             'position_id'=>1

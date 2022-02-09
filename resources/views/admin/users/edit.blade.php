@@ -30,17 +30,6 @@
     <form action="" method="post" enctype="multipart/form-data">
       
 @csrf
-<div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
-  <select class="rounded form-select" id="exampleSelect1" name="position">
-    
-    @foreach ($positions as $position )
-    <option value="{{ $position->id }}"  @if ($position->id== $user->position_id)   selected  @endif> {{ $position->name }}</option>   
-    @endforeach
-     
-    
-  </select>
-</div>
 
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>
@@ -91,27 +80,35 @@
       </select>
     </div>
 
-    <label class="col-form-label mt-4" for="Nombre">Seleccione Rol del usuario</label>
+    <div class="form-group">
+      <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
+      <select class="rounded form-select" id="exampleSelect1" name="position">
+        
+        @foreach ($positions as $position )
+        <option value="{{ $position->id }}"  @if ($position->id== $user->position_id)   selected  @endif> {{ $position->name }}</option>   
+        @endforeach
+         
+        
+      </select>
+    </div>
+    <br>
+    @if (auth()->user()->rol==0)
+
+    @else
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="rol">
+        <label class="form-check-label" for="flexCheckDefault">
+        <b>  Asignar privilegios de Administrador</b>
+        </label>
+      </div>
+  @endif
+
+    
 </br>
 
   
 
-  <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-    @if (Auth::user()->rol==-1)
-    <input type="radio" class="btn-check" name="rol" id="btnradio0" autocomplete="off"  value="-1" @if ($user->rol==-1) checked  @endif>
-    <label class="btn btn-outline-primary" for="btnradio0">Super Administrador</label>
   
-    @endif
-    @if ($user->id!=1)
-    <input type="radio" class="btn-check " name="rol" id="btnradio1" autocomplete="off"  value="0" @if ($user->rol==0) checked  @endif>
-    <label class="btn btn-outline-primary"  for="btnradio1">Administrador</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio2" autocomplete="off"  value="1"@if ($user->rol==1) checked  @endif>
-    <label class="btn btn-outline-primary" for="btnradio2">Jefe de Departamento</label>
-    <input type="radio" class="btn-check" name="rol" id="btnradio3" autocomplete="off"  value="2" @if ($user->rol==2) checked  @endif>
-    <label class="btn btn-outline-primary" for="btnradio3">Funcionario</label>  
-    @endif
-    
-  </div>
   </div>
 </br>
 

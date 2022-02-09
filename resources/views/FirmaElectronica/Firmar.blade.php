@@ -77,7 +77,7 @@ Fin posicion y pagina de firma-->
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Firmar</button>
 
-    <a href="/VincularCarpeta/{{$id}}" class="btn btn-danger" title="Editar">Omitir
+    <a href="/VincularCarpeta/{{$id}}" class="btn btn-danger" title="Editar">Continuar sin firma electronica
       <span class="glyphicon glyphicon-pencil"></span></a>
           </div> 
         

@@ -34,7 +34,9 @@ class PositionController extends Controller
         $this->validate($request, $rules, $messages);
         $positions= new Position();
         $positions->name= strtoupper($request->input('name'));
-       
+       if ($request->has('representative')) {
+        $positions->representative=1;
+       }
         $positions->save();
        
  
@@ -66,7 +68,12 @@ class PositionController extends Controller
         $this->validate($request, $rules, $messages);
         $position= Position::find($id);
         $position->name= strtoupper($request->input('name'));
-       
+
+        if ($request->has('representative')) {
+            $position->representative=1;
+           }else {
+            $position->representative=0;
+           }
         $position->save();
         
      return back()->with('notification','La informacion ha sido modificado exitosamente');

@@ -34,7 +34,7 @@
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Para:</label>
   <select class="rounded form-select select2" id="exampleSelect1" name="receptor[]" multiple="multiple">
-    <optgroup label="Mi Departamento">
+    <optgroup label="{{ $MiDepartamento->name }}" >
     <option value="{{ -$MiDepartamento->id }} "> Todo el departamento de {{ $MiDepartamento->name }} </option> 
     @foreach ($users as $user )
    @if($user->id!=Auth::user()->id)
@@ -44,7 +44,7 @@
     
     @endforeach
   </optgroup>
-  @if (Auth::user()->rol==1)
+  @if (auth()->user()->is_DepartamentBoss)
     
   
     @php

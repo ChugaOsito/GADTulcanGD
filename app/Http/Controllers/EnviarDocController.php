@@ -477,6 +477,32 @@ file_put_contents( "pdf/".$nombrepdf, $output);
  }
 
     //FinResponder
+    public function Procesos(){
+        
+        $processes=\DB::table('document_user')->where('user_id', '=', Auth::user()->id)->orderBy('process', 'desc')->get();
+
+        $i=0;
+        
+        foreach($processes as $process){
+            if($process->document_id == $process->process){
+                
+                $documents[$i]=\DB::table('documents')
+        ->join('types','documents.type_id','=','types.id')
+        ->join('document_user','documents.id','=','document_user.document_id')
+        ->where('document_user.user_id', '=', Auth::user()->id)
+        ->where('documents.id', '=', $process->document_id)
+        ->select('document_user.available as available','document_user.type as tipo','documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')
+       ->first();
+
+                
+                $i++;
+               
+            }
+          
+        }
+       // dd($documents);
+       return view('Documents.Procesos')->with(compact('documents'));
+    }
     public function Seguimiento($id){
 
         if($this->Permiso($id)==false){

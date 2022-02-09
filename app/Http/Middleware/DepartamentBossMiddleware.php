@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-
+use App\Models\Position;
 class DepartamentBossMiddleware
 {
     /**
@@ -18,8 +18,10 @@ class DepartamentBossMiddleware
     {
         if(!auth()->check())
         return redirect('login');
-        
-        if(auth()->user()->rol != 1)//No es Super administrador
+
+        $position=Position::find(auth()->user()->position_id);
+       // dd($position->representative);
+        if($position->representative != 1)//No es jefe de departamento
         return redirect('home');
         return $next($request);
     }

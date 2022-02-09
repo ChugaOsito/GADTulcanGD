@@ -33,19 +33,36 @@
                     <div class="form-group">
                       <label for="exampleSelect1" class="form-label mt-4">Carpeta Padre</label>
                       <select class="form-select" id="exampleSelect1" name="padre">
-                        <option value="1" @if (1==$folder->father_folder_id)
-                          selected
-                        @endif>Documentos Internos del GAD de Tulcan</option> 
-                        @foreach ($father_folders as $father_folder )
-                        <option value="{{ $father_folder->id }}" @if ($father_folder->id==$folder->father_folder_id)
-                          selected
-                        @endif>{{ $father_folder->name }}</option>   
-                        @endforeach
+                        @foreach ($carpetas as $carpeta )
+                    
+                        @if ($carpeta->deleted_at==NULL)
+                        
+                        <option class="dropdown-item " value="{{ $carpeta->id }}"> &#128193; {{ $carpeta->name }}</option>  
+                    
+                        @php
+                           $hijos = \DB::table('folders AS d1')
+                            ->where('d1.father_folder_id','=',$carpeta->id)
+                            ->where('d1.departament_id','=',Auth::user()->departament_id)
+                            ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+                        ->join('departaments AS d3','d3.id','=','d1.departament_id')
+                        ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+                        ->orderBy('updated_at','DESC')
+                    ->get();
+                    
+                    @endphp
+                        @if ($hijos != NULL)
+                        @php
+                            $nivel=2;
+                        @endphp
+                        @include('admin.folders.tree',['hijos' => $hijos,'nivel'=>$nivel])   
+                        
+                        @endif
+                        @endif
                          
+                        @endforeach
                         
                       </select>
                     </div>
-                    
                     <div class="form-group">
                         <label class="col-form-label mt-4" for="inputDefault">Nombre de la Carpeta</label>
                         <input type="text" class="form-control" placeholder="Inserte un nombre para el departameto" id="inputDefault" name="name" value="{{ old('name',$folder->name) }}">

@@ -30,17 +30,7 @@
     <form action="" method="post" enctype="multipart/form-data">
       
 @csrf
-<div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Cargo que desempeña</label>
-  <select class="rounded form-select" id="exampleSelect1" name="position">
-    
-    @foreach ($positions as $position )
-    <option value="{{ $position->id }}"  @if ($position->id== $user->position_id)   selected  @endif> {{ $position->name }}</option>   
-    @endforeach
-     
-    
-  </select>
-</div>
+
 
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>

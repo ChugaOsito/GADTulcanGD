@@ -64,6 +64,15 @@ class FolderController extends Controller
     }
     public function edit($id)
     {
+        $carpetas = \DB::table('folders AS d1')
+        ->where('d1.father_folder_id','=',1)
+        ->where('d1.departament_id','=',Auth::user()->departament_id)
+        ->join('folders AS d2','d2.id','=','d1.father_folder_id')
+    ->join('departaments AS d3','d3.id','=','d1.departament_id')
+    ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
+    ->orderBy('updated_at','DESC')
+->get();
+
 
         $folder=Folder::find($id);
         if($folder->departament_id!=Auth::user()->departament_id){
@@ -72,7 +81,9 @@ return('Usted no tiene permisos para realizar esta operacion');
         $departaments=Departament::all();
         $father_folders=\DB::table('folders AS d1')
         ->where('d1.departament_id','=',Auth::user()->departament_id)->get();
-        return view('admin.folders.edit')->with(compact('folder'))->with(compact('departaments'))->with(compact('father_folders'));
+        return view('admin.folders.edit')->with(compact('folder'))->with(compact('departaments'))
+        ->with(compact('carpetas'))
+        ->with(compact('father_folders'));
     }
 
     public function update($id, Request $request)

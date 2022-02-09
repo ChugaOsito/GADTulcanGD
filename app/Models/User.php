@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Notifications\AsignarContraseña;
+use App\Models\Position;
 class User extends Authenticatable implements Auditable
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -56,7 +57,8 @@ class User extends Authenticatable implements Auditable
     }
     public function getIsDepartamentBossAttribute()
     {
-        return $this->rol ==1;
+        $position=Position::find(auth()->user()->position_id);
+        return $position->representative ==1;
 
     }
     //relacion muchos a muchos

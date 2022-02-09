@@ -42,7 +42,7 @@ class DepartamentController extends Controller
        $departaments->save();
 
     $folder= new Folder();
-    $folder->name= 'Archivos de '.$request->input('name');
+    $folder->name= 'Unidad de '.$request->input('name');
     $folder->father_folder_id= 1;
     $folder->departament_id= $departaments->id;
     $folder->save();       

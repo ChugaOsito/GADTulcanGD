@@ -37,6 +37,16 @@
     <label class="col-form-label mt-4" for="inputDefault">Nombre del Cargo</label>
     <input type="text" class="form-control" placeholder="Inserte un cargo" id="inputDefault" name="name" value="{{ old('name', $positions->name) }}" onkeyup="javascript:this.value=this.value.toUpperCase();">
   </div>
+</br>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" name="representative" 
+    @if ($positions->representative==1)
+    checked  
+    @endif>
+    <label class="form-check-label" for="flexCheckDefault">
+      <b>Asignar privilegios de Representante de Departamentos</b> 
+    </label>
+  </div>
   
   
 </br>

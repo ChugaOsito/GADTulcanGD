@@ -54,7 +54,9 @@
         
         
       </div>
-      
+      <a  @if (request()->is('Procesos')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
+        href="/Procesos" class="list-group-item list-group-item-action active">Procesos</a>
+
       <a  @if (request()->is('Enviados')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
       href="/Enviados" class="list-group-item list-group-item-action active">Documentos Enviados</a>
     

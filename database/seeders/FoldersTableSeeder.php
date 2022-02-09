@@ -24,7 +24,7 @@ class FoldersTableSeeder extends Seeder
        
         Folder::create([
             'departament_id'=> 2,
-            'name'=> 'Archivos de Alcaldia',
+            'name'=> 'Alcaldia',
             'father_folder_id'=> 1
            
 
@@ -32,7 +32,7 @@ class FoldersTableSeeder extends Seeder
 
         Folder::create([
             'departament_id'=> 3,
-            'name'=> 'Archivos de TIC',
+            'name'=> 'Unidad de TIC',
             'father_folder_id'=> 1
            
 

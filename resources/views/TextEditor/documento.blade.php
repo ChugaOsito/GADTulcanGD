@@ -113,7 +113,7 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
        @if ($i!=-1)
        <h1 class="receptor" style="color:white;"><b>PARA:  </b></h1>
        @endif
-       <h1 class="receptor">  DEPARTAMENTO DE {{ strtoupper($receptor_departamento->name) }}</h1>    <br>
+       <h1 class="receptor">  UNIDAD DE {{ strtoupper($receptor_departamento->name) }}</h1>    <br>
        
        @endforeach 
     @endif
@@ -123,6 +123,12 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     <br>
     <br>
     <h1 class="page_break">{{ $cuerpo }}</h1>
+    @php
+                $posicion_emisor=\DB::table('positions')->where('id', '=',  Auth::user()->position_id)->first();
+                $departamento_emisor=\DB::table('departaments')->where('id', '=',  Auth::user()->departament_id)->first();
+
+        
+    @endphp
     <div class="firma">
         <h1>Atentamente</h1>
        
@@ -130,6 +136,8 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
 
     <h1>______________</h1>
     <h1>{{ $apellido }} {{ $nombre }} </h1>
+    <h1><b>{{ strtoupper($posicion_emisor->name)}} DE {{ strtoupper($departamento_emisor->name)}}</b> </h1>
+    
     </div >
     
 </body>
