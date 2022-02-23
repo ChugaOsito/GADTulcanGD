@@ -48,7 +48,7 @@ class UserController extends Controller
            'nombres'=>'required|max:255',
            'apellidos'=>'required|max:255',
            'email'=>'required|email|max:255|unique:users',
-           'contrasena'=>'required|min:6',
+          // 'contrasena'=>'required|min:6',
           // 'rol'=>$validacionrol
        ];
        $messages= [
@@ -63,8 +63,8 @@ class UserController extends Controller
         'email.email'=>'No se ha ingresado un correo electronico valido',
         'email.max'=>'No se ha ingresado un correo electronico valido',
         'email.unique'=>'El correo electronico ingresado ya existe ',
-        'contrasena.required'=>'No se ha ingresado una contraseña',
-        'contrasena.min'=>'No se ha ingresado una contrasena valida',
+       // 'contrasena.required'=>'No se ha ingresado una contraseña',
+        //'contrasena.min'=>'No se ha ingresado una contrasena valida',
         //'rol.in'=>'No se ha ingresado un rol valido',
        ];
        $this->validate($request, $rules, $messages);
@@ -101,7 +101,12 @@ class UserController extends Controller
        $user->name =strtoupper($request->input('nombres'));
        $user->lastname =strtoupper($request->input('apellidos'));
        $user->email =$request->input('email');
-       $user->password = bcrypt($request->input('contrasena'));
+       if($request->input('contrasena')==null){
+        $user->password = bcrypt(Str::random(10));
+       }else{
+        $user->password = bcrypt($request->input('contrasena'));
+       }
+      
        /*if ($request->input('rol')==1) {
         $existeJefe=\DB::table('users') 
         ->where('departament_id','=',$request->input('departamento'))

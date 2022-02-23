@@ -132,6 +132,8 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     <div class="firma">
         <h1>Atentamente</h1>
        
+        <br>
+       
         
 
     <h1>______________</h1>

@@ -162,9 +162,10 @@
 @php
 function MasUsuarios($id_Departamento){
   $masusuarios= \DB::table('users')->where('departament_id', '=', $id_Departamento)
-  ->where('rol', '=', 1)->where('users.deleted_at', '=', NULL)
+  
   ->join('departaments','departaments.id','=','users.departament_id')
   ->join('positions','positions.id','=','users.position_id')
+  ->where('positions.representative', '=', 1)->where('users.deleted_at', '=', NULL)
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'departaments.name as departament_name','positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
 ->get();

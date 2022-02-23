@@ -55,11 +55,8 @@ class EnviarDocController extends Controller
 'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
 'receptor'=> 'required',
 'type'=> 'required|exists:types,id'
-
         ];
-        
-
-        $messages=[
+       $messages=[
             'nombre.required'=>'No ha introducido una descripcion para el archivo ',
             'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
@@ -67,14 +64,14 @@ class EnviarDocController extends Controller
             'receptor.required'=> 'Seleccione almenos un destinatario',
             'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',
             'type.required'=>'Ingrese un tipo de documento'
-
         ];
         $this->validate($request, $rules, $messages);
         $rutapdf=$this->SubirPdf($request->file("archivo"));
        
         
         //Registrar Documento y obtener su id
-        $docSubido=$this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor'),$request->input('type') );
+        $docSubido=$this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request
+        ->input('receptor'),$request->input('type') );
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
     }
@@ -119,7 +116,10 @@ class EnviarDocController extends Controller
         ->join('types','documents.type_id','=','types.id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.type', '=', "E")
-        ->select('document_user.available as available','documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
+        ->select('document_user.available as available',
+        'documents.created_at as created_at','documents.name',
+        'documents.id as document_id','documents.number as number',
+        'types.name as type')->orderBy('documents.updated_at','DESC')
         ->get();
         
     
@@ -138,7 +138,9 @@ class EnviarDocController extends Controller
         ->join('types','documents.type_id','=','types.id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.type', '=', "R")
-        ->select('documents.read as read','documents.created_at as created_at','documents.name','documents.id as document_id','documents.number as number','types.name as type')->orderBy('documents.updated_at','DESC')
+        ->select('documents.read as read','documents.created_at as created_at',
+        'documents.name','documents.id as document_id','documents.number as number',
+        'types.name as type')->orderBy('documents.updated_at','DESC')
         ->get();
         
     
@@ -365,7 +367,6 @@ return ('Usted no tiene permitido visualizar este documento');
     }
     //Inicio Responder
     public function getResponder($id){
-        
        
         if($this->ValidarReceptor($id)==null){
 
@@ -383,30 +384,22 @@ return ('Usted no tiene permitido visualizar este documento');
         $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
 
         $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
-
         $rules=[
-
-
 'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
 'type'=> 'required|exists:types,id',
-'nombre'=> 'required|min:3'
-        ];
-
-        $messages=[
-            'nombre.required'=>'No ha introducido una descripcion para el archivo ',
+'nombre'=> 'required|min:3'        ];
+        $messages=[ 'nombre.required'=>'No ha introducido una descripcion para el archivo ',
             'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
             'type.required'=>'Ingrese un tipo de documento',
-            'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',
-
-        ];
+            'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',        ];
         $this->validate($request, $rules, $messages);
         $rutapdf=$this->SubirPdf($request->file("archivo"));
-       
+             
         
-        
-        $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
+        $docSubido=$this->RegistrarRespuesta($request->input('nombre'),
+        $rutapdf,$process->process,$user->id,$request->input('type'));
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
     }
@@ -654,7 +647,13 @@ $numero=$idAnterior->id+1;
                 $UsuariosDelpartamento=\DB::table('users')->where('departament_id', '=', $Departamento->id)->get();
                 
                 foreach ($UsuariosDelpartamento as $UsuarioDelpartamento) {
-                    $doc->users()->attach($UsuarioDelpartamento->id, ['type' => "R",'process' =>$doc->id ]);  
+                    if(Auth::user()->id==$UsuarioDelpartamento->id){
+
+                    }else{
+                        $doc->users()->attach($UsuarioDelpartamento->id, ['type' => "R",'process' =>$doc->id ]);  
+                    }
+
+                    
                 }
                 
             }

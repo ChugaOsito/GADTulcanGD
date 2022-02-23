@@ -24,13 +24,14 @@
   <thead>
     <tr>
     
-      <th colspan="2">Transaccion</th>
+      <th colspan="2">Propietario</th>
      
     
       <th >Numero</th>
       <th>Tipo</th>
       <th>Descripción</th>
       <th>Fecha de Creacion</th>
+      <th>Estado</th>
       <th>Opciones</th>
       
     </tr>
@@ -58,9 +59,18 @@ $idDelDocumento= $document->id;
      
    
     @if ($document->tipo=='E')
-    <td colspan="2">Enviado</td>
+    <td colspan="2">Yo</td>
     @else
-    <td colspan="2">Recibido</td>
+    @php
+         $propietario=\DB::table('document_user')
+        ->join('users','document_user.user_id','=','users.id')
+        ->where('document_user.document_id', '=', $idDelDocumento)
+        ->where('document_user.type', '=', 'E')
+        ->select('users.name','users.lastname as lastname',)
+       ->first();
+
+    @endphp
+    <td colspan="2">{{ $propietario->name }} {{ $propietario->lastname }}</td>
     @endif
     
  
@@ -69,7 +79,11 @@ $idDelDocumento= $document->id;
       <td>{{ $document->type }}</td>
       <td>{{ $document->name }}</td>
       <td>{{ $document->created_at }}</td>
-      
+      @if ($document->available==0)
+      <td >Cerrado</td>
+      @else
+      <td >Abierto</td>
+      @endif
       <td>
         <!-- Modal -->
         <!-- Trigger the modal with a button -->
@@ -247,7 +261,7 @@ $idDelDocumento= $document->id;
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('document_user.document_id', '!=', $idDelDocumento)
         ->where('document_user.process', '=', $idDelDocumento)
-        ->select('document_user.type as tipo','documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')
+        ->select('document_user.available as available','document_user.type as tipo','documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')
         ->get();
    
   @endphp
@@ -258,11 +272,20 @@ $idDelDocumento= $document->id;
    
    <td><i class="fas fa-angle-double-right  fa-2x"></i></td>
  
-  @if ($child->tipo=='E')
-  <td >Enviado</td>
-  @else
-  <td >Recibido</td>
-  @endif
+   @if ($child->tipo=='E')
+    <td >Yo</td>
+    @else
+    @php
+         $propietario=\DB::table('document_user')
+        ->join('users','document_user.user_id','=','users.id')
+        ->where('document_user.document_id', '=', $child->id)
+        ->where('document_user.type', '=', 'E')
+        ->select('users.name','users.lastname as lastname',)
+       ->first();
+
+    @endphp
+    <td >{{ $propietario->name }} {{ $propietario->lastname }}</td>
+    @endif
   
 
     
@@ -270,7 +293,11 @@ $idDelDocumento= $document->id;
     <td>{{ $child->type }}</td>
     <td>{{ $child->name }}</td>
     <td>{{ $child->created_at }}</td>
-    
+    @if ($child->available==0)
+      <td >Cerrado</td>
+      @else
+      <td >Abierto</td>
+      @endif
     <td>
       <!-- Modal -->
       <!-- Trigger the modal with a button -->

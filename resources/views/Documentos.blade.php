@@ -28,6 +28,38 @@
                   @if (request()->is('Seguimiento/*'))
                   <p><b>{{ $tipo->name}} Numero: </b> {{ $documento->number }}</p>
 <p> <b>Descripción:</b> {{ $documento->name }}</p>
+
+@php
+   $available=\DB::table('document_user')->where('document_user.document_id', '=', $documento->id)
+   ->select('document_user.available as available' )->first();
+
+   $process=\DB::table('document_user')->where('document_id', '=', $documento->id)->first();
+
+   $processs=\DB::table('document_user')->where('document_id', '=', $process->process)
+   ->where('user_id', '=', auth()->id())->where('type', '=', 'E')->first();
+        
+@endphp
+@if (($processs!=null))
+  
+
+@if (($available->available==0) )
+<a href="/AbrirProceso/{{$documento->id}}" class="btn btn-success " title="Reabrir Proceso">
+
+
+  <i class="fas fa-check-circle fa-1x">Reabrir Proceso</i>
+
+ </a>
+ <br>
+  @else
+  <a href="/TerminarProceso/{{$documento->id}}" class="btn btn-danger " title="Cerrar Proceso">
+
+    <i class="fas fa-times-circle fa-1x">Cerrar Proceso</i>
+
+   </a>
+   <br>
+@endif
+@endif
+<br>
                   @endif  
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>
@@ -218,12 +250,12 @@ $idDelDocumento= $document->id;
                         <i class="fas fa-paperclip fa-1x"> Anexos</i>
                          
                        </a>
-  <!-- Se elimino el boton de seguimiento 
+  <!-- Se agrego el boton de seguimiento -->
                       <a href="/Seguimiento/{{$idDelDocumento}}" class="btn btn-success" title="Seguimiento">
                         <i class="fas fa-history fa-1x"> Seguimiento</i>
                         
                       </a>
-                      -->
+                     
                       
 <!--Descomentar en caso de ser necesario, este metodo se usaba anteriormente cuando no estaban disponibles los modales
                       <a href="/Documento/{{$idDelDocumento}}" class="btn btn-primary btn-sm" title="Editar">Visualizar

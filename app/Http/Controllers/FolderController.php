@@ -37,16 +37,10 @@ class FolderController extends Controller
     }
     public function store(Request $request )
     {
-        $rules = [
-            'name'=>'required|max:75|min:3',
-            
-        ];
-        $messages= [
-         'name.required'=>'No se ha ingresado un nombre',
+        $rules = ['name'=>'required|max:75|min:3', ];
+        $messages= ['name.required'=>'No se ha ingresado un nombre',
          'name.max'=>'El nombre de carpeta no puede tener mas de 75 caracteres',
-         'name.min'=>'El nombre de carpeta no puede tener menos de 3 caracteres',
-         
-        ];
+         'name.min'=>'El nombre de carpeta no puede tener menos de 3 caracteres', ];
         $this->validate($request, $rules, $messages);
         $folders= new Folder();
         $folders->name= $request->input('name');
@@ -57,10 +51,8 @@ class FolderController extends Controller
         }else{
             $folders->father_folder_id= $request->input('padre');
         }
-    
-        $folders->save();
- 
-        return back()->with('notification','La carpeta ha sido registrado exitosamente');
+            $folders->save();
+         return back()->with('notification','La carpeta ha sido registrado exitosamente');
     }
     public function edit($id)
     {
@@ -72,8 +64,6 @@ class FolderController extends Controller
     ->select('d1.*', 'd2.name as father_folder', 'd3.name as departament')
     ->orderBy('updated_at','DESC')
 ->get();
-
-
         $folder=Folder::find($id);
         if($folder->departament_id!=Auth::user()->departament_id){
 return('Usted no tiene permisos para realizar esta operacion');
