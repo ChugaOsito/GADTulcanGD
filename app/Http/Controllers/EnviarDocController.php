@@ -520,7 +520,7 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         ->join('document_user','documents.id','=','document_user.document_id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('documents.id', '=', $id_documento->document_id)
-        ->select('document_user.type as tipo','documents.created_at as created_at','documents.name','documents.id','documents.number as number','types.name as type')
+        ->select('document_user.type as tipo','documents.created_at as created_at','documents.name as name','documents.id as id','documents.number as number','types.name as type')
         ->first();
 
                 
@@ -533,7 +533,7 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         
       
         
-        return view('Documentos')->with(compact('documents'))->with(compact('documento'))->with(compact('tipo'));
+        return view('Documents.Seguimiento')->with(compact('documents'))->with(compact('documento'))->with(compact('tipo'));
 
     }
 

@@ -50,7 +50,7 @@
 <div class="form-group">
   <button type="submit" class="btn btn-primary">Anexar</button>
 
-  <a href="{{ route('Enviados', ['exito' => 1]) }}" class="btn btn-danger" title="Editar">Continuar sin anexar
+  <a href="{{ route('Enviados', ['exito' => 1]) }}" class="btn btn-danger" title="Editar">Terminar
     <span class="glyphicon glyphicon-pencil"></span></a>
         </div>
 
