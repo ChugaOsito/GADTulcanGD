@@ -119,14 +119,18 @@
                                     <label class="col-form-label mt-4" for="inputDefault">Objeto</label>
                                     <input name="objeto" type="text" class="form-control" placeholder="Inserte Objeto del documento" id="inputDefault" value="{{ old('objeto') }}">
                                   </div>
-
+<!--
                                 <div class="form-group">
                                     <label for="exampleTextarea" class="form-label mt-4">Cuerpo</label>
                                     <textarea name="cuerpo" class="form-control" id="exampleTextarea" rows="20" >
                                       {{ old('cuerpo') }}
                                     </textarea>
                                   </div>
-                        
+                        -->
+                        <div class="form-group">
+                          <label for="cuerpo" class="form-label mt-4">Cuerpo</label>
+                        <textarea cols="80" id="cuerpo" name="cuerpo" rows="10" data-sample-short>{{ old('cuerpo') }}</textarea>
+                        </div>
                                 </br>
                         
                                   <div class="form-group">
@@ -145,19 +149,6 @@
 </div>
 </div>
 </div>
-@endsection
-@section('ck-editor')
-
-<script src="https://cdn.ckeditor.com/ckeditor5/30.0.0/classic/ckeditor.js"></script>
-
-
-<script>
-    ClassicEditor
-        .create( document.querySelector( '#editor' ) )
-        .catch( error => {
-            console.error( error );
-        } );
-</script>
 
 @php
 function MasUsuarios($id_Departamento){
@@ -173,5 +164,20 @@ return $masusuarios;
 }
 
   @endphp
+
+@endsection
+@section('ck-editor')
+
+<script>
+  CKEDITOR.replace('cuerpo', {
+    height: 400,
+    baseFloatZIndex: 10005,
+    removeButtons: 'PasteFromWord,ExportPdf,Print,Save,NewPage,Preview,Source,DocProps'
+  });
+</script>
+    
+@endsection
+@section('ck-editor-CDN')
+<script src="https://cdn.ckeditor.com/4.17.2/full/ckeditor.js"></script>
 @endsection
     

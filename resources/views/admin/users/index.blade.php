@@ -80,12 +80,12 @@
     <label class="col-form-label mt-4" for="inputDefault">Correo Electronico</label>
     <input type="text" class="form-control" placeholder="Inserte Correo Electronico" id="inputDefault" name="email" value="{{ old('email') }}">
   </div>
-<!--
+<!--Comentar Contraseña-->
   <div class="form-group">
     <label class="col-form-label mt-4" for="inputDefault">Contraseña</label>
     <input type="text" class="form-control" placeholder="Inserte Contraseña" id="inputDefault" name="contrasena" value="{{ old('contrasena', Str::random(10)) }}">
   </div>
-  -->
+  
   <div class="form-group">
 
     <div class="form-group">

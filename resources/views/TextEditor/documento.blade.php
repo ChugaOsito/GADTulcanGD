@@ -122,7 +122,8 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     <h1><b> OBJETO : {{ $objeto }}</b></h1>
     <br>
     <br>
-    <h1 class="page_break">{{ $cuerpo }}</h1>
+    
+    <h1 class="page_break">{!! $cuerpo !!}</h1>
     @php
                 $posicion_emisor=\DB::table('positions')->where('id', '=',  Auth::user()->position_id)->first();
                 $departamento_emisor=\DB::table('departaments')->where('id', '=',  Auth::user()->departament_id)->first();

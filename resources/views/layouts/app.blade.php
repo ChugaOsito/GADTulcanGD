@@ -11,6 +11,10 @@
     <!-- Scripts -->
     
     <script src="{{ asset('js/app.js') }}" ></script><!-- Se elimino etiqueta defer, volver a usar en caso de conflictos -->
+    <!-- Ckeditor -->
+    @yield('ck-editor-CDN')
+    
+    
     @yield('cssDataTable')
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -147,9 +151,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
     @yield('jsSelect2')
     
-    {{-- ck-editor 
+   
     @yield('ck-editor')
-    --}}
+  
 
     @yield('jsDataTable')
     <footer class="footer bg-light">

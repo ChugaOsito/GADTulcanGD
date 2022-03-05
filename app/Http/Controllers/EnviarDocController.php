@@ -209,6 +209,7 @@ return ('Usted no tiene permitido visualizar este documento');
                     $this->validate($request, $rules, $messages);
           
         $cuerpo=$request->input('cuerpo');
+        
         $objeto=$request->input('objeto');
         
         $nombre = Auth::user()->name;
