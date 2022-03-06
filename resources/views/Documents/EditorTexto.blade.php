@@ -33,6 +33,13 @@
                                     
                                   </select>
                                 </div>
+
+                                <div class="form-group">
+                                  <label class="col-form-label mt-4" for="inputDefault">Numero de Documento <em> (Si este campo se deja vacio se asignara un numero automaticamente)</em></label>
+                                  <input type="text" class="form-control" placeholder="Inserte un Numero de Documento" id="inputDefault" name="number" value="{{ old('number') }}" 
+                                  minlength="1" maxlength="4" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                </div>
+                                
                                 <div class="form-group">
                                   <label class="col-form-label mt-4" for="inputDefault">Descripción del Documento</label>
                                   <input type="text" class="rounded form-control" placeholder="Inserte una breve descripción" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
@@ -41,6 +48,7 @@
                                 <div class="form-group">
                                   <label for="exampleSelect1" class="form-label mt-4">Para:</label>
                                   <select class="rounded form-select select2" id="exampleSelect1" name="receptor[]" multiple="multiple">
+                                    @if($users->count()>1)
                                     <optgroup label="{{ $MiDepartamento->name }}">
                                     <option value="{{ -$MiDepartamento->id }} "> Todo el departamento de {{ $MiDepartamento->name }} </option> 
                                     @foreach ($users as $user )
@@ -52,6 +60,7 @@
                                     
                                     @endforeach
                                   </optgroup>
+                                  @endif
                                   @if (auth()->user()->is_DepartamentBoss)
                                     @php
                                    

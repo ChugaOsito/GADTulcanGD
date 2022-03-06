@@ -13,6 +13,7 @@ use App\Models\Type;
 use App\Models\Configuration;
 use Illuminate\Support\Facades\Auth;
 use PDF;
+use Illuminate\Support\MessageBag;
 class EnviarDocController extends Controller
 {
     
@@ -46,6 +47,7 @@ class EnviarDocController extends Controller
         ->with (compact('MiDepartamento'));
     }
     public function postEnviar(Request $request){
+       
         $configuration=Configuration::find(1)->first();
         
 
@@ -66,11 +68,25 @@ class EnviarDocController extends Controller
             'type.required'=>'Ingrese un tipo de documento'
         ];
         $this->validate($request, $rules, $messages);
+       
+    $consulta=$this->VerificarNumeracion($request->input('number'),$request->input('type'));
+    if($consulta!==null)
+    {
+        $errors = new MessageBag();
+        $errors->add('numeracion', 'Este numero de documento ya esta en uso, se recomienda usar el numero: '.
+        $this->RecomendarNumeracion($request->input('type')));
+        return back()->withInput()->withErrors($errors);
+    }
+    
+        
+
+   
+
         $rutapdf=$this->SubirPdf($request->file("archivo"));
        
         
         //Registrar Documento y obtener su id
-        $docSubido=$this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request
+        $docSubido=$this->RegistrarEnvio($request->input('number'),$request->input('nombre'), $rutapdf, $request
         ->input('receptor'),$request->input('type') );
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
@@ -207,6 +223,15 @@ return ('Usted no tiene permitido visualizar este documento');
             
                     ];
                     $this->validate($request, $rules, $messages);
+
+                    $consulta=$this->VerificarNumeracion($request->input('number'),$request->input('type'));
+                    if($consulta!==null)
+                    {
+                        $errors = new MessageBag();
+                        $errors->add('numeracion', 'Este numero de documento ya esta en uso, se recomienda usar el numero: '.
+                        $this->RecomendarNumeracion($request->input('type')));
+                        return back()->withInput()->withErrors($errors);
+                    }
           
         $cuerpo=$request->input('cuerpo');
         
@@ -225,19 +250,19 @@ return ('Usted no tiene permitido visualizar este documento');
         if($receptores_departamentos==null){
             $pdf = PDF::loadView(
                 'TextEditor.documento',
-                ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
+                ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero($request->input('number'),$request->input('type')),'tipo'=>$type]
                 );
 
         }elseif ($receptores==null) {
             $pdf = PDF::loadView(
                 'TextEditor.documento',
-                ['receptores_departamentos'=>$receptores_departamentos,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
+                ['receptores_departamentos'=>$receptores_departamentos,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero($request->input('number'),$request->input('type')),'tipo'=>$type]
                 );
         }
         else {
             $pdf = PDF::loadView(
                 'TextEditor.documento',
-                ['receptores_departamentos'=>$receptores_departamentos,'receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
+                ['receptores_departamentos'=>$receptores_departamentos,'receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero($request->input('number'),$request->input('type')),'tipo'=>$type]
                 );
         }
        
@@ -253,7 +278,7 @@ return ('Usted no tiene permitido visualizar este documento');
         
         
         //Registrar Documento y obtener su id
-        $docSubido= $this->RegistrarEnvio($request->input('nombre'), $rutapdf, $request->input('receptor'),$request->input('type') );
+        $docSubido= $this->RegistrarEnvio($request->input('number'),$request->input('nombre'), $rutapdf, $request->input('receptor'),$request->input('type') );
         
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
@@ -375,9 +400,15 @@ return ('Usted no tiene permitido visualizar este documento');
         }
         $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
         $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
+        //Obteniendo datos de documento a responder
+        $documentoR=Document::find($id);
+        $typoR=Type::find($documentoR->type_id);
+        //Fin Obteniendo datos
   
         $types= Type::all();
-        return  view('Responder.Enviar')->with (compact('user'))->with (compact('types'));
+        return  view('Responder.Enviar')->with (compact('user'))->with (compact('types'))
+        ->with (compact('documentoR'))
+        ->with (compact('typoR'));
     }
     public function postResponder(Request $request, $id){
         $configuration=Configuration::find(1)->first();
@@ -396,10 +427,18 @@ return ('Usted no tiene permitido visualizar este documento');
             'type.required'=>'Ingrese un tipo de documento',
             'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',        ];
         $this->validate($request, $rules, $messages);
+        $consulta=$this->VerificarNumeracion($request->input('number'),$request->input('type'));
+    if($consulta!==null)
+    {
+        $errors = new MessageBag();
+        $errors->add('numeracion', 'Este numero de documento ya esta en uso, se recomienda usar el numero: '.
+        $this->RecomendarNumeracion($request->input('type')));
+        return back()->withInput()->withErrors($errors);
+    }
         $rutapdf=$this->SubirPdf($request->file("archivo"));
              
         
-        $docSubido=$this->RegistrarRespuesta($request->input('nombre'),
+        $docSubido=$this->RegistrarRespuesta($request->input('number'),$request->input('nombre'),
         $rutapdf,$process->process,$user->id,$request->input('type'));
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
@@ -413,7 +452,12 @@ return ('Usted no tiene permitido visualizar este documento');
     $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
         $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
         $types= Type::all();
-    return  view('Responder.EditorTexto')->with (compact('user'))->with (compact('types'));
+        //Obteniendo datos de documento a responder
+        $documentoR=Document::find($id);
+        $typoR=Type::find($documentoR->type_id);
+        //Fin Obteniendo datos
+    return  view('Responder.EditorTexto')->with (compact('user'))->with (compact('types'))->with (compact('documentoR'))
+    ->with (compact('typoR'));
 
 
    
@@ -441,7 +485,14 @@ public function DocHtmlResponder(Request $request, $id){
         
                 ];
                 $this->validate($request, $rules, $messages);
-        
+                $consulta=$this->VerificarNumeracion($request->input('number'),$request->input('type'));
+                if($consulta!==null)
+                {
+                    $errors = new MessageBag();
+                    $errors->add('numeracion', 'Este numero de documento ya esta en uso, se recomienda usar el numero: '.
+                    $this->RecomendarNumeracion($request->input('type')));
+                    return back()->withInput()->withErrors($errors);
+                }
                 
     $receptores[0]=$user;
     
@@ -452,11 +503,16 @@ public function DocHtmlResponder(Request $request, $id){
     $apellido = Auth::user()->lastname;
     $type= Type::find($request->input('type'));
     $type= $type->name;
+
+    //Obteniendo datos de documento a responder
+    $documentoR=Document::find($id);
+    $typoR=Type::find($documentoR->type_id);
+    //Fin Obteniendo datos
    
     //Inicio transformar Html a pdf
     $pdf = PDF::loadView(
     'TextEditor.documento',
-    ['receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero(),'tipo'=>$type]
+    ['documentoR'=>$documentoR,'typoR'=>$typoR,'receptores'=>$receptores,'cuerpo'=>$cuerpo,'objeto'=>$objeto,'nombre'=>$nombre,'apellido'=>$apellido,'numeracion'=>$this->Asignandonumero($request->input('number'),$request->input('type')),'tipo'=>$type]
     );
 $output = $pdf->output();
 
@@ -466,7 +522,7 @@ $nombrepdf="pdf_".time().".pdf";
 file_put_contents( "pdf/".$nombrepdf, $output);
     //Fin transformacion
     
-    $docSubido=$this->RegistrarRespuesta($request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
+    $docSubido=$this->RegistrarRespuesta($request->input('number'),$request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
     return redirect()->route('FirmarDoc', ['id' => $docSubido]);
  }
 
@@ -602,27 +658,23 @@ return back();
     }
     //Fin metodo permitir acceso a documentos
 //Inicio Numeracion
-function Asignandonumero(){
-     
+function Asignandonumero($numero,$TipoDocumento){
+     if($numero==null){
+       $numero= $this->RecomendarNumeracion($TipoDocumento);
+     }
        
      $departamento= \DB::table('departaments')
      ->where('id','=',Auth::user()->departament_id)
      ->first();
      $consulta=Document::all();
-     $idAnterior=$consulta->last();
     
-     if($idAnterior==null){
-$numero=1;
-     }else{
-$numero=$idAnterior->id+1;
-     }
      $numeracion=''.$numero.'-'.$departamento->identifier.'-GADMT-'.date('Y');
      
      return $numeracion;
 }
 //Fin Numeracion
      //Inicio metodo para enviar documento 
-     function RegistrarEnvio($nombreDocumento, $rutaDocumento, $Receptores,$tipo_Documento){
+     function RegistrarEnvio($numero,$nombreDocumento, $rutaDocumento, $Receptores,$tipo_Documento){
         
         $folder=\DB::table('folders')->where('father_folder_id', '=', 1)
         ->where('departament_id', '=', Auth::user()->departament_id)->orderBy('id', 'asc')->first();
@@ -633,7 +685,7 @@ $numero=$idAnterior->id+1;
         $doc->folder_id=$folder->id;
         $Usuarios=$this->ObtenerUsuariosReceptores($Receptores);
         $Departamentos=$this->ObtenerDepartamentosReceptores($Receptores);
-       $doc->number=$this->Asignandonumero();
+       $doc->number=$this->Asignandonumero($numero,$tipo_Documento);
         $doc->save();
         if(isset($Usuarios))
         {
@@ -720,7 +772,7 @@ $numero=$idAnterior->id+1;
      //Fin Subir pdf 
 
      //Responder
-     function RegistrarRespuesta($nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder,$tipo_Documento){
+     function RegistrarRespuesta($numero,$nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder,$tipo_Documento){
         $folder=\DB::table('folders')->where('father_folder_id', '=', 1)
         ->where('departament_id', '=', Auth::user()->departament_id)->orderBy('id', 'asc')->first();
     $doc =new Document();
@@ -729,7 +781,7 @@ $numero=$idAnterior->id+1;
     $doc->path= $rutaDocumento;
     $doc->type_id=$tipo_Documento;
        
-    $doc->number=$this->Asignandonumero();
+    $doc->number=$this->Asignandonumero($numero,$tipo_Documento);
     
     
     $doc->save();
@@ -764,5 +816,60 @@ $numero=$idAnterior->id+1;
       ->get();
       }
      //Fin Jefes de departameto
+
+        //Numeracion Recomendacion
+        function RecomendarNumeracion($TipodeDocumento){
+    $numero=\DB::table('documents')
+    ->join('types','documents.type_id','=','types.id')
+    ->join('document_user','documents.id','=','document_user.document_id')
+    ->join('users','users.id','=','document_user.user_id')
+    ->join('departaments','departaments.id','=','users.departament_id')
+    ->where('departaments.id', '=',Auth::user()->departament_id )
+    ->where('types.id', '=', $TipodeDocumento)
+    ->count();
+  
+    $a=0;
+    $numero=$numero-10;
+    if($numero<=0){
+        $numero=1;
+    }
+    while ($a = 1) {
+       $consulta= $this->VerificarNumeracion($numero,$TipodeDocumento);
+       
+        if($consulta==NULL){
+$a=1;
+return $numero;
+        }
+        $numero=$numero+1;
+    
+     
+        
+    }
+    
+}
+    //Fin Numeracion Recomendacion
+
+      //Verificar Numeracion
+      function VerificarNumeracion($numeroAverificar, $TipodeDocumento){
+        $departamentoo= \DB::table('departaments')
+        ->where('id','=',Auth::user()->departament_id)
+        ->first();
+        $PREnumeracion='-'.$departamentoo->identifier.'-GADMT-'.date('Y');
+        $numeracion=''.$numeroAverificar.$PREnumeracion;
+  
+        $consulta=\DB::table('documents')
+    ->join('types','documents.type_id','=','types.id')
+    ->join('document_user','documents.id','=','document_user.document_id')
+    ->join('users','users.id','=','document_user.user_id')
+    ->join('departaments','departaments.id','=','users.departament_id')
+    ->where('departaments.id', '=',Auth::user()->departament_id )
+    ->where('types.id', '=', $TipodeDocumento)
+    ->where('documents.number', '=', $numeracion)->first();
+    return $consulta;
+
+      }
+      
+  //Fin Verificar Numeracion
+
 //Fin Funciones
 }

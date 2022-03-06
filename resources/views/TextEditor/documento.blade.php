@@ -43,6 +43,23 @@
                 text-align: center;
                 line-height: 35px;
             }
+
+            .referencias {
+                
+                position: absolute; 
+                
+                bottom: -30px; 
+                
+                display:inline-block;
+                /** Extra personal styles **/
+               
+                text-align: left;
+                line-height: 35px;
+            }
+            .referenciafont{
+                font-size: 13px;
+            }
+
             .para{
 
                 display:inline-block; 
@@ -142,6 +159,14 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     <h1><b>{{ strtoupper($posicion_emisor->name)}} DE {{ strtoupper($departamento_emisor->name)}}</b> </h1>
     
     </div >
+    @if (isset($documentoR))
+        <div class="referencias">
+            <p class="referenciafont" >Referencias: En respuesta a {{ $typoR->name}} {{ $documentoR->number }}</p>
+        </div>
+   
+    
+
+    @endif
     
 </body>
 </html>

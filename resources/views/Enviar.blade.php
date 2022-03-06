@@ -32,21 +32,28 @@
 </div>
 
 <div class="form-group">
+  <label class="col-form-label mt-4" for="inputDefault">Numero de Documento <em> (Si este campo se deja vacio se asignara un numero automaticamente)</em></label>
+  <input type="text" class="form-control" placeholder="Inserte un Numero de Documento" id="inputDefault" name="number" value="{{ old('number') }}" 
+  minlength="1" maxlength="4" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+</div>
+
+<div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Para:</label>
   <select class="rounded form-select select2" id="exampleSelect1" name="receptor[]" multiple="multiple">
-    <optgroup label="{{ $MiDepartamento->name }}" >
+    @if($users->count()>1)
+    <optgroup label="{{ $MiDepartamento->name }}">
     <option value="{{ -$MiDepartamento->id }} "> Todo el departamento de {{ $MiDepartamento->name }} </option> 
     @foreach ($users as $user )
-   @if($user->id!=Auth::user()->id)
+    @if($user->id!=Auth::user()->id)
     <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }} DE {{ strtoupper($user->departament_name) }}
        </option>   
    @endif
     
+    
     @endforeach
   </optgroup>
+  @endif
   @if (auth()->user()->is_DepartamentBoss)
-    
-  
     @php
    
     $otros_usuarios=MasUsuarios($Father_departament->id);
@@ -55,7 +62,7 @@
   <optgroup label="Departamento Superior">
   @foreach ($otros_usuarios as $otro_usuario )
   
-  <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }} DE {{ strtoupper($otro_usuario->departament_name) }}
+  <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}  DE {{ strtoupper($otro_usuario->departament_name) }}
  
   @endforeach    
 </optgroup>
@@ -76,7 +83,7 @@
     @foreach ($otros_usuarios as $otro_usuario )
     @if ($otro_usuario->id!=Auth::user()->id)
     
-    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }} DE {{ strtoupper($otro_usuario->departament_name) }}
+    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}  DE {{ strtoupper($otro_usuario->departament_name) }}
   
       @endif
     @endforeach 
@@ -97,7 +104,7 @@
     @if (isset($otros_usuarios))
     
     @foreach ($otros_usuarios as $otro_usuario )
-    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }} DE {{ strtoupper($otro_usuario->departament_name) }}
+    <option value="{{ $otro_usuario->id }}" > {{ $otro_usuario->treatment_abbreviation }}.{{ $otro_usuario->lastname }} {{ $otro_usuario->name }} - {{ $otro_usuario->position_name }}  DE {{ strtoupper($otro_usuario->departament_name) }}
   
     @endforeach  
      
@@ -105,7 +112,7 @@
   
     @endforeach
   </optgroup>  
-  @endif
+    @endif
   </select>
 </div>
 
@@ -135,9 +142,10 @@
 @php
 function MasUsuarios($id_Departamento){
   $masusuarios= \DB::table('users')->where('departament_id', '=', $id_Departamento)
-  ->where('rol', '=', 1)->where('users.deleted_at', '=', NULL)
+  
   ->join('departaments','departaments.id','=','users.departament_id')
   ->join('positions','positions.id','=','users.position_id')
+  ->where('positions.representative', '=', 1)->where('users.deleted_at', '=', NULL)
         ->join('treatments','treatments.id','=','users.treatment_id')
         ->select('users.*', 'departaments.name as departament_name','positions.name as position_name', 'treatments.abbreviation as treatment_abbreviation')
 ->get();

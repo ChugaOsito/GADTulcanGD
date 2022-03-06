@@ -17,7 +17,11 @@
                   </div>
                     
                   @endif
-    <form action="" method="post" enctype="multipart/form-data">
+
+                  <p><b>Respondiendo a {{ $typoR->name}} Numero: </b> {{ $documentoR->number }}</p>
+                  <p> <b>Descripción:</b> {{ $documentoR->name }}</p>
+
+                  <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
   <label for="exampleSelect1" class="form-label mt-4">Tipo de Documento</label>
@@ -29,6 +33,13 @@
     
   </select>
 </div>
+
+<div class="form-group">
+  <label class="col-form-label mt-4" for="inputDefault">Numero de Documento <em> (Si este campo se deja vacio se asignara un numero automaticamente)</em></label>
+  <input type="text" class="form-control" placeholder="Inserte un Numero de Documento" id="inputDefault" name="number" value="{{ old('number') }}" 
+  minlength="1" maxlength="4" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+</div>
+
 <div class="form-group">
   <fieldset>
     <label class="form-label mt-4" for="readOnlyInput">Para:</label>
