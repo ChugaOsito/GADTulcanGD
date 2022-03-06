@@ -119,7 +119,7 @@
           </i>
         </a>
 
-        <a href="/departamento/{{$departament->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/departamento/{{$departament->id}}/eliminar" class="btn btn-danger btn-sm" title="Inactivar">
           <i class="fas fa-trash fa-1x ">
           </i>
         </a>

@@ -95,7 +95,7 @@
           </i>
         </a>
 
-        <a href="/tratamiento/{{$treatment->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
+        <a href="/tratamiento/{{$treatment->id}}/eliminar" class="btn btn-danger btn-sm" title="Inactivar">
           <i class="fas fa-trash fa-1x ">
           </i>
         </a>

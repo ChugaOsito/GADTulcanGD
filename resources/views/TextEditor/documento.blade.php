@@ -103,35 +103,66 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
            $consulta1=\DB::table('treatments')->where('id', '=', $receptor->treatment_id)->first();
            $consulta2=\DB::table('positions')->where('id', '=', $receptor->position_id)->first();
            $consulta3=\DB::table('departaments')->where('id', '=', $receptor->departament_id)->first();
-           $titulo=$consulta1->abbreviation;
+           $titulo=$consulta1->name;
            $posicion=$consulta2->name;
            $departamento=$consulta3->name;
-       $i++;
+      
        
        @endphp
-       @if ($i==0)
+       @if ($i==-1)
        <h1 class="receptor"><b>PARA:  </b></h1>  
        @else
        <h1 class="receptor" style="color:white;"><b>PARA:  </b></h1>
        @endif
-       <h1 class="receptor">{{ $titulo }}. {{ $receptor->name }} {{ $receptor->lastname }}</h1><br>
+        </h1><h1 class="receptor">{{ mb_strtoupper($titulo) }}  </h1><br>
+       <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor">{{ $receptor->name }} {{ $receptor->lastname }} </h1><br>
+
+
        
        <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor"><b>  {{ $posicion }} DE {{ strtoupper($departamento) }}</b> </h1><br>
-       
+       @php
+            $i++;
+       @endphp
        @endforeach 
     @endif
-    @if ($i==-1)
-    <h1 class="receptor"><b>PARA:  </b></h1>  
-    @endif
+   
+    
     @if (@isset($receptores_departamentos))
         
     
        @foreach ($receptores_departamentos as $receptor_departamento )
-       @if ($i!=-1)
+       
+       @php
+           $Usuarios= \DB::table('users')
+        ->join('departaments','users.departament_id','=','departaments.id')
+        ->join('positions','positions.id','=','users.position_id')
+        ->join('treatments','treatments.id','=','users.treatment_id')
+        ->where('users.departament_id', '=', $receptor_departamento->id)
+        
+        ->select('departaments.name as Departamento','positions.name as posicion','treatments.name as titulo',
+        'users.name as name','users.lastname as lastname','users.id as id')->get();
+       @endphp
+
+       @foreach ($Usuarios as $usuario)
+       @if($usuario->id!=Auth::user()->id)
+       @if ($i==-1)
+       <h1 class="receptor"><b>PARA:  </b></h1>  
+       @else
        <h1 class="receptor" style="color:white;"><b>PARA:  </b></h1>
        @endif
-       <h1 class="receptor">  UNIDAD DE {{ strtoupper($receptor_departamento->name) }}</h1>    <br>
+    </h1><h1 class="receptor">{{ mb_strtoupper($usuario->titulo) }}  </h1><br>
+    <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor"> {{ $usuario->name }} {{ $usuario->lastname }}</h1><br>
        
+       <h1  class="receptor"  style="color:white;"><b>PARA:  </b></h1><h1 class="receptor"><b>  {{ $usuario->posicion }} DE {{ strtoupper($usuario->Departamento) }}</b> </h1><br>
+       
+       @php
+            $i++;
+       @endphp
+       @endif
+       @endforeach
+       <!--La siguiente linea se usaba solo para imprimir el nombre de departamento 
+       <h1 class="receptor">  UNIDAD DE {{ strtoupper($receptor_departamento->name) }}</h1>    <br>
+       -->
        @endforeach 
     @endif
     
@@ -152,10 +183,12 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
        
         <br>
        
-        
+        @php
+            $Titulo= \DB::table('treatments')->where('id', '=', Auth::user()->treatment_id)->first();
+        @endphp
 
     <h1>______________</h1>
-    <h1>{{ $apellido }} {{ $nombre }} </h1>
+    <h1>{{ $Titulo->abbreviation }}. {{ $apellido }} {{ $nombre }} </h1>
     <h1><b>{{ strtoupper($posicion_emisor->name)}} DE {{ strtoupper($departamento_emisor->name)}}</b> </h1>
     
     </div >
