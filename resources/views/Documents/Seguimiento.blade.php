@@ -26,7 +26,7 @@
                   
 
                   @if (request()->is('Seguimiento/*'))
-                  <p><b>{{ $tipo->name}} Numero: </b> {{ $documento->number }}</p>
+                  <p><b>{{ $tipo->name}} Número: </b> {{ $documento->number }}</p>
 <p> <b>Descripción:</b> {{ $documento->name }}</p>
 
 @php
@@ -64,19 +64,22 @@
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
+      <th>Propietario</th>
       @if (request()->is('Seguimiento/*'))
-      <th>Transaccion</th>
+      <th>Transacción</th>
       @endif
 @if (request()->is('Enviados'))
 <th>Para</th>
 @elseif (request()->is('Recibidos'))
 <th>De</th>
 @endif
+<th>Tipo</th>
+      <th>Número</th>
       
-      <th>Numero</th>
-      <th>Tipo</th>
+      <th>Seguimiento</th>
       <th>Descripción</th>
-      <th>Fecha de Creacion</th>
+     
+      <th>Fecha de Creación</th>
       <th>Opciones</th>
       
     </tr>
@@ -115,7 +118,7 @@
     @if (isset($documents))
       
     
-    @foreach ($documents as $document)
+    @foreach ($documents as   $keyDocument =>$document)
     
     @php
       
@@ -176,6 +179,13 @@ $idDelDocumento= $document->id;
     @endif
     
     @if (request()->is('Seguimiento/*'))
+    @php
+     $propietario= \DB::table('document_user')
+     ->join('users','users.id','=','document_user.user_id')->where('document_user.type', '=', "E")
+    ->select('users.name as name','users.lastname as lastname')
+     ->where('document_id', '=', $document->id)->first();
+    @endphp
+    <td> {{ $propietario->lastname }} {{ $propietario->name }}</td>
     @if ($document->tipo=='E')
     <td>Enviado</td>
     @else
@@ -183,9 +193,46 @@ $idDelDocumento= $document->id;
     @endif
     
     @endif
+    @php
+    $a=0;
+    $i=$keyDocument+1;
+    $temporal=null;
+     while ($a == 0) {
+      if (isset($documents[$i])){
+        $temp_tipo=$document->tipo;
+       
+      if ($temp_tipo==$documents[$i]->tipo) {
+      
+       $i++; 
+      }else {
+        $temporal=$documents[$i];
+        $a=1;
+      }
+       
+         
+      }else {
+        $a=1;
+        $temporal=null;
+      }
+     
+        }
+
+     
+       
+      
+
+      
+    @endphp
+    <td>{{ $document->type }}</td>
       <td>{{ $document->number }}</td>
-      <td>{{ $document->type }}</td>
-      <td>{{ $document->name }}</td>
+      
+      @if ($temporal==null)
+      <td></td>  
+      @else
+        <td>En respuesta a:  {{ $temporal->type }} {{ $temporal->number }}</td>
+      @endif
+      
+     <td>{{ $document->name }}</td>
       <td>{{ $document->created_at }}</td>
       
       <td>
@@ -200,7 +247,7 @@ $idDelDocumento= $document->id;
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title text-dark"><b>{{ $document->type}} Numero: {{ $document->number }} </b></h4>
+                        <h4 class="modal-title text-dark"><b>{{ $document->type}} Número: {{ $document->number }} </b></h4>
                     </div>
                     <div class="modal-body">
                       <p><b>Descripción:</b>  {{ $document->name }}</p>

@@ -32,7 +32,7 @@
 @csrf
 
 <div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>
+  <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Título</label>
   <select class="rounded form-select" id="exampleSelect1" name="treatment">
     @foreach ($treatments as $treatment )
     <option value="{{ $treatment->id }}"@if ($treatment->id== $user->treatment_id)   selected  @endif> {{ $treatment->name }} </option>   
@@ -43,8 +43,8 @@
 </div>
 
 <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Numero de Cedula</label>
-    <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification"  value="{{ old('identification', $user->identification) }}"
+    <label class="col-form-label mt-4" for="inputDefault">Número de Cédula</label>
+    <input type="text" class="form-control" placeholder="Inserte Número de Cédula" id="inputDefault" name="identification"  value="{{ old('identification', $user->identification) }}"
     minlength="10" maxlength="10" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
   </div>
   
@@ -59,7 +59,7 @@
   </div>
 
   <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Correo Electronico</label>
+    <label class="col-form-label mt-4" for="inputDefault">Correo Electrónico</label>
     <input type="text" class="form-control" placeholder="Inserte Correo Electronico" id="inputDefault" name="email"  value="{{ old('email', $user->email) }}">
   </div>
 <!--Comentar contraseña-->

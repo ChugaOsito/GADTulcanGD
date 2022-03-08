@@ -87,7 +87,7 @@
   <br>  
   <div class="row abs-center ">
     <div class="col-sm-10">
-      <h1 class="card-title text-center text-white bg-dark ">LOGS de la Aplicacion</h1>
+      <h1 class="card-title text-center text-white bg-dark ">LOGS de la Aplicación</h1>
   <table id="DataTable"class=" table table-striped" style="width:100%">
     <thead>
       <tr>

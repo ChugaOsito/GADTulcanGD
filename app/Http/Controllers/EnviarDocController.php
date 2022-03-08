@@ -321,7 +321,24 @@ return ('Usted no tiene permitido visualizar este documento');
     }
 
     //Anexos
+//Inicio Anexos temporal
+public function ViewAnexo($id){
+    $document=Document::find($id);
+    $type=Type::find($document->type_id);
+    if($this->Permiso($id)==false){
 
+        return 'Usted no tiene permisos para realizar la accion solicitada';
+    }
+    $annexes= \DB::table('annexes')->where('document_id', '=', $id)->get();
+
+    $usuario= \DB::table('users')->join('document_user','users.id','=','document_user.user_id')
+    ->where('document_id', '=', $id)
+    ->where('type', '=', 'E')->first();
+    return  view('annexes.view')->with (compact('annexes'))->with (compact('usuario'))
+    ->with (compact('document'))
+    ->with (compact('type'));
+}
+//Fin anexos temporal
     public function FormularioAnexos($id){
         $document=Document::find($id);
         $type=Type::find($document->type_id);
@@ -563,7 +580,9 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         $tipo=Type::find($documento->type_id);
 
         $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
-        $id_documentos=\DB::table('document_user')->where('process', '=', $process->process)->get();
+        $id_documentos=\DB::table('document_user')
+        ->join('documents','documents.id','=','document_user.document_id')
+        ->where('document_user.process', '=', $process->process)->orderBy('documents.updated_at','DESC')->get();
 
         
 

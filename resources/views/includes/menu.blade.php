@@ -28,7 +28,7 @@
             <a class="dropdown-item text-white" href="/size/1">Configurar Tamaño de Subida de Doumentos</a>
             <a class="dropdown-item text-white" href="/tipos">Agregar tipos de documentos</a>
             <a class="dropdown-item text-white" href="/cargos">Agregar Cargos</a>
-            <a class="dropdown-item text-white" href="/tratamientos">Agregar Tratamientos o Titulos Academicos</a>
+            <a class="dropdown-item text-white" href="/tratamientos">Agregar Tratamientos o Títulos Académicos </a>
           </div>
    
    

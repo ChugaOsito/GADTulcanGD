@@ -73,10 +73,10 @@
 <th>De</th>
 @endif
       
-      <th>Numero</th>
+      <th>Número</th>
       <th>Tipo</th>
       <th>Descripción</th>
-      <th>Fecha de Creacion</th>
+      <th>Fecha de Creación</th>
       <th>Opciones</th>
       
     </tr>
@@ -194,7 +194,7 @@ $idDelDocumento= $document->id;
       <td>
         <!-- Modal -->
         <!-- Trigger the modal with a button -->
-        <button     onclick="resalta('Fila-{{ $idDelDocumento }}')" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-{{$idDelDocumento}}"><i class="fas fa-envelope-open-text fa-1x"> Abrir</i></button>
+        <button     onclick="resalta('Fila-{{ $idDelDocumento }}')" type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal-{{$idDelDocumento}}"><i class="fas fa-envelope-open-text fa-1x"> Ver</i></button>
         
         <div id="myModal-{{$idDelDocumento}}" class="modal fade" role="dialog">
             <div class="modal-dialog modal-lg">
@@ -203,7 +203,7 @@ $idDelDocumento= $document->id;
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title text-dark"><b>{{ $document->type}} Numero: {{ $document->number }} </b></h4>
+                        <h4 class="modal-title text-dark"><b>{{ $document->type}} Número: {{ $document->number }} </b></h4>
                     </div>
                     <div class="modal-body">
                       <p><b>Descripción:</b>  {{ $document->name }}</p>
@@ -234,19 +234,20 @@ $idDelDocumento= $document->id;
                       @endif
 
                       @if (request()->is('Enviados'))
+                      <!--
                       <a href="/FirmarDoc/{{$idDelDocumento}}" class="btn btn-primary " title="Editar">
                         
                         <i class="fas fa-edit fa-1x"> Editar</i>
                          
                        </a>
-
+                      -->
                       
 
                       
 
                       @endif
                        
-                      <a href="/Anexos/{{$idDelDocumento}}" class="btn btn-info " title="Ver Anexos">
+                      <a href="/ViewAnexo/{{$idDelDocumento}}" class="btn btn-info " title="Ver Anexos">
                         <i class="fas fa-paperclip fa-1x"> Anexos</i>
                          
                        </a>

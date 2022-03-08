@@ -22,7 +22,7 @@ class DepartamentsTableSeeder extends Seeder
         ]);
 
         Departament::create([
-            'name'=> 'Alcaldia',
+            'name'=> 'Alcaldía',
             'father_departament_id'=> 1,
             'identifier'=>'ALC'
            

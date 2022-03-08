@@ -86,7 +86,7 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
     $mesnumero=date('m')-1;
     $mes=$meses[$mesnumero];
     @endphp
-    <h1 align="right">Tulcan, {{ @date('d') }} de {{ $mes }} del {{ @date('Y') }}</h1>
+    <h1 align="right">Tulcán, {{ @date('d') }} de {{ $mes }} del {{ @date('Y') }}</h1>
     <h1 align="right"><b>{{ $tipo }} Nro {{ $numeracion }}</b></h1>
     <br>
     
@@ -179,7 +179,7 @@ $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"
         
     @endphp
     <div class="firma">
-        <h1>Atentamente</h1>
+        <h1>Atentamente,</h1>
        
         <br>
        

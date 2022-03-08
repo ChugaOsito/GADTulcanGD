@@ -4,7 +4,7 @@
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
             
-                <div class="card-header">Anexar Documentos</div>
+                <div class="card-header">Anexos</div>
 
                 <div class="card-body bg-light text-black">
 
@@ -30,32 +30,7 @@
                   <!--Con este condicional verificamos que solo el propietario del documento pueda anexar documentos-->
                   <p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
                   <p> <b>Descripción:</b> {{ $document->name }}</p>
-                  @if (auth()->id()== $usuario->user_id)
-  
-
-    <form action="" method="post" enctype="multipart/form-data">
-@csrf
-
-<div class="form-group">
-  <label class="col-form-label mt-4" for="inputDefault">Nombre del Anexo</label>
-  <input type="text" class="form-control" placeholder="Inserte Nombre del Documento" id="inputDefault" name="nombre" value="{{ old('nombre') }}">
-</div>
-
-<div class="form-group">
-  <label for="formFile" class="form-label mt-4">Subir Archivo PDF</label>
-  <input class="form-control" type="file" id="formFile" name="archivo">
-</div>
-
-</br>
-<div class="form-group">
-  <button type="submit" class="btn btn-primary">Anexar</button>
-
-  <a href="{{ route('Enviados', ['exito' => 1]) }}" class="btn btn-danger" title="Editar">Terminar
-    <span class="glyphicon glyphicon-pencil"></span></a>
-        </div>
-
-</form>
-@endif
+           
 <br>
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>

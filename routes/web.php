@@ -64,6 +64,9 @@ Route::get('/Anexos/{id}', [App\Http\Controllers\EnviarDocController::class,'For
 Route::post('/Anexos/{id}', [App\Http\Controllers\EnviarDocController::class,'Anexos'])->name('Anexos');
 Route::get('/Anexo/{id}/eliminar', [App\Http\Controllers\EnviarDocController::class,'BorrarAnexo'])->name('BorrarAnexo');
 Route::get('/VerAnexo/{id}', [App\Http\Controllers\EnviarDocController::class,'VisualizarAnexo']);
+//La siguiente ruta es temporal solo para visualizar anexos
+Route::get('/ViewAnexo/{id}', [App\Http\Controllers\EnviarDocController::class,'ViewAnexo']);
+
 //Carpetas
 Route::get('/VincularCarpeta/{id}', [App\Http\Controllers\EnviarDocController::class,'FormularioCarpeta']);
 Route::post('/VincularCarpeta/{id}', [App\Http\Controllers\EnviarDocController::class,'VincularCarpeta'])->name('VincularCarpeta');;

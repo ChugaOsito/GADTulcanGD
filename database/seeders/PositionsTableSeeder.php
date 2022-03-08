@@ -16,7 +16,7 @@ class PositionsTableSeeder extends Seeder
     {
         Position::create([
             
-            'name'=> 'SERVIDOR PUBLICO DE APOYO DE SERVICIOS',
+            'name'=> 'SERVIDOR PÚBLICO DE APOYO DE SERVICIOS',
             
            
 

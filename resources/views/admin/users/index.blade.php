@@ -50,7 +50,7 @@
 
 
 <div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Titulo</label>
+  <label for="exampleSelect1" class="form-label mt-4">Tratamiento o Título</label>
   <select class="rounded form-select" id="exampleSelect1" name="treatment">
     @foreach ($treatments as $treatment )
     <option value="{{ $treatment->id }}"> {{ $treatment->name }} </option>   
@@ -61,8 +61,8 @@
 </div>
 
 <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Numero de Cedula</label>
-    <input type="text" class="form-control" placeholder="Inserte Numero de Cedula" id="inputDefault" name="identification" value="{{ old('identification') }}" 
+    <label class="col-form-label mt-4" for="inputDefault">Número de Cédula </label>
+    <input type="text" class="form-control" placeholder="Inserte Número de Cédula " id="inputDefault" name="identification" value="{{ old('identification') }}" 
     minlength="10" maxlength="10" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
   </div>
   
@@ -77,8 +77,8 @@
   </div>
 
   <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault">Correo Electronico</label>
-    <input type="text" class="form-control" placeholder="Inserte Correo Electronico" id="inputDefault" name="email" value="{{ old('email') }}">
+    <label class="col-form-label mt-4" for="inputDefault">Correo Electrónico</label>
+    <input type="text" class="form-control" placeholder="Inserte Correo Electrónico" id="inputDefault" name="email" value="{{ old('email') }}">
   </div>
 <!--Comentar Contraseña-->
   <div class="form-group">
@@ -159,7 +159,7 @@
 <table id="DataTable" class="table table-hover table-bordered">
   <thead>
     <tr>
-      <th>Cedula</th>
+      <th>Cédula</th>
       <th>Apellidos</th>
       <th>Nombres</th>
       <th>E-mail</th>
