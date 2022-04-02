@@ -20,7 +20,7 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 
-<p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
+<p><b>{{ $type->name}} Número: </b> {{ $document->number }}</p>
 <p> <b>Descripción:</b> {{ $document->name }}</p>
 
   <div class="form-group">

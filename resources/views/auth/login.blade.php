@@ -17,7 +17,7 @@
                         <form method="POST" action="{{ route('login') }}">
                             @csrf
                             <div class="mb-5">
-                                <label class="form-label" for="email">{{ __('Correo Electronico') }}</label>
+                                <label class="form-label" for="email">{{ __('Correo Electrónico') }}</label>
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                                 @error('email')

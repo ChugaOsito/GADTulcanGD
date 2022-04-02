@@ -119,6 +119,9 @@
       
     
     @foreach ($documents as   $keyDocument =>$document)
+    @if (isset($document->id))
+      
+   
     
     @php
       
@@ -194,6 +197,8 @@ $idDelDocumento= $document->id;
     
     @endif
     @php
+    /*Este codigo se usaba antes para verificar la trazabilidad 
+    se recomienda borrarlo
     $a=0;
     $i=$keyDocument+1;
     $temporal=null;
@@ -216,20 +221,22 @@ $idDelDocumento= $document->id;
       }
      
         }
+      */
 
-     
-       
-      
-
-      
     @endphp
     <td>{{ $document->type }}</td>
       <td>{{ $document->number }}</td>
       
-      @if ($temporal==null)
+      @if ($document->response==null)
       <td></td>  
       @else
-        <td>En respuesta a:  {{ $temporal->type }} {{ $temporal->number }}</td>
+      @php
+        $documentoRespuesta= \DB::table('documents')
+     ->join('types','documents.type_id','=','types.id')->where('documents.id', '=',$document->response)
+    ->select('types.name as type','documents.number as number')
+     ->first();
+      @endphp
+        <td>En respuesta a:  {{  $documentoRespuesta->type }} {{  $documentoRespuesta->number }}</td>
       @endif
       
      <td>{{ $document->name }}</td>
@@ -290,7 +297,7 @@ $idDelDocumento= $document->id;
 
                       @endif
                        
-                      <a href="/Anexos/{{$idDelDocumento}}" class="btn btn-info " title="Ver Anexos">
+                      <a href="/ViewAnexo/{{$idDelDocumento}}" class="btn btn-info " title="Ver Anexos">
                         <i class="fas fa-paperclip fa-1x"> Anexos</i>
                          
                        </a>
@@ -329,7 +336,7 @@ $idDelDocumento= $document->id;
                          <table class="table table-hover table-bordered">
                            <thead>
                              <tr>
-                               <th>Cedula</th>
+                               <th>Cédula</th>
                                <th>Nombre</th>
                                <th>Cargo</th>
                                
@@ -356,7 +363,7 @@ $idDelDocumento= $document->id;
                           <table class="table table-hover table-bordered">
                             <thead>
                               <tr>
-                                <th>Cedula</th>
+                                <th>Cédula</th>
                                 <th>Nombre</th>
                                 <th>Cargo</th>
                                 
@@ -390,6 +397,7 @@ $idDelDocumento= $document->id;
         
       </td>
     </tr>
+    @endif
     @endforeach
     @endif
   </tbody>

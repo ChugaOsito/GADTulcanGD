@@ -10,7 +10,7 @@
 @elseif (request()->is('Recibidos'))
 <div class="card-header">Bandeja de Entrada</div>
 @else
-<div class="card-header">Documentos Internos del GAD de Tulcan</div>
+<div class="card-header">Documentos Internos del GAD de Tulcán</div>
 @endif
                 <div class="card-body bg-light text-black">
 
@@ -65,7 +65,7 @@
   <thead>
     <tr>
       @if (request()->is('Seguimiento/*'))
-      <th>Transaccion</th>
+      <th>Transacción</th>
       @endif
 @if (request()->is('Enviados'))
 <th>Para</th>
@@ -265,7 +265,7 @@ $idDelDocumento= $document->id;
                     -->
                       
                       <a href="/ValidarDocFirmado/{{$idDelDocumento}}" class="btn btn-warning" title="Verificar Firmas">
-                        <i class="fas fa-file-signature fa-1x"> Verificar Firmas Electronicas</i>
+                        <i class="fas fa-file-signature fa-1x"> Verificar Firmas Electrónicas</i>
                          
                        </a>
                        
@@ -286,7 +286,7 @@ $idDelDocumento= $document->id;
                          <table class="table table-hover table-bordered">
                            <thead>
                              <tr>
-                               <th>Cedula</th>
+                               <th>Cédula</th>
                                <th>Nombre</th>
                                <th>Cargo</th>
                                
@@ -313,7 +313,7 @@ $idDelDocumento= $document->id;
                           <table class="table table-hover table-bordered">
                             <thead>
                               <tr>
-                                <th>Cedula</th>
+                                <th>Cédula</th>
                                 <th>Nombre</th>
                                 <th>Cargo</th>
                                 

@@ -25,7 +25,7 @@
             data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Otras Configuraciones</a>
         
           <div class="border rounded bg-primary dropdown-menu">
-            <a class="dropdown-item text-white" href="/size/1">Configurar Tamaño de Subida de Doumentos</a>
+            <a class="dropdown-item text-white" href="/size/1">Configurar Tamaño de Subida de Documentos</a>
             <a class="dropdown-item text-white" href="/tipos">Agregar tipos de documentos</a>
             <a class="dropdown-item text-white" href="/cargos">Agregar Cargos</a>
             <a class="dropdown-item text-white" href="/tratamientos">Agregar Tratamientos o Títulos Académicos </a>
@@ -79,7 +79,7 @@
     <a @if (request()->is('carpetas')) class="border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif  
       href="/carpetas">Gestionar Carpetas</a>    
       <a  @if (request()->is('DescargarZip')) class=" border rounded list-group-item list-group-item-action active bg-dark" @else class="border rounded list-group-item list-group-item-action active "@endif 
-        href="/DescargarCopia" class="list-group-item list-group-item-action active">Descargar copias de informacion</a>
+        href="/DescargarCopia" class="list-group-item list-group-item-action active">Descargar copias de información</a>
     @endif
   
     @if (auth()->user()->is_admin)

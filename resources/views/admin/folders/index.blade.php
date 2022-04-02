@@ -5,7 +5,7 @@
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
             
-                <div class="card-header">Gestion de Carpetas</div>
+                <div class="card-header">Gestión de Carpetas</div>
 
                 <div class="card-body bg-light text-black">
 

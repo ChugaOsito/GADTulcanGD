@@ -9,7 +9,7 @@
                 <div class="card-body bg-light text-black">
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
-<p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
+<p><b>{{ $type->name}} Número: </b> {{ $document->number }}</p>
 <p> <b>Descripción:</b> {{ $document->name }}</p>
 
 
@@ -64,9 +64,15 @@
 <br>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Guardar</button>
-
-    <a   href="/Anexos/{{ $identificador }}" class="btn btn-danger" title="Omitir">Omitir
+<!--
+   <a   href="/Anexos/{{ $identificador }}" class="btn btn-danger" title="Omitir">Omitir
       <span class="glyphicon glyphicon-pencil"></span></a>
+El siguiente boton se elemino solo para la presentacion-->
+   
+
+      <a href="{{ route('Enviados', ['exito' => 1]) }}" class="btn btn-danger" title="Omitir">Omitir
+        <span class="glyphicon glyphicon-pencil"></span></a>
+            </div>
           </div> 
 
           

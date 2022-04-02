@@ -5,7 +5,7 @@
 <div class="card text-white bg-primary border-primary mb-3" style="max-width: 100rem;">
 
             
-                <div class="card-header">Descargar Copia de informacion</div>
+                <div class="card-header">Descargar Copia de información</div>
 
                 <div class="card-body bg-light text-black">
 
@@ -31,7 +31,7 @@
     <form action="" method="post" enctype="multipart/form-data">
 @csrf
 <div class="form-group">
-  <label for="exampleSelect1" class="form-label mt-4">Seleccione un usuario</label>
+  <label for="exampleSelect1" class="form-label mt-4">Escoja un usuario</label>
   <select class="form-select" id="exampleSelect1" name="usuario">
     @foreach ($users as $user )
     <option value="{{ $user->id }}" > {{ $user->treatment_abbreviation }}.{{ $user->lastname }} {{ $user->name }} - {{ $user->position_name }}

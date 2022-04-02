@@ -13,7 +13,7 @@
 <div class="alert alert-dismissible alert-warning">
   
   <h4 class="alert-heading">Lo sentimos</h4>
-  <p class="mb-0">No se han encontrado firmas electronicas validas en este documento <a href="javascript:history.back()" class="alert-link"> Volver</a>.</p>
+  <p class="mb-0">No se han encontrado firmas electrónicas en este documento <a href="javascript:history.back()" class="alert-link"> Volver</a>.</p>
 </div>
 
 
@@ -23,21 +23,28 @@
                   <table class="table table-hover table-bordered">
                     <thead>
                       <tr>
-                        <th>Cedula</th>
+                        <th>Cédula</th>
                         <th>Nombres y Apellidos</th>
                         <th>Fecha de Firmado</th>
-                        
+                        <th>Firma</th>
                       </tr>
                     </thead>
                     <tbody>
-                      
+                      @foreach ($datos as $dato )
                       <tr>
                         
-                        <td>{{ $datos['cedula'] }}</td>
-                        <td>{{ $datos['nombre'] }}</td>
-                        <td>{{ $datos['fecha_Firmado'] }}</td>
+                        <td>{{ $dato['cedula'] }}</td>
+                        <td>{{ $dato['nombre'] }}</td>
+                        <td>{{ $dato['fecha_Firmado'] }}</td>
+                        @if ($dato['validez']==true)
+                        <td>Válida</td>
+                        @else
+                        <td> Inválida</td>
+                        @endif
                         
-                      </tr>
+                      </tr>    
+                      @endforeach
+                    
                       
                     </tbody>
                   </table>

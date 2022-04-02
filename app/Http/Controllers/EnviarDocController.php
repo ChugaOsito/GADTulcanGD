@@ -10,6 +10,7 @@ use App\Models\Departament;
 use App\Models\Annex;
 use App\Models\Transaction;
 use App\Models\Type;
+use Illuminate\Support\Str;
 use App\Models\Configuration;
 use Illuminate\Support\Facades\Auth;
 use PDF;
@@ -52,13 +53,14 @@ class EnviarDocController extends Controller
         
 
         $rules=[
-
+            'Anexo.*'=> 'mimes:pdf'.'|max:'.$configuration->document_size,
 'nombre'=> 'required|min:3',
 'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
 'receptor'=> 'required',
 'type'=> 'required|exists:types,id'
         ];
        $messages=[
+        'Anexo.mimes'=>'El anexo debe estar en formato PDF',
             'nombre.required'=>'No ha introducido una descripcion para el archivo ',
             'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
@@ -67,6 +69,7 @@ class EnviarDocController extends Controller
             'archivo.max'=>'El archivo no puede exeder los '.$configuration->document_size.' kb',
             'type.required'=>'Ingrese un tipo de documento'
         ];
+      
         $this->validate($request, $rules, $messages);
        
     $consulta=$this->VerificarNumeracion($request->input('number'),$request->input('type'));
@@ -88,6 +91,10 @@ class EnviarDocController extends Controller
         //Registrar Documento y obtener su id
         $docSubido=$this->RegistrarEnvio($request->input('number'),$request->input('nombre'), $rutapdf, $request
         ->input('receptor'),$request->input('type') );
+        if($request->hasfile('Anexo'))
+        {
+            $this->Anexar($request->file('Anexo'),$request->input('nombreAnexo'),$docSubido);
+        }
        
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
     }
@@ -196,6 +203,7 @@ return ('Usted no tiene permitido visualizar este documento');
         $Father_departament=\DB::table('departaments')->where('id', '=', $MiDepartamento->father_departament_id)->first();
         $Brother_departaments=\DB::table('departaments')->where('father_departament_id', '=', $MiDepartamento->father_departament_id)->get();
         $types= Type::all();
+        
         return  view('Documents.EditorTexto')->with (compact('users'))
         ->with (compact('Father_departament'))
         ->with (compact('Brother_departaments'))
@@ -204,8 +212,9 @@ return ('Usted no tiene permitido visualizar este documento');
         ->with (compact('MiDepartamento'));
     }
     public function DocHtml(Request $request){
+        $configuration=Configuration::find(1)->first();
         $rules=[
-
+            'Anexo.*'=> 'mimes:pdf'.'|max:'.$configuration->document_size,
             'nombre'=> 'required|min:3',
             'cuerpo'=> 'required|min:3',
             'objeto'=> 'required|min:3',
@@ -214,6 +223,7 @@ return ('Usted no tiene permitido visualizar este documento');
                     ];
             
                     $messages=[
+                        'Anexo.mimes'=>'El anexo debe estar en formato PDF',
                         'objeto.required'=>'No ha introducido ningun objeto de documento ',
                         'cuerpo.required'=>'No ha introducido ningun cuerpo de documento ',
                         'nombre.required'=>'No ha introducido una descripcion para el archivo ',
@@ -280,7 +290,10 @@ return ('Usted no tiene permitido visualizar este documento');
         //Registrar Documento y obtener su id
         $docSubido= $this->RegistrarEnvio($request->input('number'),$request->input('nombre'), $rutapdf, $request->input('receptor'),$request->input('type') );
         
-       
+        if($request->hasfile('Anexo'))
+        {
+            $this->Anexar($request->file('Anexo'),$request->input('nombreAnexo'),$docSubido);
+        }
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
 
      }
@@ -317,7 +330,10 @@ return ('Usted no tiene permitido visualizar este documento');
         $document->public=$request->input('publico');
         $document->save();
         $identificador=$id;
+        return redirect()->route('Enviados', ['exito' => 1]);
+        /* quitar luego de la demostracion
         return redirect()->route('Anexos', ['id' => $identificador]);
+    */
     }
 
     //Anexos
@@ -434,10 +450,13 @@ return ('Usted no tiene permitido visualizar este documento');
 
         $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
         $rules=[
+            'Anexo.*'=> 'mimes:pdf'.'|max:'.$configuration->document_size,
 'archivo'=> 'required|mimes:pdf'.'|max:'.$configuration->document_size,
 'type'=> 'required|exists:types,id',
 'nombre'=> 'required|min:3'        ];
-        $messages=[ 'nombre.required'=>'No ha introducido una descripcion para el archivo ',
+        $messages=[ 
+            'Anexo.mimes'=>'El anexo debe estar en formato PDF',
+            'nombre.required'=>'No ha introducido una descripcion para el archivo ',
             'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
             'archivo.required'=>'No se ha se leccionado un archivo para subir',
             'archivo.mimes'=>'El archivo debe estar en formato PDF',
@@ -455,9 +474,12 @@ return ('Usted no tiene permitido visualizar este documento');
         $rutapdf=$this->SubirPdf($request->file("archivo"));
              
         
-        $docSubido=$this->RegistrarRespuesta($request->input('number'),$request->input('nombre'),
+        $docSubido=$this->RegistrarRespuesta($id,$request->input('number'),$request->input('nombre'),
         $rutapdf,$process->process,$user->id,$request->input('type'));
-       
+        if($request->hasfile('Anexo'))
+        {
+            $this->Anexar($request->file('Anexo'),$request->input('nombreAnexo'),$docSubido);
+        }
         return redirect()->route('FirmarDoc', ['id' => $docSubido]);
     }
    //////////
@@ -480,12 +502,13 @@ return ('Usted no tiene permitido visualizar este documento');
    
 }
 public function DocHtmlResponder(Request $request, $id){
+    $configuration=Configuration::find(1)->first();
     $user_id=\DB::table('document_user')->where('type', '=', 'E')->where('document_id', '=', $id)->first();
     $user=\DB::table('users')->where('id', '=', $user_id->user_id)->first();
 
     $process=\DB::table('document_user')->where('document_id', '=', $id)->first();
     $rules=[
-
+        'Anexo.*'=> 'mimes:pdf'.'|max:'.$configuration->document_size,
         'cuerpo'=> 'required|min:3',
         'objeto'=> 'required|min:3',
         'type'=> 'required|exists:types,id',
@@ -493,6 +516,7 @@ public function DocHtmlResponder(Request $request, $id){
                 ];
         
                 $messages=[
+                    'Anexo.mimes'=>'El anexo debe estar en formato PDF',
                     'nombre.required'=>'No ha introducido una descripcion para el archivo ',
             'nombre.min'=>'La descripcion debe tener mas de 3 caracteres',
                     'objeto.required'=>'No ha introducido ningun objeto de documento ',
@@ -539,7 +563,11 @@ $nombrepdf="pdf_".time().".pdf";
 file_put_contents( "pdf/".$nombrepdf, $output);
     //Fin transformacion
     
-    $docSubido=$this->RegistrarRespuesta($request->input('number'),$request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
+    $docSubido=$this->RegistrarRespuesta($id,$request->input('number'),$request->input('nombre'),$rutapdf,$process->process,$user->id,$request->input('type'));
+    if($request->hasfile('Anexo'))
+    {
+        $this->Anexar($request->file('Anexo'),$request->input('nombreAnexo'),$docSubido);
+    }
     return redirect()->route('FirmarDoc', ['id' => $docSubido]);
  }
 
@@ -596,7 +624,8 @@ file_put_contents( "pdf/".$nombrepdf, $output);
         ->join('document_user','documents.id','=','document_user.document_id')
         ->where('document_user.user_id', '=', Auth::user()->id)
         ->where('documents.id', '=', $id_documento->document_id)
-        ->select('document_user.type as tipo','documents.created_at as created_at','documents.name as name','documents.id as id','documents.number as number','types.name as type')
+        ->select('document_user.type as tipo','documents.created_at as created_at','documents.name as name',
+        'documents.id as id','documents.number as number','types.name as type','document_user.response')
         ->first();
 
                 
@@ -777,21 +806,21 @@ function Asignandonumero($numero,$TipoDocumento){
    }
      //Fin metodo para enviar documento
 
-     //Inicio Funcion Subir Pdf
-     function SubirPdf($archivo){
-         
-     $filepdf=$archivo;
-     $nombrepdf="pdf_".time().".".$filepdf->guessExtension();
-     $rutapdf=public_path("pdf/".$nombrepdf);
-     copy($filepdf,$rutapdf);
-     
-        return $rutapdf;
-     }
-     
-     //Fin Subir pdf 
+    //Inicio Funcion Subir Pdf
+    function SubirPdf($archivo){
+        
+        $filepdf=$archivo;
+        $nombrepdf="pdf_".time().Str::random(4).".".$filepdf->guessExtension();
+        $rutapdf=public_path("pdf/".$nombrepdf);
+        copy($filepdf,$rutapdf);
+        
+           return $rutapdf;
+        }
+        
+        //Fin Subir pdf 
 
      //Responder
-     function RegistrarRespuesta($numero,$nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder,$tipo_Documento){
+     function RegistrarRespuesta($EnrespuestaA,$numero,$nombreDocumento, $rutaDocumento, $proceso, $UsuarioAresponder,$tipo_Documento){
         $folder=\DB::table('folders')->where('father_folder_id', '=', 1)
         ->where('departament_id', '=', Auth::user()->departament_id)->orderBy('id', 'asc')->first();
     $doc =new Document();
@@ -804,8 +833,9 @@ function Asignandonumero($numero,$TipoDocumento){
     
     
     $doc->save();
-    $doc->users()->attach($UsuarioAresponder, ['type' => "R",'process' =>$proceso ]);
-    $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$proceso ]);
+    $doc->users()->attach($UsuarioAresponder, ['type' => "R",'process' =>$proceso,'response' =>$EnrespuestaA  ]);
+    $doc->users()->attach(auth()->user()->id, ['type' => "E",'process' =>$proceso,'response' =>$EnrespuestaA ]);
+   
     
     return $doc->id;
 
@@ -845,6 +875,7 @@ function Asignandonumero($numero,$TipoDocumento){
     ->join('departaments','departaments.id','=','users.departament_id')
     ->where('departaments.id', '=',Auth::user()->departament_id )
     ->where('types.id', '=', $TipodeDocumento)
+    ->where('document_user.type', '=', 'E')
     ->count();
   
     $a=0;
@@ -890,5 +921,24 @@ return $numero;
       
   //Fin Verificar Numeracion
 
+   //Anexo para presentacion BETA
+   function Anexar($Anexos,$Nombres,$documentoAVincular){
+   
+
+    foreach($Anexos as  $key =>$Anexo)
+    {
+        if($Anexo!=null){
+        $rutaAnexo=$this->SubirPdf($Anexo);
+        $annex =new Annex();
+        
+        $annex->name= $Nombres[$key];
+        $annex->path= $rutaAnexo;
+        $annex->document_id= $documentoAVincular;
+        $annex->save(); 
+        }
+    }
+ 
+}
+ //Fin Anexos para presentacion BETA
 //Fin Funciones
 }

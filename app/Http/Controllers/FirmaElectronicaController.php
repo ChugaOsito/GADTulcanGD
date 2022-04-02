@@ -41,12 +41,12 @@ return 'Usted no tiene permiso para realizar la accion solicitada';
             $rutaGuardado="C:/xampp/htdocs/GADTulcanGD/public/pdf/";
                 copy($filep12,$rutap12);
                 $certificado=$rutaGuardado.$nombrep12;           
-$horiz=198;$vert=175;
+$horiz=260;$vert=210;
 try{    $client = new Client([
         'headers' => [ 'Content-Type' => 'application/json; charset="utf-8"' ]    ]);
     $response = $client->post('http://localhost:8080/Firma_EC_API/APIREST/Firmarpdf',
         ['body' => json_encode(
-            [ "archivop12" => $certificado,"contrasena" => $contraseña,"documentopdf" => $pdfAFirmar,"pagina"=> "",
+            [ "archivop12" => $certificado,"contrasena" => $contraseña,"documentopdf" => $pdfAFirmar,"pagina"=> 0,
                 "h"=> $horiz,"v"=> $vert,                    ]
         )]);
        $DocumentoFirmado=json_decode($response->getBody(),true);
@@ -75,7 +75,7 @@ catch(\GuzzleHttp\Exception\ClientException $e){
     $client = new Client([
         'headers' => [ 'Content-Type' => 'application/json; charset="utf-8"' ]
     ]);
-        $response = $client->post('http://localhost:8080/Prototipo_Firmador_Api/API/Validarpdf',
+        $response = $client->post('http://localhost:8080/Firma_EC_API/APIREST/Validarpdf',
         ['body' => json_encode(
             [                'ubicacion' => $pdfAvalidar            ]
         )]

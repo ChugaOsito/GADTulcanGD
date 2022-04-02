@@ -28,7 +28,7 @@
                   @endif
 
                   <!--Con este condicional verificamos que solo el propietario del documento pueda anexar documentos-->
-                  <p><b>{{ $type->name}} Numero: </b> {{ $document->number }}</p>
+                  <p><b>{{ $type->name}} Número: </b> {{ $document->number }}</p>
                   <p> <b>Descripción:</b> {{ $document->name }}</p>
            
 <br>
@@ -88,11 +88,13 @@
             </div>
         </div>
 <!--  Fin Modal -->
-@if (auth()->id()== $usuario->user_id)      
+@if (auth()->id()== $usuario->user_id)   
+<!--   
 <a href="/Anexo/{{$annex->id}}/eliminar" class="btn btn-danger btn-sm" title="Dar de baja">
   <i class="fas fa-trash fa-1x ">
   </i>
 </a>
+-->
 @endif
         
       </td>
